@@ -1341,6 +1341,625 @@ const getBtn = (str: string) => {
 
 
 
+# Pinia
+
+## 初始化
+
+### 安装
+
+```bash
+npm install pinia
+```
+
+### 注册
+
+```ts
+import { createApp } from 'vue'
+import App from './App.vue'
+import {createPinia} from 'pinia'
+const store = createPinia()
+
+const app = createApp(App)
+
+app.use(store)
+
+app.mount('#app')
+```
+
+
+
+## 创建仓库
+
+### 创建
+
+```ts
+import { defineStore } from 'pinia'
+
+export const useUserStore = defineStore('user', {
+  state() {
+    return {
+      name: 'ren',
+      age: '23',
+    }
+  },
+  getters: {},
+  actions: {},
+})
+```
+
+### 组件上使用
+
+```vue
+<template>
+  <div>
+    {{ UserStore.name }} - {{ UserStore.age }}
+  </div>
+</template>
+
+<script setup lang="ts">
+import { useUserStore } from './store/store-user'
+const UserStore = useUserStore()
+</script>
+```
+
+
+
+## 使用
+
+### 响应式解构
+
+```vue
+<template>
+  <div>
+    <button @click="change">修改</button>
+    {{ UserStore.name }} - {{ UserStore.age }}
+  </div>
+</template>
+
+<script setup lang="ts">
+import { useUserStore } from './store/store-user'
+import { storeToRefs } from 'pinia'
+const UserStore = useUserStore()
+// storeToRefs 传入 store即可结构出具有响应式的ref对象
+const { name } = storeToRefs(UserStore)
+const change = () => {
+  name.value = 'renguoqiang'
+}
+</script>
+```
+
+### state
+
+```vue
+<template>
+  <div>
+    <button @click="change">修改</button>
+    {{ UserStore.name }} - {{ UserStore.age }}
+  </div>
+</template>
+
+<script setup lang="ts">
+import { onMounted } from 'vue'
+import { useUserStore } from './store/store-user'
+const UserStore = useUserStore()
+
+onMounted(() => {
+  // 1. 支持直接修改
+  UserStore.name = 'renguoqiang'
+})
+
+const change = () => {
+  // 2. $patch 批量修改
+  UserStore.$patch({
+    name: 'pan',
+    age: '22',
+  })
+  // 3. $patch 函数式批量修改
+  UserStore.$patch(state => {
+    state.name = 'ding'
+    state.age = '67'
+  })
+  // 4. $state 全部覆盖（不推荐）
+  UserStore.$state = {
+    name: 'shi',
+    age: '67',
+  }
+  // 5. 直接调用action修改
+  UserStore.setName('rrrren')
+}
+</script>
+```
+
+### action
+
+```ts
+import { defineStore } from 'pinia'
+
+type User = {
+  name: string
+  age: string
+}
+
+const Login = (): Promise<User> => {
+  return new Promise(resolve => {
+    setTimeout(() => {
+      resolve({
+        name: 'renguoqiang',
+        age: '28',
+      })
+    }, 1000)
+  })
+}
+
+export const useUserStore = defineStore('user', {
+  state() {
+    return {
+      user: <User>{},
+      name: '',
+    }
+  },
+  getters: {},
+  actions: {
+    async login() {
+      // 支持异步的async
+      const user = await Login()
+      this.user = user
+      // 可以调用其他actions
+      this.setName(user.name)
+    },
+    setName(name: string) {
+      this.name = name
+    },
+  },
+})
+```
+
+### getter
+
+```ts
+  state() {
+  // ...
+  },
+  getters: {
+    // 可以连用其他getters
+    newName(): string {
+      // 读取值的时候不需要执行函数
+      return `${this.user.name} - ${this.newAge}`
+    },
+    newAge(): string {
+      return this.user.age
+    }
+  }
+```
+
+### 实例方法
+
+```vue
+<template>
+  <div>
+    <button @click="change">修改</button>
+    {{ UserStore.newName}}
+  </div>
+</template>
+
+<script setup lang="ts">
+import { useUserStore } from './store/store-user'
+const UserStore = useUserStore()
+const change = () => {
+  // 重置state
+  UserStore.$reset()
+  // state改变的回调
+  UserStore.$subscribe(() => {
+    // 。。。
+  })
+  // action触发的回调
+  UserStore.$onAction(() => {
+    // 。。。
+  })
+}
+</script>
+```
+
+
+
+# Vue Router
+
+## 初始化
+
+### 安装
+
+```bash
+npm i vue-router@4
+```
+
+### 注册
+
+```ts
+// router/index.ts
+import { createRouter, createWebHistory } from 'vue-router'
+
+const router = createRouter({
+  history: createWebHistory(),
+  routes: [
+    {
+      path: '/father',
+      name: 'father',
+      component: () => import('../components/Father.vue'),
+    },
+  ],
+})
+
+export default router
+```
+
+```vue
+<!-- App.vue -->
+<template>
+  <RouterView />
+</template>
+
+<script setup lang="ts"></script>
+```
+
+```ts
+// main.ts
+import { createApp } from 'vue'
+import App from './App.vue'
+import { createPinia } from 'pinia'
+import router from './router/index'
+const store = createPinia()
+
+const app = createApp(App)
+
+app.use(store)
+// 使用use注册路由
+app.use(router)
+app.mount('#app')
+```
+
+##  router-link
+
+### `<router-link>`
+
+```vue
+<template>
+  <!-- router name 访问 -->
+  <RouterLink to="father">father1</RouterLink>
+  <!-- router path 访问 -->
+  <RouterLink to="/father">father2</RouterLink>
+  <!-- 对象命名访问 -->
+  <RouterLink :to="{name: 'father'}">father3</RouterLink>
+  <RouterView />
+</template>
+
+<script setup lang="ts"></script>
+```
+
+### 编程式导航
+
+```vue
+<template>
+<button @click="goRouter">跳转</button>
+  <RouterView />
+</template>
+
+<script setup lang="ts">
+import { useRouter } from 'vue-router'
+// 使用 useRouter 注册路由工具
+const router = useRouter()
+const goRouter = () => {
+  // 直接传递path
+  router.push('/father')
+  // 使用对象path
+  router.push({
+    path: '/father'
+  })
+  // 使用对象name
+  router.push({
+    name: 'father'
+  })
+}
+</script>
+```
+
+
+
+## 历史记录
+
+```vue
+<template>
+  <button @click="goRouter">跳转</button>
+  <RouterView />
+</template>
+
+<script setup lang="ts">
+import { useRouter } from 'vue-router'
+// 使用 useRouter 注册路由工具
+const router = useRouter()
+const goRouter = () => {
+  // push一条历史记录
+  router.push('/father')
+  // 替换一条历史记录
+  router.replace('/father')
+  // 前进或者返回n条记录
+  router.go(1)
+  // 后退
+  router.back()
+}
+</script>
+```
+
+
+
+## 路由传参
+
+### query参数
+
+```vue
+<!-- App.vue -->
+<template>
+  <button @click="goRouter">跳转</button>
+  <RouterView />
+</template>
+
+<script setup lang="ts">
+import { useRouter } from 'vue-router'
+const router = useRouter()
+const goRouter = () => {
+  router.push({
+    // 使用name 或者 path 都可以携带query参数
+    name: 'father',
+    path: '/father',
+    query: {
+      name: 'ren',
+      age: 27
+    }
+  })
+}
+</script>
+```
+
+```vue
+<!-- Father.vue -->
+<template>
+  <div>
+    {{ route.query.name }}
+  </div>
+</template>
+
+<script setup lang="ts">
+import { useRoute } from 'vue-router';
+// 使用useRoute获取当前路由对象
+const route = useRoute()
+</script>
+```
+
+### params参数
+
+```vue
+<!-- App.vue -->
+<template>
+  <button @click="goRouter">跳转</button>
+  <RouterView />
+</template>
+
+<script setup lang="ts">
+import { useRouter } from 'vue-router'
+const router = useRouter()
+const goRouter = () => {
+  router.push({
+    name: 'father',
+    // !! 最新vue-router版本如果动态参数中不含该参数，则会直接丢弃
+    // 不支持path 、 params组合
+    params: {
+      names: 'ren', // 会被直接丢弃
+    }
+  })
+}
+</script>
+```
+
+### 动态路由参数
+
+```ts
+// router/index.ts
+import { createRouter, createWebHistory } from 'vue-router'
+
+const router = createRouter({
+  history: createWebHistory(),
+  routes: [
+    {
+      // 使用:申明动态参数
+      path: '/father/:id',
+      name: 'father',
+      component: () => import('../components/Father.vue'),
+    },
+  ],
+})
+
+export default router
+```
+
+```vue
+<!-- App.vue -->
+<template>
+  <button @click="goRouter">跳转</button>
+  <RouterView />
+</template>
+
+<script setup lang="ts">
+import { useRouter } from 'vue-router'
+const router = useRouter()
+const goRouter = () => {
+  router.push({
+    name: 'father',
+    // 在params中传递动态参数
+    params: {
+      id: 123
+    }
+  })
+  // 或者使用path直接拼接数据
+  router.push({
+    path: '/father/123',
+  })
+}
+</script>
+```
+
+```vue
+<!-- Father.vue -->
+<template>
+  <div>
+    {{ route.params.id }}
+  </div>
+</template>
+
+<script setup lang="ts">
+import { useRoute } from 'vue-router';
+// 使用useRoute获取当前路由对象
+const route = useRoute()
+</script>
+```
+
+
+
+## 重定向与嵌套路由
+
+```ts
+// router/index.ts
+import { createRouter, createWebHistory } from 'vue-router'
+
+const router = createRouter({
+  history: createWebHistory(),
+  routes: [
+    {
+      path: '/',
+      name: 'root',
+      component: () => import('../components/Father.vue'),
+      // 重定向
+      redirect: '/b',
+      // 嵌套路由
+      children: [
+        {
+          path: '/b',
+          name: 'b',
+          component: () => import('../components/B.vue'),
+        },
+      ],
+    },
+  ],
+})
+
+export default router
+```
+
+
+
+## 别名
+
+```ts
+        {
+          path: '/b',
+          // 可以多个路由匹配同一个组件
+          alias: ['/a', '/c'],
+          name: 'b',
+          component: () => import('../components/B.vue'),
+        },
+```
+
+
+
+## 导航守卫
+
+### 全局前置守卫
+
+```ts
+router.beforeEach((to, from, next) => {
+  // ...
+  next()
+})
+```
+
+### 全局后置守卫
+
+```ts
+router.afterEach((to, from) => {
+  // ...
+})
+```
+
+
+
+## meta
+
+```ts
+// router/index.ts
+import { createRouter, createWebHistory } from 'vue-router'
+
+// 扩展原信息接口
+declare module 'vue-router' {
+  interface RouteMeta {
+    key?: string
+  }
+}
+
+const router = createRouter({
+  history: createWebHistory(),
+  routes: [
+    {
+      path: '/',
+      name: 'root',
+      component: () => import('../components/Father.vue'),
+      redirect: '/b',
+      // 定义元信息
+      meta: {
+        key: '1123'
+      },
+      children: [
+        {
+          path: '/b',
+          alias: ['/a', '/c'],
+          name: 'b',
+          component: () => import('../components/B.vue'),
+        },
+      ],
+    },
+  ],
+})
+
+router.beforeEach((to, from, next) => {
+  // 导航守卫中读取
+  console.log('to.meta.key :>> ', to.meta.key);
+  next()
+})
+
+export default router
+```
+
+```vue
+<!-- Father.vue -->
+<template>
+  <div>
+    Father
+    <RouterView></RouterView>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { useRoute } from 'vue-router';
+const route = useRoute()
+// 读取原信息
+const key = route.meta.key
+console.log('key :>> ', key);
+</script>
+```
+
+
+
+
+
+
+
 
 
 
@@ -1373,4 +1992,40 @@ node_modules/bin中查找vite脚本文件
 ```
 
 
+
+## 环境变量
+
+### 读取
+
+```ts
+// vue中读取
+const env = import.meta.env
+```
+
+```ts
+// node 中读取
+import { defineConfig, loadEnv } from 'vite'
+import vue from '@vitejs/plugin-vue'
+
+// 使用函数接受mode
+export default defineConfig(({ mode }) => {
+  // 使用loadEnv函数加载环境变量
+  const env = loadEnv(mode, process.cwd(), '')
+  // 会加载所有环境变量
+  console.log('env :>> ', env);
+  return {
+    plugins: [vue()],
+  }
+})
+```
+
+### 创建
+
+```js
+// 必须添加VITE前缀
+// .env.development 中创建开发环境的环境变量
+VITE_BASE_URL = /somewhere
+// .env.production 中创建开发环境的环境变量
+VITE_BASE_URL = /anywhere
+```
 
