@@ -335,19 +335,6 @@ git cherry-pick [<options>] <commit-ish>...
 
 
 
-## 临时存储
-
-上面也有初步介绍这个命令的用法，就是用来临时存一下不想被提交的代码变更的，常用命令如下：
-
-- `git stash save 'xxx'`: 储存变更
-- `git stash list`: 查看储存区所有提交列表
-- `git stash pop`: 弹出并应用最近的一次储存区的代码提交
-- `git stash drop stash@{n}`: 删除某次储存记录
-- `git stash clear`: 清楚所有 stash 信息
-
-它的数据将被存在你仓库 .git 文件下的 refs/stash 里。
-
-
 
 
 
