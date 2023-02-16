@@ -219,13 +219,236 @@ git pull origin branch_name
 
 **简介**
 
-只拉取远程分支的更改，但是不合并到本地
+拉取远程分支的更新，但是不合并到本地，需要主动合并，获取更新后会返回一个FETCH_HEAD
 
 **命令**
 
 ```shell
-# 获取远程分支修改的内容
-git fetch 
+# 将远程主机的更新全部取回本地
+git fetch origin
+
+# 取回特定分支的更新
+git fetch origin branch_name
+
+# 合并fetch获取到修改
+git merge origin/branch_name
+
+# 查看FETCH_HEAD
+git log -p FETCH_HEAD
+```
+
+
+
+### git merge
+
+**简介**
+
+用于合并fetch或者合并其他分支
+
+**命令**
+
+```shell
+# 合并指定分支
+git merge branch_name
+
+# 取消合并
+git merge --abort
+```
+
+
+
+### git log
+
+**简介**
+
+查看提交记录
+
+**命令**
+
+```shell
+# 查看所有提交记录和id
+git log
+```
+
+
+
+### git reflog
+
+**简介**
+
+查看所有提交记录，包括丢失的部分
+
+**命令**
+
+```shell
+# 查看所有提交记录
+git reflog
+```
+
+
+
+### git reset
+
+**简介**
+
+用于回撤版本
+
+**命令**
+
+```shell
+# 回退到上一个版本
+git reset HEAD^
+# 回退到上上一个版本
+git reset HEAD^^
+# 回退到上n一个版本
+git reset HEAD~n
+
+# 回退后保留代码到工作区（add 前）
+git reset --mixed HEAD^
+
+# 回退后保留代码到暂存区（commit 前）
+git reset --soft HEAD^
+
+# 回退后丢弃代码
+git reset --hard HEAD^
+```
+
+
+
+### git revert
+
+**简介**
+
+保留记录的回滚，不会让commit消失，而是产生一个新的commit
+
+**命令**
+
+```shell
+# 回退到指定版本
+git revert HEAD^
+git revert commit_id
+```
+
+
+
+### git cherry-pick
+
+**简介**
+
+用于挑选指定提交，然后合并到当前分支上，会产生新的提交记录，且会拥有不同的commit_id
+
+**命令**
+
+```shell
+# 获取指定commit_id
+git cherry-pick commit_id
+
+# 获取指定分支的最近一次提交
+git cherry-pick branch_name
+
+# 同时转移多个提交
+git cherry-pick commit_id_1 commit_id_2 ...
+
+# 转移连续的提交，要求1必须早于2，切不包含1
+git cherry-pick commit_id_1..commit_id_2
+
+# 包含首位的连续转移
+git cherry-pick commit_id_1^..commit_id_2
+
+# 解决相关冲突后继续合并，需要先git add
+git cherry-pick --continue
+
+# 冲突发生时放弃合并，回到之前的状态
+git cherry-pick --abort
+
+# 发生冲突时直接放弃，维持现状
+git cherry-pick --quit
+```
+
+
+
+### git tag
+
+**简介**
+
+用来标记特定的版本
+
+**命令**
+
+```shell
+# 快速创建一个tag
+git tag tag_name
+
+# 附注标签创建
+git tag -a tag_name -m "xxx"
+
+# 查看标签
+git tag
+
+# 推送标签到远程
+git push origin tag_name
+
+# 删除tag
+git tag -d tag_name
+```
+
+
+
+
+
+
+
+## 二、经典案例
+
+### 撤销与回滚
+
+#### 撤销git add
+
+```shell
+# 以下命令等价
+git reset
+git reset HEAD
+git reset --mixed HEAD
+```
+
+
+
+#### 撤销git commit
+
+```shell
+# 以下命令等价
+git reset HEAD^
+git reset --mixed HEAD^
+```
+
+
+
+#### 回滚到指定commit_id
+
+```shell
+# 查看需要回滚的commit_id
+git log
+
+# 直接回滚，丢弃当前未保存未提交的代码
+git reset --hard commit_id
+```
+
+
+
+#### 回滚后再滚回来
+
+```shell
+# 获取回滚目标id
+git log
+
+# 执行回滚
+git reset --hard commit_id
+
+# 获取因回滚而丢失的id
+git reflog
+
+# 执行回滚
+git reset --hard commit_id
 ```
 
 
@@ -236,18 +459,16 @@ git fetch
 
 
 
+### 本地的项目托管到远程
 
-
-## 如何将本地的项目托管到github
-
-### 1、配置git
+#### 1、配置git
 
 ```bash
 git config --global user.name rrrrrrrren
 git config --global user.email dittorenard@outlook.com
 ```
 
-### 2、生成密钥
+#### 2、生成密钥
 
 ```bash
 ssh-keygen -t rsa -b 4096 -C "dittorenard@outlook.com"
@@ -257,13 +478,13 @@ ssh-keygen -t rsa -b 4096 -C "dittorenard@outlook.com"
 
 密钥位置： `C:\Users\任国强\.ssh\id_rsa\id_rsa.pub`
 
-### 3、注册密钥
+#### 3、注册密钥
 
 进入github设置页面：[Add new SSH keys (github.com)](https://github.com/settings/ssh/new)
 
 将密钥内容复制进输入框中，确认后即可生效。
 
-### 4、初次提交
+#### 4、初次提交
 
 ```bash
 git init
@@ -296,49 +517,32 @@ git remote -v show // 查看当前源
 
 
 
-## 删除分支
-
-查看所有分支
+### 删除分支
 
 ```bash
+# 查看所有分支
 git branch -a
 ```
 
-删除本地分支
-
 ```bash
+# 删除本地分支
 git branch -d  local_branch_name
+# 删除远程分支
+git push origin --delete origin_branch_name
 ```
-
-删除远程分支
-
-```bash
- git push origin --delete origin_branch_name
-```
-
-
-
-## 挑选合并
-
-用法
 
 ```shell
-git cherry-pick [<options>] <commit-ish>...
-
-常用options:
-    --quit                退出当前的chery-pick序列
-    --continue            继续当前的chery-pick序列
-    --abort               取消当前的chery-pick序列，恢复当前分支
-    -n, --no-commit       不自动提交
-    -e, --edit            编辑提交信息
+# 删除本地tag
+git tag -d tag_name
+# 删除远程tag
+git push origin --delete tag_name
 ```
 
 
 
+## 三、提交规范
 
-
-
-## 提交规范
+### 前缀标准
 
 ```
 feat 增加新功能
