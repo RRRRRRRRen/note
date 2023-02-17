@@ -482,6 +482,8 @@ git reset --hard commit_id
 ```bash
 git config --global user.name rrrrrrrren
 git config --global user.email dittorenard@outlook.com
+# 开启git颜色
+git config --global color.ui true
 ```
 
 #### 2、生成密钥
