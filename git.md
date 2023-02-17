@@ -394,6 +394,22 @@ git tag -d tag_name
 
 
 
+### git rebase
+
+**简介**
+
+改建分支基点或者合并多次提交记录
+
+**命令**
+
+```shell
+# 变基 (将当前分支的基点移到master到最新提交)
+git rebase master
+
+# 合并(合并当前分支的多次提交)
+git rebase -i HEAD~n
+```
+
 
 
 
