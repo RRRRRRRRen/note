@@ -560,20 +560,97 @@ git push origin --delete tag_name
 
 ## 三、提交规范
 
-### 前缀标准
+### 规范提交信息
 
+**1.安装`commitizen & cz-customizable`**
+
+```shell
+npm install -g commitizen cz-customizable
 ```
-feat 增加新功能
-fix 修复问题/BUG
-style 代码风格相关无影响运行结果的
-perf 优化/性能提升
-refactor 重构
-revert 撤销修改
-test 测试相关
-docs 文档/注释
-chore 依赖更新/脚手架配置修改等
-workflow 工作流改进
-ci 持续集成
-types 类型定义文件更改
-wip 开发中
+
+
+
+**2.配置自定义Adapter**
+
+```shell
+# 目录：根目录/.czrc
 ```
+
+```json
+{ "path": "cz-customizable" }
+```
+
+
+
+**3.自定义Adapter内容**
+
+```shell
+# 目录：根目录/.cz-config.js
+```
+
+```js
+'use strict';
+
+module.exports = {
+
+  types: [
+    {
+      value: 'WIP',
+      name : '💪  WIP:      Work in progress'
+    },
+    {
+      value: 'feat',
+      name : '✨  feat:     A new feature'
+    },
+    {
+      value: 'fix',
+      name : '🐞  fix:      A bug fix'
+    },
+    {
+      value: 'refactor',
+      name : '🛠  refactor: A code change that neither fixes a bug nor adds a feature'
+    },
+    {
+      value: 'docs',
+      name : '📚  docs:     Documentation only changes'
+    },
+    {
+      value: 'test',
+      name : '🏁  test:     Add missing tests or correcting existing tests'
+    },
+    {
+      value: 'chore',
+      name : '🗯  chore:    Changes that don\'t modify src or test files. Such as updating build tasks, package manager'
+    },
+    {
+      value: 'style',
+      name : '💅  style:    Code Style, Changes that do not affect the meaning of the code (white-space, formatting, missing semi-colons, etc)'
+    },
+    {
+      value: 'revert',
+      name : '⏪  revert:   Revert to a commit'
+    }
+  ],
+
+  skipEmptyScopes: true,
+  allowCustomScopes: false,
+  allowBreakingChanges: ["feat", "fix"]
+};
+```
+
+
+
+**4.提交规范前缀**
+
+```shell
+wip:			开发中
+feat:			增加新功能
+fix:			修复问题/BUG
+refactor:	重构
+docs:			文档/注释
+test:			测试相关
+chore:		依赖更新/脚手架配置修改等
+style:		代码风格相关无影响运行结果的
+revert:		撤销修改
+```
+
