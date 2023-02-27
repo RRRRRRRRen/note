@@ -63,3 +63,20 @@ nvm root C:\Users\任国强\AppData\Roaming\nvm
 
 
 ## NPM
+
+**设置国内镜像**
+
+```shell
+# 设置淘宝镜像
+npm config set registry https://registry.npm.taobao.org
+
+# 查看当前镜像地址
+npm config get registry
+```
+
+**使用cnpm**
+
+```shell
+npm install -g cnpm --registry=https://registry.npmmirror.com
+```
+
