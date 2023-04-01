@@ -18,7 +18,10 @@ nvm version
 nvm current
 
 # 显示可下载版本的部分列表
-nvm list available 
+nvm list available
+
+# 设置默认版本
+nvm alias default vx.x.x
 
 # 安装/卸载node
 nvm install <version> [arch]
