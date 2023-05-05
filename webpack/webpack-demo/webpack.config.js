@@ -5,13 +5,13 @@ const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 module.exports = {
   mode: "production",
   entry: {
-    main: path.resolve(__dirname, "../src/main.js"),
+    main: path.resolve(__dirname, "./src/main.js"),
   },
   output: {
-    // filename: "[name].[hash:10].js",
+    filename: "[name].[hash:10].js",
     // assetModuleFilename: 'images/[hash:8][ext][query]',
-    path: path.resolve(__dirname, "../dist/assets/[fullhash]"),
-    publicPath: 'https://cdn.example.com/assets/[fullhash]/',
+    path: path.resolve(__dirname, "./dist"),
+    // publicPath: 'https://cdn.example.com/assets/[fullhash]/',
   },
   module: {
     rules: [
@@ -32,7 +32,7 @@ module.exports = {
   plugins: [
     new CleanWebpackPlugin(),
     new HtmlWebpackPlugin({
-      template: path.resolve(__dirname, "../public/index.html"),
+      template: path.resolve(__dirname, "./public/index.html"),
     }),
   ],
 };
