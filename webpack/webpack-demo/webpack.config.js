@@ -1,38 +1,21 @@
 const path = require("path");
-const HtmlWebpackPlugin = require("html-webpack-plugin");
-const { CleanWebpackPlugin } = require("clean-webpack-plugin");
-
+const { WebpackRunPlugin, WebpackDonePlugin } = require("./webpackPlugins");
+const { loader1, loader2 } = require("./webpackLoader");
 module.exports = {
-  mode: "production",
-  entry: {
-    main: path.resolve(__dirname, "./src/main.js"),
-  },
+  mode: "production", //防止代码被压缩
+  entry: "./src/main.js", //入口文件
   output: {
-    filename: "[name].[hash:10].js",
-    // assetModuleFilename: 'images/[hash:8][ext][query]',
-    path: path.resolve(__dirname, "./dist"),
-    // publicPath: 'https://cdn.example.com/assets/[fullhash]/',
+    path: path.resolve(__dirname, "dist"),
+    filename: "[name].js",
   },
+  devtool: "source-map", //防止干扰源文件
   module: {
     rules: [
       {
-        test: /\.css$/,
-        use: ["style-loader", "css-loader", "postcss-loader"],
+        test: /\.js$/,
+        use: [loader1, loader2],
       },
-      {
-        test: /\.less$/,
-        use: ["style-loader", "css-loader", "postcss-loader", "less-loader"],
-      },
-      {
-        test: /\.png/,
-        type: 'asset/resource'
-      }
     ],
   },
-  plugins: [
-    new CleanWebpackPlugin(),
-    new HtmlWebpackPlugin({
-      template: path.resolve(__dirname, "./public/index.html"),
-    }),
-  ],
+  plugins: [new WebpackRunPlugin(), new WebpackDonePlugin()],
 };
