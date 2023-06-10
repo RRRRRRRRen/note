@@ -105,7 +105,7 @@
 
 我们来逐行看：
 
-2-4：这些是volar插件提供的功能。
+**2-4：这些是volar插件提供的功能。**
 
 ```json
   // 配置ts开发工具包的地址，vben的ts是项目安装的，配置后就可以指定项目安装的ts版本运行，而不是使用可能存在于全局的ts版本
@@ -116,7 +116,7 @@
   "volar.tsPluginStatus": false,
 ```
 
-5-8：配置
+**5-8：配置**
 
 ```json
   // 	指定包管理器，但并不能限制项目使用其他包管理器
@@ -147,29 +147,415 @@
 
 当在跨平台的开发环境中共享代码时，使用不同的行尾符可能会导致一些问题，统一换行符有助于代码的一致性方便跨平台协作。
 
+**9-56: 文件系统管理**
+
+```json
+	// 全局搜索是忽略的文件夹和文件
+  "search.exclude": {
+    "**/node_modules": true,
+		// ...
+    "**/.yarn": true
+  },
+	// 用于设置哪些文件和文件夹在工作区隐藏，隐藏后避免了手动修改这些文件的情况
+  "files.exclude": {
+    "**/.cache": true,
+		// ...
+    "**/.DS_Store": true,
+  },
+	// 用于设置vscode文件监视器忽略的文件。
+  "files.watcherExclude": {
+    "**/.git/objects/**": true,
+		// ...
+    "**/yarn.lock": true
+  },
+```
+
+`files.watcherExclude`
+
+在查阅大量资料后，我发现这个设置非常诡异，按照文档说明，被匹配的文件不会被vscode文件监视器所监视，意味着文件的删除、修改、移动不会被vscode感知，也就不会出发代码格式化、自动保存等操作，也不会出发git文件状态的改变。
+
+但实际上，在设置后依然会出发这些操作，stackoverflow中有个相关问题提到这个，解释说vscode的插件扩展是可以覆盖这个设置也可以绕过这个设置，所以有些插件和扩展在被排除的文件中依然可以正常工作，因此给人一种该设置不生效的感觉。
+
+[Stack Overflow 问题地址](https://stackoverflow.com/questions/56863731/do-we-really-need-vs-codes-file-watchers-what-do-they-do-how-can-they-be-disa)
+
+**57-58：stylelint配置**
+
+```json
+  // 启用 Stylelint 插件，使其对当前项目进行样式代码的检查和验证
+	"stylelint.enable": true,
+	// 定义了需要进行样式验证的文件类型
+  "stylelint.validate": ["css", "less", "postcss", "scss", "vue", "sass"],
+```
+
+简单介绍下stylelint，Stylelint 是一个强大的样式代码检查工具，用于检测和纠正样式文件中的错误、警告和风格问题。
+
+Stylelint 的主要功能包括：
+
+1. 语法检查：检查样式代码的语法错误，例如缺少分号、括号不匹配等。
+2. 风格规则：根据预定义的规则集，检查样式代码是否符合一致的编码风格，例如缩进、命名约定、属性顺序等。
+3. 错误提示：提供详细的错误信息和位置指示，帮助开发者快速定位和修复问题。
+4. 自定义规则：允许开发者定义自己的规则集，以满足项目的特定需求和样式规范。
+5. 插件扩展：支持通过插件扩展来增加额外的规则和功能。
+
+**59-61：path-intellisense插件配置**
+
+```json
+  // 配置特定文件类型的路径映射规则
+	"path-intellisense.mappings": {
+    "/@/": "${workspaceRoot}/src"
+  },
+```
+
+"Path Intellisense" 是一个提供路径自动补全和导航功能的插件，可以帮助开发者更快地输入和浏览文件路径。
+
+但你配置了mappings后，输入前缀就可以自动识别为对应的映射目录，然后就可以快速键入目录了。
+
+![image-20230610110933615](https://gitee.com/rrrrrrrren/note_image/raw/master/image-20230610110933615.png)
+
+但是还有很多其他配置可以影响这个提示，例如在tsconfig.json中compilerOptions.paths设置也可以起到同样的作用，经过测试tsconfig.json的优先级可能更高。但是`compilerOptions.paths`的作用不止如此，之后会继续介绍。
+
+**62-85：为不同文件类型分别制定默认的格式化工具**
+
+```json
+  "[javascriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[html]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[css]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[less]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[scss]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[markdown]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+```
+
+`[javascriptreact]`
+
+这种类型的设置，可以为不同类型的文件设置配置不同的vscode设置，而不是仅限于指定格式化程序，但是一般而言不需要设置其他的选项。
+
+这里我们将所有的默认格式化程序设置为prettier，在执行格式化命令后，会自动调用相关的扩展。
+
+例如，在对main.ts文件右击选择使用...格式化文档，就可以看到prettier被设置为默认选项。
+
+![image-20230610112353828](https://gitee.com/rrrrrrrren/note_image/raw/master/image-20230610112353828.png)
+
+![image-20230610112244818](https://gitee.com/rrrrrrrren/note_image/raw/master/image-20230610112244818.png)
+
+但是如果你没有安装对应的插件，那么在执行格式化时就会有如下提示：
+
+![image-20230610112614821](https://gitee.com/rrrrrrrren/note_image/raw/master/image-20230610112614821.png)
+
+**86-95：文件保存后的行为** 
+
+```json
+  // 在保存文件时自动执行的代码操作
+	"editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true,
+    "source.fixAll.stylelint": true
+  },
+	// 针对vue文件进行的定制化设置
+  "[vue]": {
+    "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": true,
+      "source.fixAll.stylelint": true
+    }
+  },
+```
+
+该设置项允许你指定一系列代码操作（Code Actions），当你保存文件时，编辑器将自动执行这些操作。代码操作可以是格式化代码、修复错误、应用代码片段等。你可以使用该设置项根据自己的需求来定义要执行的代码操作。
+
+`source.fixAll.eslint`
+
+在保存文件时，自动修复 ESLint 检测到的问题。
+
+`source.fixAll.stylelint`
+
+在保存文件时，自动修复 Stylelint 检测到的问题
+
+**96-104：国际化插件配置**
+
+```json
+  // 指定存放语言文件的路径
+	"i18n-ally.localesPaths": ["src/locales/lang"],
+	// 指定键名的样式，这里设置为嵌套样式
+  "i18n-ally.keystyle": "nested",
+	// 启用键名排序
+  "i18n-ally.sortKeys": true,
+	// 启用命名空间功能
+  "i18n-ally.namespace": true,
+	// 指定语言文件的匹配模式
+  "i18n-ally.pathMatcher": "{locale}/{namespaces}.{ext}",
+	// 启用的解析器列表
+  "i18n-ally.enabledParsers": ["ts"],
+	// 源语言设置为英语
+  "i18n-ally.sourceLanguage": "en",
+	// 显示语言设置为中文
+  "i18n-ally.displayLanguage": "zh-CN",
+	// 启用的框架列表，这里启用了 Vue 和 React
+  "i18n-ally.enabledFrameworks": ["vue", "react"],
+```
+
+以上是关于 Visual Studio Code 中 i18n-ally 插件的一些配置选项。根据你的项目需求，你可以根据以上示例进行相应的配置，并根据具体情况进行调整。i18n-ally 插件可以帮助你管理和处理多语言的翻译工作，提供方便的国际化开发体验。
+
+我们将会在国际化部分深入了解这个插件，对于国际化来说这个插件可以说是必须的。
+
+**105-138：**
+
+```json
+  // 自定义的单词列表
+	"cSpell.words": [
+    "vben",
+		// ...
+    "antd"
+  ],
+```
+
+`cSpell.words` 是 Visual Studio Code 中 CSpell 插件的配置选项之一。它用于指定自定义的单词列表，这些单词将被视为正确的拼写，不会触发拼写检查的警告。
+
+需要注意的是，Visual Studio Code 的拼写检查功能依赖于当前活动的语言环境和所安装的相关插件。确保你的工作区或文件中已选择正确的语言，并安装了相应的语言支持插件，以便获得最佳的拼写检查体验。
+
+感人感觉用处不大，并且在使用ts时，其提供的检查功能更为实际。
+
+**139-141：插件Vetur配置项**
+
+```json
+  // 格式化 Vue 单文件组件中的 <script> 部分时，会自动缩进第一行
+	"vetur.format.scriptInitialIndent": true,
+	// 表示在格式化 Vue 单文件组件中的 <style> 部分时，会自动缩进第一行。
+  "vetur.format.styleInitialIndent": true,
+	// 表示关闭对 <script> 部分的语法验证
+  "vetur.validation.script": false,
+```
+
+在vue3项目中，我们并不推荐同时使用vetur，更推荐使用volar。并且两个有关缩进的设置其实在我们后面学习的prettier和eslint都可以设置，不使用vetur插件时，不需要关注这些配置。个人认为这是一个保险的冗余配置。
+
+**142-159：MicroPython配置**
+
+```json
+  "MicroPython.executeButton": [
+    {
+      "text": "▶",
+      "tooltip": "运行",
+      "alignment": "left",
+      "command": "extension.executeFile",
+      "priority": 3.5
+    }
+  ],
+  "MicroPython.syncButton": [
+    {
+      "text": "$(sync)",
+      "tooltip": "同步",
+      "alignment": "left",
+      "command": "extension.execute",
+      "priority": 4
+    }
+  ],
+```
+
+MicroPython 是一种精简版的 Python 解释器，专为嵌入式系统和微控制器设计的。它提供了一种在资源有限的环境中运行 Python 代码的方式，使开发者可以在小型设备上使用高级编程语言进行开发。
+
+所以我们为什么需要Python的设置，why？会不会是某个提交者的失误呢。
+
+**161-170：资源管理器的配置**
+
+```json
+  // 启用文件嵌套功能
+	"explorer.fileNesting.enabled": true,
+	// 不自动展开嵌套的文件夹
+  "explorer.fileNesting.expand": false,
+	// 定义文件嵌套的规则模式
+  "explorer.fileNesting.patterns": {
+    "*.ts": "$(capture).test.ts, $(capture).test.tsx",
+    "*.tsx": "$(capture).test.ts, $(capture).test.tsx",
+    "*.env": "$(capture).env.*",
+    "CHANGELOG.md": "CHANGELOG*",
+    "package.json": "pnpm-lock.yaml,pnpm-workspace.yaml,LICENSE,.gitattributes,.gitignore,.gitpod.yml,CNAME,README*,.npmrc,.browserslistrc",
+    ".eslintrc.js": ".eslintignore,.prettierignore,.stylelintignore,.commitlintrc.js,.prettierrc.js,.stylelintrc.js"
+  },
+```
+
+一定有人拿到项目后第一时间会看一眼package.json，然后wtf，为什么是个文件夹，而且这个文件夹居然又是个有内容的文件，难道npm更新了吗？
+
+其实就是这个配置导致的，可以让项目的文件夹结构看起来更加清爽，让根目录下相关的配置文件尽量组织在一起，但是只是观感上的差异，实际上文件目录并没有改变。
+
+![image-20230610151948188](https://gitee.com/rrrrrrrren/note_image/raw/master/image-20230610151948188.png)
+
+**171：终端配置**
+
+```json
+  // 	终端可以回滚查看的历史输出行数，默认1000，这里设置为10000
+	"terminal.integrated.scrollback": 10000
+```
+
+到这里全部的settings.json文件就解读完了，设计到了不少的插件设置，想要完全体验出这些设置的作用，还需要理解相关插件的作用，我们继续学习。
 
 
 
-
-
-
-
-
-
-
-
-
-# editorconfig
+## `.editorconfig`
 
 EditorConfig 是一种用于定义和维护跨多个编辑器和 IDE 的代码风格和格式化规则的文件。它提供了一种统一的方式来配置和管理代码文件的缩进、换行符、字符编码、文件格式等方面的规范。
 
+不像.vscode文件夹只能作用于vscode，editorconfig可以作用所有的编辑器。
+
 通过 `.editorconfig` 文件，你可以指定项目中的每个文件的编辑器配置选项。
 
-但是为什么找不到这个文件呢，其实是应为vscode的设置项可以指定隐藏哪些文件。我们找到`.vscode`文件夹
+但是为什么找不到这个文件呢，其实是应为vscode的设置项可以指定隐藏哪些文件，当然也不建议修改这个文件，我们简单看看这个文件。
 
-```tree
+```ini
+# 指示此文件为顶级文件，表示 EditorConfig 配置的起始点。
+root = true
 
+# 所有文件的通用设置
+[*]
+# 指定字符编码为 UTF-8
+charset=utf-8
+# 指定换行符为 LF（Line Feed）
+end_of_line=lf
+# 在文件末尾插入空行
+insert_final_newline=true
+# 使用空格进行缩进
+indent_style=space
+# 指定缩进的空格数为 2
+indent_size=2
+# 指定最大行长度为 100，超过该长度的行将被视为过长。
+max_line_length = 100
+
+# 适用于所有扩展名为 .yml、.yaml 和 .json 的文件。
+[*.{yml,yaml,json}]
+indent_style = space
+indent_size = 2
+
+# 适用于所有扩展名为 .md 的 Markdown 文件。
+[*.md]
+# 不移除 Markdown 文件末尾的空格。
+trim_trailing_whitespace = false
+
+# 适用于名为 Makefile 的文件。
+[Makefile]
+# 对于 Makefile 文件，使用制表符进行缩进。
+indent_style = tab
 ```
 
+再次简单介绍少两个东西：
+
+换行符：一种是LF（\n），另一种是CRLF（\r\n），不同的操作系统换行符是不一样的，为了统一不同系统的一致行为，就需要统一换行符。个人认为另一个好处就是在进行全局搜索时，使用正则匹配换行情况时更为准确。
+
+制表符：简单说制表符占据的字符宽度是自适应的，而不是固定的，所以自适应的宽度在编码文件中非常不友好，可能会导致奇奇怪怪的缩进。所以我们需要使用固定宽度的空格来代替制表符`tab`
 
 
+
+# 格式化与代码检查
+
+有关编辑器的设置，更像是装修中的硬装，设置好了就能用，但是想要用的好且舒心，就需要优秀的室内设计和软装，而代码格式化和代码检查就像是装修中软装。
+
+## Prettier
+
+Prettier 是一个流行的代码格式化工具，用于统一和美化代码的风格。
+
+在使用Prettier前，我们首先需要理清出一个问题，那就是npm安装的prettier和vscode插件市场安装的prettier到底有什么关系和区别？
+
+简单来说，npm包安装的prettier是一个独立的node脚本，他可以单独的在命令行运行，不需要借助任何载体就可以检查指定的文件，你甚至可以使用记事本写代码，然后在命令行执行prettier相关命令来手动完成代码格式化的操作。
+
+vscode插件市场的prettier也具有prettier的功能，那么为什么需要这个插件呢，他解决了npm包的一个痛点，那就是需要手动的在命令行去执行相关命令，有了这个插件，我们就可以非常快速的、不需要手动输入命令的完成格式化的操作。
+
+那么为什么我们还需要npm包的prettier呢，一个插件不就完全搞定格式化了吗？问题来了，你能保证所有的协作用户都安装了这个插件吗，你又能保证所有用户都是用vscode吗，万一人家就偏爱记事本呢，在这种情况下就不能让这些人胡作非为都提交不好看的代码，所以我们就需要在一些核心操作上自动触发prettier命令格式化他的代码，例如提交代码前。
+
+这一点同样适用其他的插件和他对应的npm包。
+
+### `.prettierrc.js`
+
+根目录下的`.prettierrc.js`就是prettier的配置文件，他可以同时作用于prettier命令和prettier插件。
+
+```js
+module.exports = {
+  // 指定每行的最大字符宽度，超过这个宽度的代码将被折行
+  printWidth: 100,
+  // 指定是否在语句末尾添加分号
+  semi: true,
+  // 指定在 Vue 单文件组件中的 <script> 和 <style> 标签是否要使用额外的缩进
+  vueIndentScriptAndStyle: true,
+  // 指定是否使用单引号来包裹字符串
+  singleQuote: true,
+  // 指定是否在多行数组或对象的最后一项添加逗号
+  trailingComma: 'all',
+  // 指定是否在 Markdown 文件中根据printWidth对文本进行换行
+  proseWrap: 'never',
+  // 指定对 HTML 文件中的空白符敏感度的级别
+  htmlWhitespaceSensitivity: 'strict',
+  // 指定换行符的类型
+  endOfLine: 'auto',
+  // 指定要使用的额外插件的名称
+  plugins: ['prettier-plugin-packagejson'],
+  // 指定针对特定文件进行的配置覆盖
+  overrides: [
+    // 这里示例中对以 .*rc 结尾的文件使用 JSON 解析器进行格式化。
+    {
+      files: '.*rc',
+      options: {
+        parser: 'json',
+      },
+    },
+  ],
+};
+```
+
+`htmlWhitespaceSensitivity`
+
+这是用来处理html中的元素之间的空白的，不了解空白的可以去温习一下html中对于空白的解释，这里vben使用strict，简单看下格式化前后对比
+
+格式化前：
+
+![image-20230610164336412](https://gitee.com/rrrrrrrren/note_image/raw/master/image-20230610164336412.png)
+
+格式化后：
+
+![image-20230610164408921](https://gitee.com/rrrrrrrren/note_image/raw/master/image-20230610164408921.png)
+
+简单来说就是，你元素之间有多少个空白我都按照一个（html中连续的空白也会视为一个空白）处理，没有空白那就是没有空白不给你加空白。这样的好处就是在页面渲染时可以准确的识别出你到底写没写空白。
+
+给人最大的差别就在于，一个元素标签是否被打断在两行显示，打断后可以避免产生空白，例如格式化后的第二个span元素的两个标签。
+
+`plugins`
+
+`prettier-plugin-packagejson`该插件是专门用于处理 `package.json` 文件的格式化的，它可以确保 `package.json` 文件的结构和内容符合一致的规范和约定。
+
+通过启用这个插件，你可以确保 `package.json` 文件在使用 Prettier 进行格式化时会遵循指定的规则，包括缩进、换行符、引号类型等。
+
+`overrides`
+
+是 Prettier 的一个配置选项，用于针对特定的文件或文件类型进行单独的配置覆盖。
+
+上述配置表示针对所有以 `.rc` 结尾的文件，使用 `json` 解析器进行格式化。这意味着当你的项目中存在以 `.rc` 结尾的文件（如 `.eslintrc`, `.prettierrc` 等），这些文件会按照 JSON 格式进行解析和格式化。
+
+### `.prettierignore`
+
+文件是用于配置 Prettier 忽略特定文件或文件夹的规则的文件。
+
+```glob
+dist
+.local
+.output.js
+node_modules
+
+**/*.svg
+**/*.sh
+
+public
+.npmrc
+```
+
+首先提一嘴prettierignore的语法规则
