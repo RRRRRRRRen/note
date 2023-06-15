@@ -274,7 +274,9 @@ module.exports = {
 **7-19：解析器配置**
 
 ```js
-  parser: 'vue-eslint-parser',
+  // 指定解析器vue-eslint-parser
+	parser: 'vue-eslint-parser',
+  // 解析器配置项
   parserOptions: {
     parser: '@typescript-eslint/parser',
     ecmaVersion: 2020,
@@ -289,3 +291,136 @@ module.exports = {
   },
 ```
 
+`parser`
+
+这里为什么有`parser`和`parserOptions.parser`两个`parser`，查看[vue-eslint-parser](https://github.com/vuejs/vue-eslint-parser)文档发现，`parserOptions.parser`只是`vue-eslint-parser`的一个配置项而已，并不是eslint指定的属性，文档中指出，`parserOptions.parser`是用来指定一个parser专门解析`<script> `标签里面的内容，因为你有可能在这个标签内使用js或者ts语法，所以提供一个额外配置来区分解析。
+
+vben使用ts进行开发，所以指定`parserOptions.parser`为`@typescript-eslint/parser`，这个parser就是专门解析ts语法的。除此之外你还可以参考文档将其设置为一个对象，对ts和js分别指定解析器（如果你在vue文件中既使用ts又使用js的话）。
+
+`ecmaVersion`
+
+指定了要解析的 ECMAScript 版本，这里是 ECMAScript 2020。那么之前`env.es6`是干什么的？再看eslint文档[配置语言选项 - ESLint 中文文档 (nodejs.cn)](https://nodejs.cn/eslint/configure/language-options/#specifying-parser-options):
+
+
+
+![image-20230614100540204](https://gitee.com/rrrrrrrren/note_image/raw/master/image-20230614100540204.png)
+
+哦，覆盖设置啊，env用来指定全局的es版本为6，解析器解析的指定为es2020，就是这么回事了。
+
+`sourceType`
+
+指定了代码的模块类型为 ES 模块。可能会有人问env.es6不可以指定es模块化吗，不是已经确认环境里吗？可是文档说env.es6开启了所有es6功能，但是除了模块化。通过这个配置可以让我们自由选择在es6中使用其他模块化语法。
+
+`jsxPragma`
+
+指定了 JSX 语法中的 pragma，即用于解析 JSX 的库或框架的名称。在这里，指定为 'React' 表示使用 React 库来解析 JSX。
+
+`ecmaFeatures.jsx`
+
+启用jsx语法支持
+
+`project`
+
+指定了 TypeScript 的配置文件路径，用于提供类型检查和类型推断的支持。这里使用了通配符匹配多个可能的 tsconfig 文件。
+
+`createDefaultProgram` 
+
+禁用了 ESLint 默认的 TypeScript 项目创建。简单说就是设置是否联合解析ts文件，如果联合解析那么可以提高 ESLint 的性能，因为它可以重复使用已经解析过的文件和类型信息，避免重复解析和处理相同的内容。如果设置为false，会使每个文件都独立解析和处理，减少内存占用和构建时间，如果项目很大建议设置为false。
+
+`extraFileExtensions`
+
+指定了额外的文件扩展名，这里是 .vue 文件。这样，ESLint 将会识别并解析 .vue 文件中的代码。
+
+到这里就简单了解了解析器了，但是eslint的vscode插件并不一定全部支持这些设置，只有在使用命令后进行eslint的相关操作时才会完全按照配置进行执行。
+
+**20-26：插件和扩展**
+
+```js
+  plugins: ['vue', '@typescript-eslint', 'import'],
+  extends: [
+    'eslint:recommended',
+    'plugin:vue/vue3-recommended',
+    'plugin:@typescript-eslint/recommended',
+    'plugin:prettier/recommended',
+  ],
+```
+
+`plugins` 字段指定了所使用的插件
+
+- `'vue'` 插件：提供了一系列用于检查和规范 Vue.js 代码的规则。
+- `@typescript-eslint` 插件：提供了一系列用于检查和规范 TypeScript 代码的规则。它扩展了 ESLint 的功能，使其能够处理 TypeScript 特定的语法和类型注解。
+- `'import'` 插件：提供了一系列用于检查和规范模块导入语句的规则。它可以帮助你确保正确地导入和使用模块。
+
+`extends: [...]` 指定了所使用的扩展配置，即所继承的规则集
+
+- `eslint:recommended`：使用 ESLint 官方推荐的规则集，包含了一些常见的代码风格和错误检查规则。
+- `plugin:vue/vue3-recommended`：使用 Vue 官方推荐的规则集，适用于 Vue 3 项目，提供了针对 Vue 文件的代码检查规则。
+- `plugin:@typescript-eslint/recommended`：使用 TypeScript ESLint 插件提供的规则集，包含了一些适用于 TypeScript 项目的规则。
+- `plugin:prettier/recommended`：使用 Prettier 插件提供的规则集，与 Prettier 配合使用，确保代码风格一致性。
+
+**27-89：自定义规则**
+
+```js
+  rules: {
+    // ...
+  }
+```
+
+rules用于自定义eslint内置的规则，也可用于自定义插件扩展提供的规则，但是在命名上有所区别，例如：
+
+```js
+    // 内置规则
+		'space-before-function-paren': 'off',
+		// import插件的规则，需要前缀
+    'import/first': 'error',
+```
+
+这里写的规则具有最高优先级，可以覆盖插件中的规则。
+
+**89：全局变量定义**
+
+```js
+  globals: { defineOptions: 'readonly' },
+```
+
+在 ESLint 配置中，`globals` 字段用于定义全局变量。具体地说，`globals` 字段中的每个键值对表示一个全局变量的定义，其中键是变量名，值是该变量的属性。
+
+在给定的配置中，`globals: { defineOptions: 'readonly' }` 表示定义了一个名为 `defineOptions` 的全局变量，并将其设置为只读（`readonly`）。这意味着在代码中使用 `defineOptions` 变量时，ESLint 不会报错，而且该变量不可被修改。
+
+通过定义全局变量，你可以告诉 ESLint 哪些变量在代码中是全局可用的，从而避免因未声明变量而产生的错误或警告。
+
+
+
+## `.eslintignore`
+
+不再介绍了，忽略列表罢了，看一眼就可以，因为多看一眼就会。。。
+
+
+
+## 验证
+
+首先找到验证解析器的方法，我们知道解析器的作用就是将代码转化为AST，默认情况下eslint只认识js文件，所以他只会把js文件转化为AST，但是我们有vue文件、ts文件，甚至vue中还有ts代码，这个时候就需要一个解析器来解析这些文件。
+
+这里有个网站可以用于快速的更具解析器获取AST的：[AST explorer](https://astexplorer.net/)
+
+首先明确我们的目的，让我们的eslint可以识别js、ts、vue，也就是说可以把这几种文件转化为AST，当然能转化ts的必然可以转化js，因为ts时js的超集，所以，问题被简化为：找到一个可以将vue、ts文件转化为AST的parser。
+
+当然我们已经提前知道了答案，就是`parser: 'vue-eslint-parser'`。
+
+我们进入网站依次验证：
+
+首先明确一点，vue-eslint-parser是无法解析ts的，他需要搭配`parserOption.parser: '@typescript-eslint/parser',`来解析ts，默认可以识别js。
+
+![image-20230614154155516](https://gitee.com/rrrrrrrren/note_image/raw/master/image-20230614154155516.png)
+
+发现可以正常识别除了样式的代码。那么我们不光需要解析vue文件，还需要解析js文件啊，看看js文件效果：
+
+![image-20230614154358660](https://gitee.com/rrrrrrrren/note_image/raw/master/image-20230614154358660.png)
+
+同样的解析器也可以识别js，那么我们得出结论：vue-eslint-parser默认情况下可以解析vue文件和js文件。至于ts文件和vue中的ts语法怎么办，交给`parserOption.parser: '@typescript-eslint/parser'`，这里就不去验证了。
+
+此时我们有了vue的AST-语法树了，现在就可以对AST进行检查了，但是默认情况下eslint又不认识vue的AST了，这时候就需要`eslint-plugin-vue`这个插件来检查vue的语法树了。
+
+好了，我们的eslint识别了vue的语法了，那么就可以更具规则判断语法合不合适了吧，唉，不巧的是eslint也不知道vue的语法他合不合适，这时候就需要一套语法规则了，`eslint-plugin-vue`同时提供了语法规则`'plugin:vue/vue3-recommended',`。
+
+到这里就可以认为eslint支持vue文件了。
