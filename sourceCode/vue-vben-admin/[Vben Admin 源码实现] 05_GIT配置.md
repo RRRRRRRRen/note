@@ -474,17 +474,196 @@ messages属性配置为不同的commit结构部分提供描述信息：
 
 
 
+## cz-git、czg
+
+我们之前都是通过script的`commit`脚本触发czg，然后再通过czg触发commitlint，接下来我们就说说这个这个过程，和这个过程需要用到的技术。
+
+先来了解下czg，找到[czg官网](https://cz-git.qbb.sh/zh/cli/)，它直接告诉我们一句话：交互式命令行工具生成标准化的 git commit message。根据我们之前到使用体验来说，确实是这样的。翻译翻译，就是个命令调出一个界面，用来选一选，填一填的完成一个标准化的git commit信息。
+
+那么问题来了，我们之前一直在配置commitlint这个工具，为什么使用czg去触发呢？其实czg偷偷使用了commitlint的配置文件`.commitlintrc.js`，属于是鸠占鹊巢了，但是确实给我们提供了方便，类似的功能提供相同的配置确实减少了开发人员的负担。
+
+czg了解了，那么cz-git是什么呢？
+
+再次之前我们要了解另一个工具：Commitizen。
+
+Commitizen和czg类似，也是一个用来启动交互界面的启动器，但是不同于czg，Commitizen需要适配器，然后经过一个复杂的配置过程，就可以通过`git cz`来触发交互界面。Commitizen有各种各样的适配器来通过不同的提交记录模版，而cz-git就是其中一个模版也就是适配器，所以cz-git需要依存于Commitizen。
+
+而czg不需要适配器，他直接内置了cz-git作为他的适配器，这样我们就减少了一个配置适配器的过程。
+
+现在我们基本搞清楚了Commitizen、czg、cz-git这三个东西了。
+
+那么开发者会按照既定的路线提交吗，他们一定会使用`npm run commit`这段代码去写commitmsg吗？
+
+也许有人全局安装了Commitizen，他就喜欢使用Commitizen提供的命令去提交呢。
+
+也许还有人就不喜欢乱七八糟的东西，他就喜欢原生的使用`git commit -m "xxx"`去提交呢。
+
+其实vben都给了解决方案，并且统一了通过这些方法触发条件的行为。在我们研究package.json的时候我们再去介绍。
 
 
 
+# GIT提交内容规范
+
+通过一系列工具我们标准化了git commit message，那么是不是我修改的任何内容都可以提交呢，就算我写了个很明显的bug、错误的语法、乱七八糟的样式也可以提交呢，vben当然不会允许这样。这时就需要祭出神器：husky。
+
+## husky
+
+什么是husky？
+
+Husky 是一个用于在 Git 仓库中添加 Git 钩子（Git hooks）的工具。Git 钩子是在特定的 Git 事件（如提交代码、推送代码等）发生时触发的脚本，它们可以用于执行一些自定义的操作或校验，以确保代码的质量和一致性。
+
+Husky 的主要作用是简化 Git 钩子的管理和配置过程。它提供了一个简单的接口来定义和安装钩子脚本，并自动将这些脚本添加到项目的 `.git/hooks` 目录中。通过 Husky，开发者可以方便地在特定的 Git 事件发生时执行预定义的脚本，例如在提交代码前运行代码格式化工具、运行单元测试、校验提交信息格式等。
+
+husky运作原理？
+
+当您在使用 Husky 时，在初始化过程中，Husky会为您的项目创建一个 `.git/hooks` 目录，并在其中添加对应的 Git 钩子脚本文件。这些钩子脚本文件与具体的 Git 事件相关联，比如 `pre-commit`、`pre-push`、`commit-msg` 等。
+
+当您执行 Git 相关操作时，例如执行 `git commit` 或 `git push` 命令，Git 会检查是否存在对应的钩子脚本文件，并在适当的时机调用这些脚本文件。
+
+如何使用husky？
+
+首先需要让husky在项目中生效，我们需要借助npm钩子（prepare，后面会详细讲解npm的各种钩子，和它的常用场景）来触发husky的初始化命令`husky install`，这样husky就会把git钩子暴露出来，通过一些简单的配置，在钩子触发时执行我们自定义的功能。
+
+这个钩子会在我们`pnpm install时自动触发`，同时我们也可以手动`pnpm run prepare`触发它：
+
+![image-20230616105708542](https://gitee.com/rrrrrrrren/note_image/raw/master/image-20230616105708542.png)
+
+执行命令后会多出个_文件夹，此时就说明，我们的husyk已经准备就绪了，完成配置后就可以干活了。
+
+这个时候就可以在指定位置配置git钩子了，那么我们一般会干什么呢？
+
+pre-commit：提交前先检查代码并且自动修复不合适的地方
+
+commit-msg：获取提交信息时检查信息是否符合规范
+
+我们可以通过husky提供的命令去自动创建一个钩子的内容[Getting started | 🐶 husky (typicode.github.io)](https://typicode.github.io/husky/getting-started.html#create-a-hook)，也可以自己直接写shell脚本（我不会啊，自己生成吧）。
+
+这是官网的案例：
+
+```shell
+npx husky add .husky/pre-commit "npm test"
+git add .husky/pre-commit
+```
+
+有些小伙伴可能看过在package.json中直接配置钩子脚本的，那个是老版本的husky，新版改变了使用方式，至于原因，就是为了解决某种设置难以同步的缺陷，这里也不去深究了。
+
+`commit-msg`
+
+```shell
+#!/bin/sh
+
+# shellcheck source=./_/husky.sh
+. "$(dirname "$0")/_/husky.sh"
+
+PATH="/usr/local/bin:$PATH"
+
+npx --no-install commitlint --edit "$1"
+```
+
+我们只看关键内容：`npx --no-install commitlint --edit "$1"`
+
+- `npx`: 是 Node.js 提供的一个工具，用于执行项目依赖中的可执行命令，无需全局安装。它会在项目的 `node_modules/.bin` 目录下查找并执行指定的命令。
+- `--no-install`: 是 `npx` 命令的选项之一，表示不需要安装依赖。如果在本地项目的 `node_modules` 目录下已经安装了 `commitlint`，则直接使用该安装的版本，而不需要再次安装。
+- `commitlint`: 是要执行的命令，它是一个用于验证提交消息的工具。
+- `--edit "$1"`: 是 `commitlint` 命令的选项之一，表示打开编辑器来编辑指定的文件。`$1` 是脚本的参数，表示传入的提交消息文件的路径。
+
+简单来说，这个commit-msg钩子触发了commitlint去校验commit message了。
+
+`pre-commit`
+
+```shell
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+. "$(dirname "$0")/common.sh"
+
+[ -n "$CI" ] && exit 0
+
+PATH="/usr/local/bin:$PATH"
+
+# Format and submit code according to lintstagedrc.js configuration
+pnpm exec lint-staged
+```
+
+关键内容：`pnpm exec lint-staged`
+
+- `pnpm`: 是一个 Node.js 包管理工具，类似于 npm 和 yarn，用于安装和管理项目依赖。
+- `exec`: 是 `pnpm` 命令的子命令之一，用于在项目环境中执行指定的命令。
+- `lint-staged`: 是一个用于在提交前对暂存文件进行 lint 检查的工具。它会根据项目配置的规则，对暂存的文件进行相应的 lint 操作，例如代码格式化、静态代码分析等。
+
+因此，`pnpm exec lint-staged` 命令的作用是在项目中执行 lint-staged 工具，对暂存的文件进行 lint 操作。
 
 
 
+## lint-staged
 
+在pre-commit的钩子中，我们使用了lint-staged，那么lint-staged是什么呢？
+
+`lint-staged` 是一个用于在提交前对暂存文件进行 lint 检查的工具。它的主要作用是在代码提交之前自动运行指定的 lint 工具，并对暂存的文件进行相应的 lint 操作，例如代码格式化、静态代码分析等。
+
+`lint-staged` 的工作流程如下：
+
+1. 当执行提交操作时，`lint-staged` 会检查暂存区中有哪些文件将要提交。
+2. 对于符合配置规则的文件，`lint-staged` 会按照预定义的 lint 命令和规则对它们进行相应的操作，例如运行代码格式化工具、静态代码分析工具等。
+3. 如果 lint 操作失败或文件不符合规则，`lint-staged` 会阻止提交，并输出相应的错误信息。
+
+我们可以在package.json中找到他的配置：
+
+```json
+"lint-staged": {
+    "*.{js,jsx,ts,tsx}": [
+      "prettier --write",
+      "eslint --fix"
+    ],
+    "{!(package)*.json,*.code-snippets,.!(browserslist)*rc}": [
+      "prettier --write--parser json"
+    ],
+    "package.json": [
+      "prettier --write"
+    ],
+    "*.vue": [
+      "prettier --write",
+      "eslint --fix",
+      "stylelint --fix"
+    ],
+    "*.{scss,less,styl,html}": [
+      "prettier --write",
+      "stylelint --fix"
+    ],
+    "*.md": [
+      "prettier --write"
+    ]
+  },
+```
+
+`eslint --fix` ：执行eslint对代码进行检查和修复
+
+`prettier --write`：对代码进行格式化处理
+
+`stylelint --fix`：格式化、检查修复css语法
+
+
+
+# 流程总结
+
+1. 配置git
+   1. 通过gitattributes解决换行符显示问题
+   2. 通过gitignore忽略不需要追踪到文件
+2. 配置commitlint
+   1. 配置`.commitlintrc.js`文件，规范提交记录的格式
+3. 配置czg
+   1. 借助czg提供可交互的git提交界面
+4. 配置husky
+   1. 暴露出git的钩子
+   2. 在commit-msg钩子中使用commitlint格式化提交记录
+   3. 在pre-commit中使用lint-staged修复代码
+5. 配置lint-staged
+   1. 提供给husky使用
 
 
 
 # Github配置
+
+除了对git仓库相关的配置，vben还提供了一些对github或者其他托管网站的一些配置，在一些非开源项目中，我们不需要进行这些额外的配置，所以我们只做简单分析。
 
 ## `.gitpod.yml `
 
@@ -512,3 +691,44 @@ tasks:
     command: pnpm run dev
 ```
 
+## `.github`
+
+看到名字就知道是github专用的配置项了，我们看一下他的目录结构：
+
+```tree
+.github
+├── ISSUE_TEMPLATE
+│   ├── 1-bug.md
+│   ├── 2-feature.md
+│   ├── 3-bug-cn.md
+│   └── config.yml
+├── commit-convention.md
+├── contributing.md
+├── pull_request_template.md
+└── workflows
+    ├── deploy.yml
+    ├── issue-close-require.yml
+    ├── issue-labeled.yml
+    └── release.yml
+```
+
+1. `.github`: 这是存放 GitHub 相关文件和配置的目录。
+2. `.github/ISSUE_TEMPLATE`: 这个目录包含用于创建 GitHub Issue 的模板文件。
+   - `1-bug.md`: 这是一个用于报告 Bug 的 Issue 模板。
+   - `2-feature.md`: 这是一个用于提出新功能的 Issue 模板。
+   - `3-bug-cn.md`: 这是一个用于以中文报告 Bug 的 Issue 模板。
+   - `config.yml`: 这是配置文件，可能包含关于 Issue 模板的其他配置信息。
+3. `.github/commit-convention.md`: 这是一个关于提交规范的文档，描述了项目中使用的提交消息的格式和约定。
+4. `.github/contributing.md`: 这是一个关于贡献指南的文档，向贡献者提供了关于如何参与项目和提交贡献的说明。
+5. `.github/pull_request_template.md`: 这是一个用于创建 Pull Request 的模板文件，在提交 Pull Request 时提供了预定义的内容和格式。
+6. `.github/workflows`: 这个目录包含了 GitHub Actions 的工作流配置文件。
+   - `deploy.yml`: 这是一个用于部署的工作流配置文件。
+   - `issue-close-require.yml`: 这是一个在关闭 Issue 时执行的工作流配置文件。
+   - `issue-labeled.yml`: 这是一个在给 Issue 打标签时执行的工作流配置文件。
+   - `release.yml`: 这是一个用于发布版本的工作流配置文件。
+
+在简单介绍下GitHub Actions：
+
+GitHub Actions 是 GitHub 提供的一项功能，用于自动化和执行各种软件开发工作流程。它允许开发者在代码仓库中创建和配置自定义的工作流程，以响应不同的事件或触发条件，例如代码提交、Pull Request 的创建或合并等。
+
+使用 GitHub Actions，开发者可以通过编写 YAML 格式的配置文件来定义工作流程，包括任务、步骤和操作。这些工作流程可以自动执行各种操作，例如构建、测试、部署、发布等，以提高开发效率、自动化重复性任务和保证代码质量。
