@@ -1,16 +1,18 @@
 # 前言
 
-在配置好包管理之后，我们就可以随意下载和安装依赖去书写代码了，但是vben作为一个大型项目，必定存在协作开发的情况，为此必须要统一代码风格和规则，至于好处也不用多说了。所以在正式写代码前，先配置好相关的代码规范可以起到一劳永逸的效果。
+在配置好包管理之后，我们就可以自行下载和安装依赖去书写代码了，但是vben作为一个大型项目，必定存在协作开发的情况，为此必须要统一代码风格和规则。
+
+我们知道像vscode这类编辑器是具有非常多的高级功能的，例如代码提示、格式化等等。这类编辑器他不像记事本那样，记事本几乎所有的东西都不可配置，也没有高级功能，一切都看起来那么纯粹。而vscode这类编辑器，具有非常多的可配置功能，这会造成同一个项目、同一个编辑器写出的代码千人千面，就连现实的效果也会天差地别。正因为如此，统一编辑器的行为就成了至关重要的一步。
 
 
 
-# 编辑器配置
+# 一、全局配置
 
-在这之前我们已经初始化了项目，已经完全可以上手写代码了，但是为了达到一个规范代码的目的，我们还需要规范所有参与开发当前项目的人，所使用的编辑器具有相同的行为，防止出现风格各异的代码。
+> 在我们学习vben是如何配置vscode之前，我们先了解一些概念和做一些简单的全局配置。
 
-虽然我们之后会提到一系列代码检查工具和格式化工具，使用这些工具可以确保具有相同的代码风格，但这些工具都需要主动在命令行中调用才可以做这些格式化的工作，所以我们需要vscode这款强大的编辑器实时的去完成这些工作，让我们在编写代码的同时也可以做好格式化代码、检查代码这些工作。
+## 1. 进入设置
 
-## `settings.json`
+**可交互的设置界面**
 
 如果你是独自开发一整个项目，不需要和别人写作，那么你可以直接在vscode左下角按钮进入全局的设置文件进行配置
 
@@ -19,6 +21,8 @@
 此时就可以在这个窗口中根据提供好的分类去一一设置了
 
 ![image-20230608174520640](https://gitee.com/rrrrrrrren/note_image/raw/master/image-20230608174520640.png)
+
+**编辑器的配置文件**
 
 这对于一些常用的设置项进行更改时还是比较容易的，但是一旦需要设置的内容很多时，我们并不推荐在这里修改，而是前往其源头文件`settings.json`中去修改。
 
@@ -36,7 +40,98 @@
 
 总之，我们将与项目无关的配置放在这里，或者提前为可能与项目有关的配置设置好默认值。
 
-## `.vscode`
+
+
+## 2. 通用配置
+
+这里还是补充一份笔者自用的一个全局设置，配置项不多，想要尽量维持全局配置的纯粹。
+
+```json
+{
+  // ! 外观
+  "window.zoomLevel": 1,
+  "editor.fontSize": 16,
+  "editor.lineHeight": 24,
+  "workbench.iconTheme": "material-icon-theme",
+  "workbench.colorTheme": "Dracula Soft",
+  
+  // ! 编辑器
+  "editor.tabSize": 2,
+  "editor.dragAndDrop": false,
+  "editor.guides.bracketPairs": true,
+
+  // ! 保存行为
+  "editor.formatOnSave": false,
+  "editor.formatOnPaste": false,
+  "editor.formatOnType": false,
+  "editor.codeActionsOnSave": {
+    "source.fixAll": true,
+    "source.fixAll.eslint": true
+  },
+
+  // ! 代码校验
+  "javascript.validate.enable": false,
+  "typescript.validate.enable": false,
+
+  // ! 文件资源管理器
+  "files.exclude": {
+    "**/.svn": true,
+    "**/.hg": true,
+    "**/.DS_Store": true,
+    "**/.sass-cache": true,
+    "**/.vscode": false,
+    "**/node_modules": false
+  },
+
+  // ! 代码格式化
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "[vue]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[javascript|react]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[typescript|react]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[less]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[css]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+
+  // ! 插件 - Eslint
+  "eslint.enable": true,
+  "eslint.quiet": true,
+  "eslint.validate": ["javascript", "javascriptreact", "vue"],
+  "eslint.format.enable": true,
+  "eslint.lintTask.enable": true,
+}
+```
+
+这里做一些简单的分类，详细的配置作用我们稍后介绍。
+
+
+
+# 二、项目级配置
+
+> 在这之前我们已经初始化了项目，已经完全可以上手写代码了，但是为了达到一个规范代码的目的，我们还需要规范所有参与开发当前项目的人，所使用的编辑器具有相同的行为，防止出现风格各异的代码。
+>
+> 虽然我们之后会提到一系列代码检查工具和格式化工具，使用这些工具可以确保具有相同的代码风格，但这些工具都需要主动在命令行中调用才可以做这些格式化的工作，所以我们需要vscode这款强大的编辑器实时的去完成这些工作，让我们在编写代码的同时也可以做好格式化代码、检查代码这些工作。
+
+
+
+## 1. `.vscode`文件夹
 
 我们可以通过编辑器内置的设置选项来设置一些通用的配置，那么和项目强相关的配置该怎么处理呢，我们并不希望为了适配某个项目而使得整个通用配置被改的面目全非。
 
@@ -405,7 +500,7 @@ MicroPython 是一种精简版的 Python 解释器，专为嵌入式系统和微
 
 
 
-## `.editorconfig`
+## 2. `.editorconfig`文件
 
 EditorConfig 是一种用于定义和维护跨多个编辑器和 IDE 的代码风格和格式化规则的文件。它提供了一种统一的方式来配置和管理代码文件的缩进、换行符、字符编码、文件格式等方面的规范。
 
@@ -455,5 +550,6 @@ indent_style = tab
 换行符：一种是LF（\n），另一种是CRLF（\r\n），不同的操作系统换行符是不一样的，为了统一不同系统的一致行为，就需要统一换行符。个人认为另一个好处就是在进行全局搜索时，使用正则匹配换行情况时更为准确。
 
 制表符：简单说制表符占据的字符宽度是自适应的，而不是固定的，所以自适应的宽度在编码文件中非常不友好，可能会导致奇奇怪怪的缩进。所以我们需要使用固定宽度的空格来代替制表符`tab`
+
 
 

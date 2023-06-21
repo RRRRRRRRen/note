@@ -8,6 +8,56 @@
 
 我们给package.json的各类属性做一个简单分类然后一一介绍。
 
+
+
+# pnpm初始化配置
+
+既然vben使用pnpm作为包管理器，那么首先我们就需要熟悉其基本命令，然后理解项目中有关pnpm的配置。
+
+`.npmrc`
+
+```ini
+public-hoist-pattern[]=husky
+public-hoist-pattern[]=*eslint*
+public-hoist-pattern[]=*prettier*
+public-hoist-pattern[]=lint-staged
+public-hoist-pattern[]=*stylelint*
+public-hoist-pattern[]=@commitlint/cli
+public-hoist-pattern[]=@vben/eslint-config
+```
+
+首先看配置项`public-hoist-pattern`是做什么的，找到官网说明[public-hoist-pattern](https://pnpm.io/zh/npmrc#public-hoist-pattern)，简单来说就是用来做依赖提升来解决幻影依赖问题，至于什么是幻影依赖，可以参考这个文章：[NPM 存在的问题以及 PNPM 是怎么处理的 - Yuexun's Blog](https://www.yuexun.me/blog/problems-with-npm-and-how-pnpm-handles-them)。
+
+通过删除这个配置，我们可以对比查看删除前后node_modules的文件结构。
+
+![image-20230608153144899](https://gitee.com/rrrrrrrren/note_image/raw/master/image-20230608153144899.png)
+
+可以看出来，这个配置可以将一些子依赖提升到根目录到node_modules中，而不是子依赖的node_modules中，以此来消除其作为幻影依赖的可能。(但是笔者在删除这个配置后，并未影响项目的运行，可能一种保险措施吧，如果有知道的小伙伴请@我)
+
+`pnpm-lock.yaml`
+
+这是与pnpm有关的第二个文件，这个文件其实作用和其他包管理器的lock文件类似，都是用来锁定依赖版本、加快下载和安装速度的，它在保证项目的可重现性和一致性方面起到了重要的作用。这个文件会在安装依赖时自动生成，我们不太需要关注这个文件。
+
+`pnpm-workspace.yaml`
+
+在之前的文件目录简介中，我们提到了一些子项目和内部使用的工具文件夹，这些文件夹也可以作为一个完整的项目来运行。如下三个
+
+- internal
+
+- packages
+
+- apps
+
+在之后学习这些子项目时我们再详细学习这些内容。目前可以简单理解这个配置文件主要的目的就是给这些子项目共享依赖。
+
+`package.json`
+
+这个文件相比大家都很熟悉，在其中几乎可以配置项目相关的所有设置，我们暂时不用逐行理解，在涉及到相关技术时再去学习其中相关的配置。
+
+
+
+
+
 # 仓库描述类：1-17
 
 这些属性都比较简单，代码托管平台上会读取这些字段现在是仓库页面，仅仅作为一个描述性的信息来使用，使其他开发者和工具能够了解项目的基本属性和配置。
@@ -257,3 +307,83 @@ Gzip 压缩可以在前端和服务端两个层面上进行配置和开启。让
 选项 "--noEmit" 指示 TypeScript 类型检查器在检查代码时不生成任何输出文件。这意味着它仅执行类型检查而不进行实际的编译或转译操作。
 
 选项 "--skipLibCheck" 表示跳过对引入的库文件进行类型检查。通常，引入的库文件已经经过类型检查，因此可以跳过对它们的检查，以加快类型检查的速度。
+
+
+
+# 代码修复类：39-67
+
+```json
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": [
+      "prettier --write",
+      "eslint --fix"
+    ],
+    "{!(package)*.json,*.code-snippets,.!(browserslist)*rc}": [
+      "prettier --write--parser json"
+    ],
+    "package.json": [
+      "prettier --write"
+    ],
+    "*.vue": [
+      "prettier --write",
+      "eslint --fix",
+      "stylelint --fix"
+    ],
+    "*.{scss,less,styl,html}": [
+      "prettier --write",
+      "stylelint --fix"
+    ],
+    "*.md": [
+      "prettier --write"
+    ]
+  },
+```
+
+提供给husky暴露的git钩子per-commit使用的。当触发git的commit时，会自动根据这个配置去执行代码修复的功能，写法比较固定，不需要深究。
+
+
+
+# 提交信息类：63-67
+
+```json
+  "config": {
+    "commitizen": {
+      "path": "node_modules/cz-git"
+    }
+  },
+```
+
+vben推荐使用czg来进行代码提交的操作，但是也不排斥使用commitizen来提交代码，vben通过这个配置项配置好了commitizen，喜欢使用commitizen的成员也可以无感切换到vben到统一配置。
+
+
+
+# 依赖项目类：68-149
+
+根据项目进展逐一介绍
+
+
+
+# 环境描述类：150-154
+
+```json
+  "packageManager": "pnpm@8.1.0",
+  "engines": {
+    "node": ">=16.15.1",
+    "pnpm": ">=8.1.0"
+  }
+```
+
+这些字段的目的是为了确保你的项目在正确的环境中运行，但是也仅仅是提供了对所需工具和环境的建议，你依然可以无视危险继续安装其他版本。
+
+`"packageManager": "pnpm@8.1.0",`
+
+这个字段指定了项目使用的包管理器是 pnpm，并且版本号是 8.1.0。
+
+这意味着vben希望我们在项目中使用 pnpm 来管理依赖项的安装和管理。
+
+`engines`
+
+这个字段指定了你的项目所需的 Node.js 和 pnpm 的最低版本要求。根据你的设置：
+
+- Node.js 版本需求是 `>=16.15.1`，这表示你的项目需要 Node.js 版本大于等于 16.15.1 才能正常运行。
+- pnpm 版本需求是 `>=8.1.0`，这表示你的项目需要 pnpm 版本大于等于 8.1.0 才能正常工作。
