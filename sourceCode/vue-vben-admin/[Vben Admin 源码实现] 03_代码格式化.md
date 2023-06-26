@@ -187,7 +187,7 @@ public
 
 !!!没有给出任何报错信息，没有提示我们位置顺序有问题。
 
-我们检查配置，首先找到插件`@vben/stylelint-config`的真实文件位置，这里有一些npm工作区的知识需要学习，暂时就直接拿到这个实体文件的位置：`internal/stylelint-config/.eslintrc.js`
+我们检查配置，首先找到插件`@vben/stylelint-config`的真实文件位置，这里有一些npm工作区的知识需要学习，暂时就直接拿到这个实体文件的位置：`internal/stylelint-config/.index.ts`
 
 重点看这段代码：
 

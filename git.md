@@ -654,3 +654,12 @@ style:		代码风格相关无影响运行结果的
 revert:		撤销修改
 ```
 
+
+
+## 四、其他配置
+
+## [将 Visual Studio Code 用作编辑器](https://docs.github.com/zh/get-started/getting-started-with-git/associating-text-editors-with-git#将-visual-studio-code-用作编辑器)
+
+```shell
+git config --global core.editor "code --wait"
+```
