@@ -811,6 +811,12 @@ BOM和DOM都是宿主对象。
 
 ## **构造器模式**
 
+> 是一种创建型设计模式，它用于创建对象并初始化对象的属性和方法。它通过构造函数来创建对象，并使用原型链来共享方法和属性，从而提高对象的复用性和性能。
+
+### **具体应用场景**
+
+**1. 定义对象**
+
 ```js
 function Employee(name, age) {
     this.name = name
@@ -822,7 +828,17 @@ function Employee(name, age) {
 const employee1 = new Employee('ren', 22)
 ```
 
+
+
 ## **原型模式**
+
+> 原型模式是一种创建型设计模式，它通过复制（克隆）现有的对象来创建新的对象，而不是通过实例化类来创建新对象。这样可以避免直接使用构造函数或复杂的创建过程，从而提高创建对象的效率。
+>
+> 在原型模式中，我们使用一个原型对象作为基础，然后通过克隆这个原型对象来创建新的对象。原型对象可以是已有的实例，也可以是一个特殊的对象，专门用于克隆。
+
+### **具体应用场景**
+
+**1. 原型链写法**
 
 ```js
 function Employee(name, age) {
@@ -848,177 +864,513 @@ class Employee {
 const employee1 = new Employee('ren', 22)
 ```
 
-## **工厂模式**
+**2.Object.create()写法**
 
 ```js
-class User {
-    constructor(role, pages) {
-        this.role = role
-        this.pages = pages
-    }
-    static UserFactory(role) {
-        switch (role) {
-            case "admin":
-                return new User('admin', "[1,2,3]")
-                break
-            case "editor":
-                return new User('editor', "[1]")
-                break
-            default:
-                throw new Error('error')
-        }
-    }
-}
-const user = User.UserFactory('admin')
+// 原型对象
+const carPrototype = {
+  wheels: 4,
+  engine: 'V6',
+  color: 'white',
+
+  start() {
+    console.log('The car is starting...');
+  },
+
+  stop() {
+    console.log('The car is stopping...');
+  },
+
+  getInfo() {
+    return `Color: ${this.color}, Engine: ${this.engine}, Wheels: ${this.wheels}`;
+  },
+};
+
+// 具体原型对象 - 克隆 carPrototype
+const myCar = Object.create(carPrototype);
+myCar.color = 'blue'; // 自定义color属性
+
+const yourCar = Object.create(carPrototype);
+yourCar.color = 'red'; // 自定义color属性
+
+// 测试
+console.log(myCar.getInfo()); // 输出：Color: blue, Engine: V6, Wheels: 4
+console.log(yourCar.getInfo()); // 输出：Color: red, Engine: V6, Wheels: 4
+
+myCar.start(); // 输出：The car is starting...
+yourCar.stop(); // 输出：The car is stopping...
 ```
+
+
+
+
+
+## **工厂模式**
+
+> 工厂模式是一种创建对象的设计模式，它通过一个工厂函数或类来封装对象的创建过程。它可以帮助我们避免在代码中直接使用构造函数来实例化对象，从而降低耦合度，并提供一种更灵活的方式来创建对象。
+>
+> 在工厂模式中，我们将对象的创建抽象成一个工厂函数，该函数负责根据传递的参数或条件来创建不同的对象实例。这样，我们可以根据需要创建不同类型的对象，而不必关心对象创建的细节。
+
+### **具体应用场景**
+
+**1. 图表类的创建**
+
+```js
+// 定义一个抽象类
+class Chart {
+  render() {
+    throw new Error('抽象方法不能调用')
+  }
+}
+
+// 实现具体的类
+class LineChart extends Chart {
+  render() {
+    console.log('渲染折线图')
+  }
+}
+
+class BarChart extends Chart {
+  render() {
+    console.log('渲染柱状图')
+  }
+}
+
+// 实现工厂方法
+class ChartFactory {
+  createChart(chartType) {
+    switch (chartType) {
+      case 'line':
+        return new LineChart()
+      case 'bar':
+        return new BarChart()
+      default:
+        throw new Error(`没有${chartType}类型的图表`)
+    }
+  }
+}
+
+// 使用工厂方法创建对象
+const chartFactory = new ChartFactory()
+const lineChartObj = chartFactory.createChart('line')
+lineChartObj.render()
+const barChartObj = chartFactory.createChart('bar')
+barChartObj.render()
+
+```
+
+
 
 ## 抽象工厂模式
 
-```js
-class User {
-    constructor(role, pages) {
-        this.role = role
-        this.pages = pages
-    }
-    say() {
-        console.log(this.name + "-" + this.age)
-    }
+> 抽象工厂模式是一种创建型设计模式，它可以创建一系列相关或相互依赖的对象，而无需指定其具体类。这种模式通过提供一个接口或抽象类，定义了一组创建对象的方法，然后每个具体的工厂类实现这个接口或继承这个抽象类，并负责创建特定类型的对象。
+>
+> 抽象工厂模式的主要目标是提供一个接口，用于创建一族相关或互相关联的产品，而不需要显式指定其具体的类。这使得客户端代码可以与产品的具体类解耦，只需使用抽象接口进行操作，从而增强了代码的灵活性和可维护性。
+
+### 具体应用场景
+
+**1.不同品质的电子设备对象**
+
+假设我们有两种不同类型的电子设备：手机（Phone）和电视（TV），每种设备又有两种不同型号：高端型（High-end）和普通型（Standard）。我们将使用抽象工厂模式来创建不同型号的手机和电视。
+
+首先，我们定义抽象产品类 `Phone` 和 `TV`，并定义它们的共同方法：
+
+```javascript
+// 抽象产品 Phone
+class Phone {
+  constructor() {
+    this.type = 'Phone';
+  }
+
+  getInfo() {
+    return `This is a ${this.type}.`;
+  }
 }
-class Admin extends User {
-    constructor(name) {
-        super(name, 'admin', [1,2,3])
-    }
-    dataShow1() {}
+
+// 抽象产品 TV
+class TV {
+  constructor() {
+    this.type = 'TV';
+  }
+
+  getInfo() {
+    return `This is a ${this.type}.`;
+  }
 }
-class SuperAdmin extends User {
-    constructor(name) {
-        super(name, 'super-admin', [1,2,3])
-    }
-    dataShow2() {}
-}
-function getAbstractUserFactory(role) {
-    switch(role) {
-        case 'admin':
-            return Admin
-        case 'superAdmin'
-            return SuperAdmin
-        default:
-            throw new Error('error')
-    }
-}
-const AdminClass = getAbstractUserFactory('admin')
-const admin = new AdminClass('ren')
 ```
+
+然后，我们定义具体产品类 `HighEndPhone` 和 `StandardPhone`，以及 `HighEndTV` 和 `StandardTV`：
+
+```javascript
+// 具体产品 HighEndPhone
+class HighEndPhone extends Phone {
+  constructor() {
+    super();
+    this.model = 'High-end Phone';
+  }
+
+  getInfo() {
+    return `${super.getInfo()} Model: ${this.model}.`;
+  }
+}
+
+// 具体产品 StandardPhone
+class StandardPhone extends Phone {
+  constructor() {
+    super();
+    this.model = 'Standard Phone';
+  }
+
+  getInfo() {
+    return `${super.getInfo()} Model: ${this.model}.`;
+  }
+}
+
+// 具体产品 HighEndTV
+class HighEndTV extends TV {
+  constructor() {
+    super();
+    this.model = 'High-end TV';
+  }
+
+  getInfo() {
+    return `${super.getInfo()} Model: ${this.model}.`;
+  }
+}
+
+// 具体产品 StandardTV
+class StandardTV extends TV {
+  constructor() {
+    super();
+    this.model = 'Standard TV';
+  }
+
+  getInfo() {
+    return `${super.getInfo()} Model: ${this.model}.`;
+  }
+}
+```
+
+接下来，我们定义抽象工厂类 `ElectronicFactory`，并在其中定义创建手机和电视的抽象方法：
+
+```javascript
+// 抽象工厂 ElectronicFactory
+class ElectronicFactory {
+  createPhone() {
+    throw new Error('createPhone must be implemented in the concrete factory.');
+  }
+
+  createTV() {
+    throw new Error('createTV must be implemented in the concrete factory.');
+  }
+}
+```
+
+最后，我们定义具体工厂类 `HighEndFactory` 和 `StandardFactory`，分别实现 `ElectronicFactory` 的抽象方法来创建不同型号的手机和电视：
+
+```javascript
+// 具体工厂 HighEndFactory
+class HighEndFactory extends ElectronicFactory {
+  createPhone() {
+    return new HighEndPhone();
+  }
+
+  createTV() {
+    return new HighEndTV();
+  }
+}
+
+// 具体工厂 StandardFactory
+class StandardFactory extends ElectronicFactory {
+  createPhone() {
+    return new StandardPhone();
+  }
+
+  createTV() {
+    return new StandardTV();
+  }
+}
+```
+
+现在，我们可以在客户端代码中使用这些工厂来创建不同型号的手机和电视：
+
+```javascript
+function clientCode(factory) {
+  const phone = factory.createPhone();
+  const tv = factory.createTV();
+
+  console.log(phone.getInfo());
+  console.log(tv.getInfo());
+}
+
+const highEndFactory = new HighEndFactory();
+clientCode(highEndFactory);
+
+const standardFactory = new StandardFactory();
+clientCode(standardFactory);
+```
+
+运行以上代码，输出结果如下：
+
+```
+This is a Phone. Model: High-end Phone.
+This is a TV. Model: High-end TV.
+
+This is a Phone. Model: Standard Phone.
+This is a TV. Model: Standard TV.
+```
+
+如此，我们使用抽象工厂模式成功地实现了在电子设备制造业中创建不同型号手机和电视的需求。通过使用抽象工厂模式，我们可以轻松地添加新的具体产品类和工厂类，而无需修改客户端代码。
+
+
 
 ## 建造者模式
 
-建造者模式将一个复杂的构建层与表示层相互分离，同样的构建过程可采用不同的表示。工厂模式是为了穿件对象实例，关心的是最终产出的是什么，而不关系创建的过程。而建造者模式关心的是创建这个对象的整个过程，甚至是创建对象的每一个细节。
+> 建造者模式是一种创建型设计模式，它主要用于创建复杂对象，通过将对象的构造过程拆分成多个步骤，从而使得同样的构造过程可以创建不同的表示。
+>
+> 在建造者模式中，有以下几个主要角色：
+>
+> 1. **产品（Product）**： 表示最终创建的复杂对象。产品通常包含多个组成部分。
+> 2. **抽象建造者（Builder）**： 定义创建产品的接口，声明构建产品各个部分的抽象方法。
+> 3. **具体建造者（Concrete Builder）**： 实现抽象建造者接口，负责具体产品部件的构造。它包含一个获取最终产品的方法。
+> 4. **导演（Director）**： 负责安排具体建造者的构造步骤，以及控制产品的构造过程。
+>
+> 使用建造者模式的主要目的是将一个复杂对象的构建过程与其表示分离，使得构建过程和表示可以独立变化，从而可以构建不同表示的复杂对象。这种模式适用于构建的产品具有复杂的内部结构，且由相同的构建过程构造不同的表示。
+
+### 具体使用场景
+
+**1.菜单构建器**
 
 ```js
-class Builder {
-    init() { console.log('init') }
-    getData() { console.log('getData') }
-    render() { console.log('render') }
+class MenuBuilder {
+  constructor() {
+    this.menu = '';
+  }
+
+  addMenuItem(name, link) {
+    this.menu += `<a href="${link}">${name}</a>`;
+  }
+
+  addSubMenu(name, items) {
+    this.menu += `<div>${name}: <ul>`;
+    items.forEach(item => {
+      this.menu += `<li>${item}</li>`;
+    });
+    this.menu += '</ul></div>';
+  }
+
+  getMenu() {
+    return this.menu;
+  }
 }
-class Opreator{
-    async startBuild() {
-        await builder.init()
-        await builder.getData()
-        await builderj.render()
-    }
-}
-const op = new Opreator()
-op.startBuild(new Builder())
+
+// 使用示例
+const menuBuilder = new MenuBuilder();
+menuBuilder.addMenuItem('Home', '/');
+menuBuilder.addMenuItem('About', '/about');
+menuBuilder.addSubMenu('Services', ['Web Design', 'App Development', 'SEO']);
+menuBuilder.addSubMenu('Contact', ['Phone', 'Email', 'Location']);
+
+const menuHTML = menuBuilder.getMenu();
+console.log(menuHTML);
 ```
+
+
 
 ## 单例模式
 
-保证一个类仅有一个实例，并提供一个访问他的全局访问点，主要解决一个全局使用类频繁的创建和销毁，占用内存。
+> 保证一个类仅有一个实例，并提供一个访问他的全局访问点，主要解决一个全局使用类频繁的创建和销毁，占用内存。
+
+### **具体应用场景**
+
+**1. 弹窗管理器**
+
+弹窗管理器是用于管理网页上弹出的各种弹窗的实例，确保在同一时间只显示一个弹窗，防止多个弹窗同时显示或覆盖。我们可以使用单例模式来实现弹窗管理器：
+
+定义弹窗类
 
 ```js
-// es5
-var Singleton = (function() {
-    var instance
-    function User(name, age) {
-        this.name = name
-        this.age = age
+class PopupManager {
+  constructor() {
+    if (PopupManager.instance) {
+      return PopupManager.instance;
     }
-    return function(name, age) {
-        if(!instance) {
-            instance = new User(name, age)
-        }
-        return instance
-    }
-})()
-var a = Singleton('123', 123)
-var b = Singleton('456', 456)
-a === b // true
-```
 
-```js
-// es6
-class Singleton{
-    constructor(name, age) {
-        if(!Singleton.instance) {
-            this.age = age
-            this.name = name
-            Singleton.instance = this
-        }
-        return Single.instance
-    }
+    this.popups = [];
+    PopupManager.instance = this;
+  }
+
+  addPopup(popup) {
+    this.popups.push(popup);
+  }
+
+  removePopup(popup) {
+    this.popups = this.popups.filter(item => item !== popup);
+  }
+
+  showPopup(popup) {
+    this.popups.forEach(item => {
+      item.hide();
+    });
+
+    popup.show();
+  }
+
+  static getInstance() {
+    return PopupManager.instance || new PopupManager();
+  }
 }
-new Singleton('123', 123) === new Singleton('456', 456) // true
 ```
+
+使用实例
+
+```js
+const popupManager1 = new PopupManager();
+const popupManager2 = new PopupManager();
+
+console.log(popupManager1 === popupManager2); // 输出：true，说明获取到同一个实例
+
+class Popup {
+  constructor(name) {
+    this.name = name;
+  }
+
+  show() {
+    console.log(`Showing ${this.name} popup.`);
+  }
+
+  hide() {
+    console.log(`Hiding ${this.name} popup.`);
+  }
+}
+
+const popup1 = new Popup('Popup 1');
+const popup2 = new Popup('Popup 2');
+
+popupManager1.addPopup(popup1);
+popupManager1.addPopup(popup2);
+
+popupManager1.showPopup(popup1); // 只显示 Popup 1
+popupManager1.showPopup(popup2); // 只显示 Popup 2
+```
+
+
 
 ## 装饰器模式
 
-装饰器能够很好地对已有的功能进行拓展，这样不会更改原有的代码，对其他的业务产生影响，这方便我们在较少的改动下对软件功能进行拓展。
+> 装饰模式是一种结构型设计模式，它允许你在不改变对象自身结构的情况下，动态地给对象添加额外的功能。装饰模式通过创建包装类来实现这一点，这个包装类包含了原始对象，并在其基础上添加了额外的行为。
+>
+> 装饰模式的主要目的是为了避免使用继承来扩展对象的功能，因为继承会导致类的层次结构变得复杂，而且在编译时就确定了类的行为。相比之下，装饰模式允许在运行时动态地组合对象的功能，使得代码更加灵活和可扩展。
+>
+> 在装饰模式中，通常有以下几个角色：
+>
+> 1. **组件接口（Component）**： 定义了原始对象和装饰器对象的公共接口。
+> 2. **具体组件（ConcreteComponent）**： 实现了组件接口，是原始对象，它是我们需要扩展功能的对象。
+> 3. **装饰器（Decorator）**： 实现了组件接口，并持有一个组件对象，用于装饰原始对象。在装饰器中可以增加新的行为，也可以修改原始对象的行为。
+> 4. **具体装饰器（ConcreteDecorator）**： 继承自装饰器类，是具体的装饰器，实现了新的行为并在调用原始对象的方法前后添加额外的逻辑。
+
+### **具体应用场景**
+
+**1. 日志记录器**
 
 ```js
-Function.prototype.before = funtion(beforeFn) {
-    var _this = this
-    return function() {
-        beforeFn.apply(this, arguments)
-        return _this.apply(this, arguments)
-    }
+// 组件接口 - 日志记录器
+class Logger {
+  log(message) {
+    console.log(`Log: ${message}`);
+  }
 }
-function test() {
-    console.log('111')
+
+// 具体组件 - 基本日志记录器
+class BasicLogger extends Logger {
+  log(message) {
+    console.log(`Basic Log: ${message}`);
+  }
 }
-var test1 = test.before(() => {
-    console.log("222")
-})
+
+// 装饰器 - 日志级别装饰器
+class LogLevelDecorator extends Logger {
+  constructor(logger, level) {
+    super();
+    this.logger = logger;
+    this.level = level;
+  }
+
+  log(message) {
+    console.log(`${this.level} Log: ${message}`);
+    this.logger.log(message);
+  }
+}
+
+// 使用示例
+const basicLogger = new BasicLogger();
+basicLogger.log('This is a basic log message');
+
+const warningLogger = new LogLevelDecorator(basicLogger, 'Warning');
+warningLogger.log('This is a warning log message');
+
+const errorLogger = new LogLevelDecorator(basicLogger, 'Error');
+errorLogger.log('This is an error log message');
+
 ```
+
+
 
 ## 适配模式
 
-将一个类的接口转换成客户希望的另一个接口。适配器模式让那些接口不兼容的类可以一起工作。
+>  适配器模式是一种结构型设计模式，它用于将一个类的接口转换成客户端所期望的另一个接口。适配器模式使得原本由于接口不兼容而无法在一起工作的类能够协同工作。
+>
+> 在软件设计中，适配器模式有以下几个主要角色：
+>
+> 1. **目标接口（Target）**： 目标接口是客户端所期望的接口，也是客户端直接调用的接口。
+> 2. **适配者类（Adaptee）**： 适配者类是需要被适配的类，它拥有原本不兼容的接口。
+> 3. **适配器类（Adapter）**： 适配器类是适配器模式的核心，它实现了目标接口，并持有一个适配者类的实例，在目标接口的方法中调用适配者类的方法来实现适配。
+
+### **具体应用场景**
+
+**1. 集成第三方组件**
 
 ```js
-class TMap {
-    render () {}
+// 第三方日志记录组件（不兼容我们的应用）
+class ThirdPartyLogger {
+  logMessage(message) {
+    console.log(`Third Party Logger: ${message}`);
+  }
 }
-class BMap {
-    dispaly() {}
+
+// 我们的应用中的日志记录类
+class OurLogger {
+  log(message) {
+    console.log(`Our Logger: ${message}`);
+  }
 }
-class BMapAdapter extends BMap {
-    constructor() {
-        super()
-    }
-    render() {
-        this.dispaly()
-    }
+
+// 适配器类 - 适配第三方日志记录组件到我们的应用中
+class ThirdPartyLoggerAdapter extends OurLogger {
+  constructor() {
+    super();
+    this.thirdPartyLogger = new ThirdPartyLogger();
+  }
+
+  log(message) {
+    this.thirdPartyLogger.logMessage(message);
+  }
 }
-function renderMap(map) {
-    map.render()
-}
-renderMap(new TMap())
-renderMap(new BMapAdapter())
+
+// 使用示例
+const logger = new ThirdPartyLoggerAdapter();
+logger.log('This is a log message'); // 输出：Third Party Logger: This is a log message
 ```
+
+
 
 ## 策略模式
 
-策略模式定义了一些列算法，并将每个算法封装起来，使他们可以相互替换，且算法的变化不会影响使用算法的客户。策略模式属于对象行为模式，它通过对算法的封装，把使用算法的职责和算法的实现分隔开来，并委派给不同的对象对这些算法管理。主要解决if...else过多难以管理的问题。
+>  策略模式定义了一些列算法，并将每个算法封装起来，使他们可以相互替换，且算法的变化不会影响使用算法的客户。策略模式属于对象行为模式，它通过对算法的封装，把使用算法的职责和算法的实现分隔开来，并委派给不同的对象对这些算法管理。主要解决if...else过多难以管理的问题。
+
+### **具体应用场景**
+
+**1. 根据不同级别计算薪水**
 
 ```js
 let strategry = {
@@ -1031,28 +1383,78 @@ function calBonus(Level, salary) {
 calBonus('S', 10000)
 ```
 
+
+
 ## 代理模式
 
-为其他对象提供一种代理控制对这个对象的访问。
+> 代理模式是一种结构型设计模式，它允许你提供一个代理对象，用于控制对其他对象的访问。代理对象充当了原始对象的中间人，客户端通过代理对象来访问原始对象，从而可以在访问过程中添加额外的逻辑或控制。
+>
+> 在代理模式中，通常有以下几个角色：
+>
+> 1. **抽象主题（Subject）**： 定义了代理对象和真正对象的共同接口，客户端通过它来访问真正的对象。
+> 2. **真正主题（Real Subject）**： 实现了抽象主题接口，是真正的对象，执行具体的业务逻辑。
+> 3. **代理（Proxy）**： 实现了抽象主题接口，持有一个真正主题的引用，并在访问真正主题之前或之后添加额外的逻辑。
+
+### **具体应用场景**
+
+**1. 代理请求鉴权控制**
 
 ```js
-let obj = {}
-let proxy = new Proxy(obj, {
-    get(target, key) {
-        return target(key)
-    },
-    set(target, key, value) {
-        if(key === 'data') {
-            box.innerHtml = value
-        }
-        target[key] = value
+// 主题接口
+class Subject {
+  request() {
+    console.log('Subject：处理请求');
+  }
+}
+
+// 真实主题类
+class RealSubject extends Subject {
+  request() {
+    console.log('RealSubject：处理请求');
+  }
+}
+
+// 代理类
+class Proxy extends Subject {
+  constructor(realSubject) {
+    super();
+    this.realSubject = realSubject;
+  }
+
+  request() {
+    if (this.checkAccess()) {
+      this.realSubject.request();
+      this.logAccess();
     }
-})
+  }
+
+  checkAccess() {
+    console.log('Proxy：检查访问权限');
+    return true;
+  }
+
+  logAccess() {
+    console.log('Proxy：记录访问日志');
+  }
+}
+
+// 使用代理访问真实对象
+const realSubject = new RealSubject();
+const proxy = new Proxy(realSubject);
+
+proxy.request();
+
 ```
+
+
 
 ## 观察者模式
 
-定义了对象间的一种一对多的依赖关系，当目标对象的状态发生改变时，所有依赖它的对象都会得到通知。
+> 观察者模式是一种行为设计模式，其中对象之间存在一对多的依赖关系。当一个对象的状态发生变化时，它的所有依赖者都得到通知并自动更新。观察者模式将对象之间的关系解耦，使得它们可以独立变化。
+
+### **具体应用场景**
+
+**1. 观察模式**
 
 ```js
 // 目标者类
@@ -1099,6 +1501,8 @@ subject.add(obs2);
 // 目标者通知更新
 subject.notify();  
 ```
+
+
 
 ## 发布订阅模式
 
