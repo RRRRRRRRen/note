@@ -558,6 +558,76 @@ git push origin --delete tag_name
 
 
 
+### submodule
+
+#### 添加子模块
+
+```shell
+# 添加子模块
+git submodule add <git_repository_path> <submodule_path>
+# git_repository_path: 子模块仓库地址
+# submodule_path: 自定义子模块的文件夹与位置
+```
+
+#### 查看所有子模块
+
+```shell
+# 查看所有子模块
+git submodule
+```
+
+#### 拉取子模块代码
+
+```shell
+# 拉取子模块
+# 初始化子模块信息
+git submodule init
+# 拉取子模块代码
+git submodule update
+
+# 等同于
+git submodule update --init --recursive
+```
+
+#### 克隆项目同时获取子模块代码
+
+```shell
+# 克隆项目同时获取
+git clone <git_repository_path> --recursive
+```
+
+#### 删除子模块
+
+```shell
+# 1.取消子模块追踪
+	git rm --cached <submodule_folder_path>
+# 2.删除子模块文件
+	rm -rf <submodule_folder_path>
+# 3.删除子模块配置
+	# 进入.gitmodules文件
+	# 删除对应模块配置内容：例如
+	# [submodule "assets"]
+  # 	path = assets
+  # 	url = https://github.com/maonx/vimwiki-assets.git
+# 4.删除git模块配置
+	# 进入.git/config文件
+	# 删除对应模块配置内容：例如
+	# [submodule "assets"]
+  # 	url = https://github.com/maonx/vimwiki-assets.git
+# 5.删除子模块追踪文件
+	rm -rf .git/modules/<submodule_folder_path>
+# 6.提交修改
+	git add .
+	git commit -m "message"
+	git push
+```
+
+
+
+
+
+
+
 ## 三、提交规范
 
 ### 规范提交信息
