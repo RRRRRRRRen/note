@@ -8,17 +8,18 @@
 
 **Symbol**：代表创建一个独一无二不可变的数据类型，用来解决全局变量冲突问题。
 
+```JS
+// 不需要new，可以直接当作函数去声明一个值
+var sym1 = Symbol();
+var sym2 = Symbol("foo");
+var sym3 = Symbol("foo");
+```
+
 **BigInt**：超过安全整数范畴的大整数。
 
 
 
 ## 2.堆栈的理解
-
-**操作系统内存中**
-
-栈区：由编译器自动分配，存放函数的参数值，局部变量的值等。
-
-堆区：一般由开发着分配释放，若开发者不是放，程序结束时可能由垃圾回收机制回收。
 
 **数据结构中**
 
@@ -115,6 +116,18 @@ isNaN函数在接受到参数后，会尝试将这个参数转换为数值，任
 
 Number.isNaN会先判断传入的参数是否为数字，如果是数字在继续判断是否为NaN，不会进行数据类型的转换，这种方法对于NaN更加准确。
 
+```js
+isNaN(NaN); // true
+isNaN('A String'); // true
+isNaN(undefined); // true
+isNaN({}); // true
+
+Number.isNaN(NaN); // true
+Number.isNaN('A String'); // false
+Number.isNaN(undefined); // false
+Number.isNaN({}); // false
+```
+
 
 
 ## 8.==操作符的强制转换规则
@@ -157,7 +170,7 @@ Number.isNaN会先判断传入的参数是否为数字，如果是数字在继�
 
 以下这些是假值：undefined、null、false、0、NaN、""
 
-假值的布尔强制类型转换的结果为false。从逻辑上说，假值以为的值都为真值。
+假值的布尔强制类型转换的结果为false。从逻辑上说，假值以外的值都为真值。
 
 
 
