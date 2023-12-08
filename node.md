@@ -65,6 +65,58 @@ nvm root C:\Users\任国强\AppData\Roaming\nvm
 
 
 
+## NRM
+
+**安装**：首先，需要在全局安装 nrm。在命令行中执行以下命令即可：
+
+```shell
+npm install -g nrm
+```
+
+**查看可用源**：你可以使用以下命令查看当前可用的源列表：
+
+```shell
+nrm ls
+```
+
+**切换源**：要切换到某个源，可以使用以下命令：
+
+```shell
+nrm use <源名称>
+```
+
+例如，要切换到 taobao 源，可以执行：
+
+```shell
+nrm use taobao
+```
+
+**测试源的速度**：你可以通过以下命令测试各个源的响应速度：
+
+```shell
+nrm test
+```
+
+**添加自定义源**：如果你有自定义的源，可以通过以下命令添加：
+
+```shell
+nrm add <源名称> <源地址>
+```
+
+例如，添加一个名为 myregistry 的自定义源：
+
+```shell
+nrm add myregistry http://myregistry.com/
+```
+
+**删除源**：如果要删除已添加的源，可以使用以下命令：
+
+```shell
+nrm del <源名称>
+```
+
+
+
 ## NPM
 
 **设置国内镜像**
