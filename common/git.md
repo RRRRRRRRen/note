@@ -414,11 +414,11 @@ git rebase -i HEAD~n
 
 
 
-## 二、经典案例
+## 二、常用功能
 
 ### 01.撤销与回滚
 
-#### 撤销git add
+**-- 撤销git add**
 
 ```shell
 # 以下命令等价
@@ -427,9 +427,7 @@ git reset HEAD
 git reset --mixed HEAD
 ```
 
-
-
-#### 撤销git commit
+**-- 撤销git commit**
 
 ```shell
 # 以下命令等价
@@ -437,9 +435,7 @@ git reset HEAD^
 git reset --mixed HEAD^
 ```
 
-
-
-#### 回滚到指定commit_id
+**-- 回滚到指定commit_id**
 
 ```shell
 # 查看需要回滚的commit_id
@@ -449,9 +445,7 @@ git log
 git reset --hard commit_id
 ```
 
-
-
-#### 回滚后再滚回来
+**-- 回滚后再滚回来**
 
 ```shell
 # 获取回滚目标id
@@ -469,15 +463,9 @@ git reset --hard commit_id
 
 
 
-
-
-
-
-
-
 ### 02.本地的项目托管到远程
 
-#### 1、配置git
+**1.配置git**
 
 ```bash
 git config --global user.name rrrrrrrren
@@ -486,7 +474,7 @@ git config --global user.email dittorenard@outlook.com
 git config --global color.ui true
 ```
 
-#### 2、生成密钥
+**2.生成密钥**
 
 ```bash
 ssh-keygen -t rsa -b 4096 -C "dittorenard@outlook.com"
@@ -496,13 +484,13 @@ ssh-keygen -t rsa -b 4096 -C "dittorenard@outlook.com"
 
 密钥位置： `C:\Users\任国强\.ssh\id_rsa\id_rsa.pub`
 
-#### 3、注册密钥
+**3.注册密钥**
 
 进入github设置页面：[Add new SSH keys (github.com)](https://github.com/settings/ssh/new)
 
 将密钥内容复制进输入框中，确认后即可生效。
 
-#### 4、初次提交
+**4.初次提交**
 
 ```bash
 git init
@@ -537,10 +525,14 @@ git remote -v show // 查看当前源
 
 ### 03.删除分支
 
+**1.查看所有分支**
+
 ```bash
 # 查看所有分支
 git branch -a
 ```
+
+**2.删除分支**
 
 ```bash
 # 删除本地分支
@@ -548,6 +540,8 @@ git branch -d  local_branch_name
 # 删除远程分支
 git push origin --delete origin_branch_name
 ```
+
+**3.删除tag**
 
 ```shell
 # 删除本地tag
@@ -560,7 +554,7 @@ git push origin --delete tag_name
 
 ### 04.submodule
 
-#### 添加子模块
+**1.添加子模块**
 
 ```shell
 # 添加子模块
@@ -569,14 +563,14 @@ git submodule add <git_repository_path> <submodule_path>
 # submodule_path: 自定义子模块的文件夹与位置
 ```
 
-#### 查看所有子模块
+**2.查看所有子模块**
 
 ```shell
 # 查看所有子模块
 git submodule
 ```
 
-#### 拉取子模块代码
+**3.拉取子模块代码**
 
 ```shell
 # 拉取子模块
@@ -589,14 +583,14 @@ git submodule update
 git submodule update --init --recursive
 ```
 
-#### 克隆项目同时获取子模块代码
+**4.克隆项目同时获取子模块代码**
 
 ```shell
 # 克隆项目同时获取
 git clone <git_repository_path> --recursive
 ```
 
-#### 删除子模块
+**5.删除子模块**
 
 ```shell
 # 1.取消子模块追踪
@@ -683,6 +677,8 @@ git rebase -i [old_hash] [new_hash]
 7. **drop (d):**
    - 意义：丢弃该提交，不保留任何更改。
    - 使用场景：用于完全删除一个提交。
+
+![image-20231225154008318](https://gitee.com/rrrrrrrren/note_image/raw/master/image-20231225154008318.png)
 
 
 
@@ -781,7 +777,3 @@ chore:		依赖更新/脚手架配置修改等
 style:		代码风格相关无影响运行结果的
 revert:		撤销修改
 ```
-
-
-
-## 
