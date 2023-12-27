@@ -222,6 +222,10 @@ int a = 10, b = 20;
 
 ## 四、流程控制语句
 
+### 分支
+
+#### if else
+
 ```JAVA
     if(heartRate >= 40 && heartRate <= 80) {
       System.out.println("Heart rate is normal.");
@@ -242,6 +246,155 @@ int a = 10, b = 20;
     } else 
       System.out.println("Heart rate is too high.");
     
+```
+
+#### switch case
+
+**执行顺序**
+
+1.依次匹配case语句，一旦匹配上，则执行case语句
+
+2.如果没有遇到break，则会穿透继续执行其他case
+
+3.如果遇到break，则直接结束switch
+
+**注意事项**
+
+- switch中只允许使用 byte、short、char、int、枚举（JDK5）、String（JDK7）
+- default块的位置是随意的
+
+```JAVA
+class Test {
+  public static void main(String[] args) {
+    int num = 1;
+    switch(num) {
+      case 1:
+        System.out.println("1");
+      case 2:
+        System.out.println("2");
+      case 3:
+        System.out.println("3");
+    }
+  }
+}
+```
+
+```java
+class Test {
+  public static void main(String[] args) {
+    int num = 1;
+    switch(num) {
+      default:
+        System.out.println("default");
+        break;
+      case 1:
+      case 2:
+      case 3:
+        System.out.println("1\2\3");
+        break;
+    }
+  }
+}
+```
+
+### 循环
+
+循环四要素
+
+1. 初始化条件
+2. 循环条件（必须为Boolean格式）
+3. 循环体
+4. 迭代部分
+
+#### for
+
+> 1.124中如果有多个语句，需要使用逗号 `,` 隔开
+> 2.循环外不可使用内部变量
+> 3.break可以跳出循环
+
+```java
+class Test {
+  public static void main(String[] args) {
+    for(int i = 0; i < 5; i++) {
+      System.out.println("Hello World!");
+    }
+  }
+}
+```
+
+#### while
+
+```java
+class Test {
+  public static void main(String[] args) {
+    int num = 0;
+    while (num < 10) {
+      System.out.println("Hello World!" + num);
+      num++;
+    }
+  }
+}
+```
+
+```JAVA
+// 猜数字练习
+class Test {
+  public static void main(String[] args) {
+    int num = (int)(Math.random() * 100) + 1;
+    Scanner sc = new Scanner(System.in);
+
+    int guess = sc.nextInt();
+    while(guess != num) {
+      if(guess > num) {
+        System.out.println("Too high!");
+      } else {
+        System.out.println("Too low!");
+      }
+      guess = sc.nextInt();
+    }
+    System.out.println("You guessed it!");
+    sc.close();
+  }
+}
+```
+
+#### do while
+
+> 至少会执行一次循环体
+
+```java
+class Test {
+  public static void main(String[] args) {
+    int num = 1;
+    do {
+      System.out.println("Hello World!" + num);
+      num++;
+    } while (num < 10);
+  }
+}
+```
+
+### 关键字break、continue
+
+| 关键字   | 使用范围      | 作用             |
+| -------- | ------------- | ---------------- |
+| break    | switch \ 循环 | 跳出当前循环结构 |
+| continue | 循环          | 结束当次循环     |
+
+```java
+// 结束 带标签的循环
+class Test {
+  public static void main(String[] args) {
+    label:for(int i=0;i<10;i++) {
+      for(int j=0;j<10;j++) {
+        if(j==5) {
+          break label;
+        }
+        System.out.println("i = " + i + " j = " + j);
+      }
+    }
+  }
+}
 ```
 
 
