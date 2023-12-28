@@ -397,6 +397,85 @@ class Test {
 }
 ```
 
+## 五、数组
+
+### 数组声明
+
+> 数组声明后不可更改长度
+>
+> 数组存放的内存地址是连续的
+
+```java
+// 第一种方式：静态初始化
+double[] prices;
+prices = new double[]{20.12, 33.123, 23, 3};
+
+// 第二种方式：动态初始化
+String[] foods = new String[4];
+
+// 第三种方式：类型推断
+int[] number = {1, 2, 3, 4};
+```
+
+### 数组元素的调用
+
+```java
+double[] prices;
+prices = new double[]{20.12, 33.123, 23, 3};
+
+// 取值
+System.out.println(prices[0]);
+// 赋值
+prices[1] = 15.22;
+// 长度
+System.out.println(prices.length);
+```
+
+### 数组的遍历
+
+```java
+double[] prices;
+prices = new double[]{20.12, 33.123, 23, 3};
+// 数组的遍历
+for(int i = 0; i < prices.length; i++) {
+    System.out.println(prices[i]);
+}
+```
+
+### 数组初始化值
+
+```java
+// 整型
+int[] arr1 = new int[3];
+System.out.println(arr1[0]); // 初始化值为：0
+// 浮点型
+double[] arr2 = new double[3];
+System.out.println(arr1[0]); // 初始化值为：0.0
+// 字符型
+char[] arr3 = new char[3];
+System.out.println(arr3[0]); // 初始化值为：0 （\u0000）
+// 布尔型
+boolean[] arr4 = new boolean[3];
+System.out.println(arr4[0]); //  初始化值为：false
+
+// 引用数据类型
+String[] arr5 = new String[3];
+System.out.println(arr5[0]); //  初始化值为：null
+```
+
+### 二维数组
+
+```java
+// 动态初始化
+int[][] arr_1 = new int[3][4];
+System.out.println(arr_1.length); // 3
+System.out.println(arr_1[0].length); // 4
+// 静态初始化
+int[][] arr_2 = new int[][]{{1,2,3,4},{1,2,3,4},{1,2,3,4}};
+System.out.println(arr_1.length); // 3
+System.out.println(arr_1[0].length); // 4
+```
+
 
 
 ## 其他
