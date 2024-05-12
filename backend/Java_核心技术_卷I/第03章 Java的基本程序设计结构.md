@@ -427,3 +427,101 @@ System.out.println(season2);
 - 除了右结合运算符。例如`+=`
 
 ## 3.6 字符串
+
+### 3.6.1 子串
+
+提取子串
+
+```java
+String greeting = "Hello";
+String s = greeting.substring(0,3); // "Hel"
+```
+
+### 3.6.2 拼接
+
+允许使用 `+` 拼接两个字符串。
+
+```java
+String s1 = "Hello ";
+String s2 = "world";
+String msg = s1 + s2; // "Hellw world"
+```
+
+当将一个字符串与一个非字符串拼接时，后者会被转换成字符串。
+
+使用分隔符拼接
+
+```java
+String all = String.join(" / ", "aa", 'bb'); // "aa / bb"
+```
+
+### 3.6.3 字符串不可变
+
+修改字符串需要先提取再拼接
+
+```java
+String a = "hello";
+greeting = greeting.substring(0,3) + 'n'; // "heln"
+```
+
+**特性**
+
+- String类对象不可变
+
+### 3.6.4 检测字符串是否相等
+
+检测相等
+
+```java
+String a = "hello";
+a.equals("hello world"); // false
+```
+
+检测相等，但不区分大小写
+
+```java
+String a = "hello";
+boolean result = a.equalsIgnoreCase("Hello"); // true
+```
+
+### 3.6.5 字符串与 Null 值
+
+检测字符串为空的方法
+
+```java
+if(str.length() == 0);
+// 或
+if(str.equals(""));
+```
+
+检测字符串是否为null
+
+```java
+if(str == null);
+```
+
+### 3.6.6 码点与代码单元
+
+java字符串是一个char值序列，char数据类型是采用UTF-16编码鄙视Unicode码点的一个代码单元。
+
+常用的Unicode自负可以采用一个代码单元表示，而辅助字符需要一对代码单元表示。
+
+length方法将返回采用UTF-16编码表示给定字符串所需要的代码单元个数。
+
+代码单元个数：
+
+```java
+String a = "Hello";
+int n = a.length(); // 5
+```
+
+码点个数：
+
+```java
+
+```
+
+
+
+
+
