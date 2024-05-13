@@ -508,6 +508,8 @@ java字符串是一个char值序列，char数据类型是采用UTF-16编码鄙�
 
 length方法将返回采用UTF-16编码表示给定字符串所需要的代码单元个数。
 
+不推荐使用char类型，过于底层。
+
 代码单元个数：
 
 ```java
@@ -518,10 +520,144 @@ int n = a.length(); // 5
 码点个数：
 
 ```java
-
+String string = "😊";
+int count = string.codePointCount(0,string.length());
+System.out.println(count); // 1
+System.out.println(string.length()); // 2
 ```
 
+位置n的代码单元：
 
+```java
+String string = "A😊A";
+char first = string.charAt(0); // A
+System.out.println(first);
+char second = string.charAt(1); // ?
+System.out.println(second);
+char third = string.charAt(2); // ?
+System.out.println(third);
+char fourth = string.charAt(3); // A
+System.out.println(fourth);
+```
 
+位置n的码点：
 
+```java
+String string = "A😊A";
+int index0 = string.offsetByCodePoints(0, 0);
+System.out.println(index0); // 0
+int cp0 = string.codePointAt(index0); // 65
+System.out.println(cp0);
+
+int index1 = string.offsetByCodePoints(0, 1);
+System.out.println(index1); // 1
+int cp1 = string.codePointAt(index1);
+System.out.println(cp1); // 128522
+
+int index2 = string.offsetByCodePoints(0, 2);
+System.out.println(index2); // 3
+int cp2 = string.codePointAt(index2);
+System.out.println(cp2); // 65
+```
+
+依次查看每一个码点
+
+```java
+String string = "A😊A";
+int[] codePoints = string.codePoints().toArray();
+System.out.println(Arrays.toString(codePoints)); // [65, 128522, 65]
+```
+
+码点数组转字符串
+
+```java
+int[] codePoints = {65, 128522, 65};
+String str = new String(codePoints,0, codePoints.length);
+System.out.println(str); // A😊A
+```
+
+### 3.6.7 String API
+
+常用API
+
+### 3.6.8 阅读联机API文档
+
+[Overview (Java Platform SE 8 ) (oracle.com)](https://docs.oracle.com/javase/8/docs/api/)
+
+### 3.6.9 构建字符串
+
+单线程使用 StringBuilder
+
+多线程使用 StringBuffer
+
+```java
+StringBuilder builder = new StringBuilder();
+builder.append('A');
+builder.append("BBC");
+String str = builder.toString();
+System.out.println(str); // ABBC
+```
+
+### 3.6.10 文本块
+
+**声明文本块**
+
+> (JDK15支持)
+
+```java
+String str = """
+    Hello
+    World
+    !
+    """;
+```
+
+**特性**
+
+- 以`"""`开头，后面跟一个`换行符`，并以另一个`""";`结尾。
+- 行尾`\`会拼接下一行。
+- 行结束符会被标准化为`\n`
+- 自动去除公共缩进
+
+## 3.7 输入与输出
+
+### 3.7.1 读取输入
+
+```java
+Scanner scan = new Scanner(System.in);
+String str = scan.nextLine();
+int number = scan.nextInt();
+```
+
+### 3.7.2 格式化输出
+
+遵循一定的语法。
+
+```java
+int age = 19;
+String name = "AAA";
+System.out.printf("Hello %s, Next year, you'll be %d", name, age); // Hello AAA, Next year, you'll be 19
+```
+
+### 3.7.3 文件输入与输出
+
+文件输出
+
+```java
+Scanner in = new Scanner(Path.of("myFile.txt"), StandardCharsets.UTF_8);
+```
+
+文件输出
+
+```java
+PrintWriter out = new PrintWriter("myFile.txt", StandardCharsets.UTF_8);
+```
+
+**注意：**
+
+- 生成的文件取决于虚拟机、shell运行所在的目录、ide控制。
+- 推荐使用绝对路径名。
+- 每个反斜线之前需要再加一个反斜线。
+
+## 3.8 控制流程
 
