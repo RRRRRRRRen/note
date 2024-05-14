@@ -661,3 +661,174 @@ PrintWriter out = new PrintWriter("myFile.txt", StandardCharsets.UTF_8);
 
 ## 3.8 控制流程
 
+### 3.8.1 块作用域
+
+块确定了变量的作用域。
+
+不能在嵌套的两个块中声明同名的变量。
+
+### 3.8.2 条件语句
+
+条件必须用小括号括起来。
+
+```java
+int a = 12;
+int b = 13;
+if (a > b) {
+    System.out.println(a);
+}
+```
+
+- else子语句与最邻近的if构成一组
+- 推荐使用大括号让代码更加清晰。
+- 可以反复使用if...else if ...语句
+
+### 3.8.3 循环
+
+while循环会在条件为true时执行下一个语句或者下一个块语句。
+
+```java
+while (balance < goal)
+{
+  balance += payment;
+  double interest = balance * interstRate / 100;
+  balance += interest;
+  years++;
+}
+```
+
+如果希望循环体至少执行一次，可以使用do while语句。
+
+```java
+do
+{
+  balance += payment;
+  double interest = balance * interstRate / 100;
+  balance += interest;
+  years++;
+} while (balance < goal)
+```
+
+### 3.8.4 确定性循环
+
+for语句第一部分：计数器初始化。
+
+for语句第二部分：每一轮循环前要检测的循环条件。
+
+for语句第三部分：指定如何更新计数器。
+
+```java
+for (int i = 10; i > 0; i--)
+{
+  // ...
+  i++;
+}
+```
+
+- for语句第一部分声明的变量会扩展到这个for循环的末尾。
+- for循环内部定义的变量只能在for循环体中使用。
+
+### 3.8.5 多重选择：switch 语句
+
+case标签可以是：
+
+- 类型为char、byte、short、int的常量表达式。
+- 枚举常量。
+- 字符串字面量。
+- 多个字符串，用逗号分隔。
+
+特性：
+
+- switch语句从选项值相匹配的case标签开始执行，直到遇到下一个break语句，或者执行到switch语句结束。
+- 如果没有匹配的case标签，则会执行default子句（如果有的话）。
+- 有直通行为的形式中，每个case以一个冒号 `:` 结束。
+- 没有直通行为的形式中，每个case以一个箭头 `->` 结束。
+- switch表达式中具有yield关键字，与break蕾丝，yield会终止执行，但是yield会生成一个值，就是表达式的值。
+
+直通表达式：
+
+```java
+int day = 2;
+switch (day) {
+    case 1:
+        System.out.println("Monday");
+        // No break, so it falls through to the next case
+    case 2:
+        System.out.println("Tuesday");
+        // No break, so it falls through to the next case
+    case 3:
+        System.out.println("Wednesday");
+        break;
+    default:
+        System.out.println("Another day");
+}
+```
+
+### 3.8.6 终端控制流程的语句
+
+不带标签的break语句。退出当前循环。
+
+```java
+while (year <= 100)
+{
+  balance += payment;
+  // ...
+  if (balance >= goal) break;
+}
+```
+
+带标签break语句。退出指定循环，包括嵌套的循环。
+
+```java
+outerLoop: // Define a label for the outer loop
+for (int i = 0; i < 5; i++) {
+    for (int j = 0; j < 5; j++) {
+        if (j == 3) {
+            break outerLoop; // Terminates the outer loop when j is 3
+        }
+        System.out.println("i = " + i + ", j = " + j);
+    }
+}
+```
+
+continue语句会越过当前循环体的剩余部分，直接跳到循环的首部。
+
+```java
+public class ContinueExample {
+    public static void main(String[] args) {
+        // 使用循环输出 1 到 5 的数字，但跳过数字 3
+        for (int i = 1; i <= 5; i++) {
+            if (i == 3) {
+                // 当 i 等于 3 时，跳过当前迭代，继续下一次迭代
+                continue;
+            }
+            System.out.println(i);
+        }
+    }
+}
+```
+
+## 3.9 大数
+
+构造整数：
+
+```java
+// 转换为大数
+BigInteger a = BigInteger.valueOf(100);
+```
+
+```java
+// 更长的数构造为大数
+BigInteger a = new BigInteger("2020200202020202020202002020202020");
+```
+
+构造浮点数：
+
+```java
+BigDecimal a = new BigDecimal("0.1");
+```
+
+- 对于BigDecimal类，总是应当使用一个字符串参数来进行构造。
+- 不能使用算数运算符去计算，而需要使用提供的方法。
+
+ 
