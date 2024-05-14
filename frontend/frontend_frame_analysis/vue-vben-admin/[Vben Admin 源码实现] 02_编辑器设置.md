@@ -164,6 +164,27 @@
 }
 ```
 
+1. **`vue.volar`**:
+   - 这是一个针对 Vue.js 项目的 VS Code 插件，提供了对 Volar 的支持。Volar 是一个基于 TypeScript 的 Vue 3 编辑器插件，提供了更快速、更智能的 Vue 3 语法高亮、智能感知和类型检查等功能。
+2. **`dbaeumer.vscode-eslint`**:
+   - 这是一个用于集成 ESLint 到 VS Code 的插件。它会根据你的 ESLint 配置文件来检测和提示代码中的 JavaScript 或 TypeScript 错误和风格问题，并提供快速修复建议。
+3. **`stylelint.vscode-stylelint`**:
+   - 这是一个用于集成 Stylelint 到 VS Code 的插件。Stylelint 是一个强大的 CSS 和样式表 lint 工具，该插件可以在编辑器中实时检测 CSS、SCSS 或 LESS 文件中的语法和风格问题。
+4. **`esbenp.prettier-vscode`**:
+   - 这是一个集成 Prettier 到 VS Code 的插件。Prettier 是一个代码格式化工具，该插件可以在保存文件时自动格式化代码，帮助保持项目的代码风格一致。
+5. **`mrmlnc.vscode-less`**:
+   - 这是一个用于在 VS Code 中提供对 LESS (Leaner Style Sheets) 文件的语法高亮和语法检查支持的插件。
+6. **`lokalise.i18n-ally`**:
+   - 这是一个用于国际化（i18n）开发的插件，支持在 VS Code 中管理和编辑多语言字符串，同时提供了国际化资源的自动化功能。
+7. **`antfu.iconify`**:
+   - 这是一个 VS Code 插件，用于集成 Iconify 图标系统，允许你在编辑器中快速搜索、预览和插入图标。
+8. **`antfu.unocss`**:
+   - 这是一个用于 VS Code 的 Unocss 插件，Unocss 是一个自动删除未使用 CSS 样式的工具，该插件可以与 Unocss 集成，帮助优化项目的 CSS 样式表。
+9. **`mikestead.dotenv`**:
+   - 这是一个用于在 VS Code 中提供对 `.env` 文件的语法高亮和语法检查支持的插件，使得环境变量文件更易于编辑和管理。
+10. **`warmthsea.vscode-custom-code-color`**:
+    - 这是一个自定义代码颜色的 VS Code 插件，允许你根据自定义规则和配置，调整编辑器中代码的颜色和外观，以适应个人或团队的喜好和需求。
+
 在这个文件中，我们可以设置项目推荐安装的插件和不推荐安装的插件，只要在数组中添加这个插件的标识符就可以让他出现在vscode插件市场的推荐菜单下：
 
 ![image-20230609160721218](https://gitee.com/rrrrrrrren/note_image/raw/master/image-20230609160721218.png)
@@ -200,7 +221,7 @@
 
 我们来逐行看：
 
-**2-4：这些是volar插件提供的功能。**
+**1-4：这些是volar插件提供的功能。**
 
 ```json
   // 配置ts开发工具包的地址，vben的ts是项目安装的，配置后就可以指定项目安装的ts版本运行，而不是使用可能存在于全局的ts版本
@@ -359,14 +380,14 @@ Stylelint 的主要功能包括：
 ```json
   // 在保存文件时自动执行的代码操作
 	"editor.codeActionsOnSave": {
-    "source.fixAll.eslint": true,
-    "source.fixAll.stylelint": true
+    "source.fixAll.eslint": "explicit",
+    "source.fixAll.stylelint": "explicit"
   },
 	// 针对vue文件进行的定制化设置
   "[vue]": {
     "editor.codeActionsOnSave": {
-      "source.fixAll.eslint": true,
-      "source.fixAll.stylelint": true
+      "source.fixAll.eslint": "explicit",
+      "source.fixAll.stylelint": "explicit"
     }
   },
 ```
@@ -498,7 +519,18 @@ MicroPython 是一种精简版的 Python 解释器，专为嵌入式系统和微
 
 到这里全部的settings.json文件就解读完了，设计到了不少的插件设置，想要完全体验出这些设置的作用，还需要理解相关插件的作用，我们继续学习。
 
+**174-175：自定义颜色**
 
+```json
+  "vscodeCustomCodeColor.highlightValue": "v-auth",
+  "vscodeCustomCodeColor.highlightValueColor": "#6366f1"
+```
+
+通过使用插件自定义某些代码片段的颜色。
+
+![image-20240506150430456](https://gitee.com/rrrrrrrren/note_image/raw/master/image-20240506150430456.png)
+
+![image-20240506150202346](https://gitee.com/rrrrrrrren/note_image/raw/master/image-20240506150202346.png)
 
 ## 2. `.editorconfig`文件
 

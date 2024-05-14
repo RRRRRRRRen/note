@@ -55,7 +55,7 @@ module.exports = {
 };
 ```
 
-`htmlWhitespaceSensitivity`
+**`htmlWhitespaceSensitivity`**
 
 这是用来处理html中的元素之间的空白的，不了解空白的可以去温习一下html中对于空白的解释，这里vben使用strict，简单看下格式化前后对比
 
@@ -71,13 +71,13 @@ module.exports = {
 
 给人最大的差别就在于，一个元素标签是否被打断在两行显示，打断后可以避免产生空白，例如格式化后的第二个span元素的两个标签。
 
-`plugins`
+**`plugins`**
 
 `prettier-plugin-packagejson`该插件是专门用于处理 `package.json` 文件的格式化的，它可以确保 `package.json` 文件的结构和内容符合一致的规范和约定。
 
-通过启用这个插件，你可以确保 `package.json` 文件在使用 Prettier 进行格式化时会遵循指定的规则，包括缩进、换行符、引号类型等。
+通过启用这个插件，你可以确保 `package.json` 文件在使用 Prettier 进行格式化时会遵循指定的规则，包括缩进、换行符、引号类型、属性顺序等。
 
-`overrides`
+**`overrides`**
 
 是 Prettier 的一个配置选项，用于针对特定的文件或文件类型进行单独的配置覆盖。
 

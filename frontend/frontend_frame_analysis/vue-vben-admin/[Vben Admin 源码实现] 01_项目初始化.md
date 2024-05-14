@@ -154,50 +154,55 @@ vue-vben-admin-analysis
 
 ```SHELL
 vue-vben-admin
-├── .browserslistrc		# 浏览器兼容规则配置
-├── .commitlintrc.js		# git 提交信息规范配置
-├── .editorconfig		# 编辑器通用配置
-├── .env		# 通用环境变量
-├── .env.analyze		# analyze 专用环境变量
-├── .env.development		# development 专用环境变量
-├── .env.production		# production 专用环境变量
-├── .env.test		# test 专用环境变量
-├── .eslintignore		# eslint 忽略规则配置
-├── .eslintrc.js		# eslint 规则配置
-├── .git		# git 版本控制核心文件
-├── .gitattributes		# git 行为和属性配置
-├── .github		# github 相关配置
-├── .gitignore		# git 版本控制忽略规则
-├── .gitpod.yml		# Gitpod 的配置文件
-├── .husky		# git 钩子工具
-├── .npmrc		# npm 行为和选项配置文件
-├── .prettierignore		# prettier 忽略规则
-├── .prettierrc.js		# prettier 规则配置
-├── .stylelintignore		# stylelint 忽略规则
-├── .stylelintrc.js		# stylelint 配置规则
-├── .vscode				# vscode 的相关配置文件
-├── CHANGELOG.en_US.md		# 详细更新记录：英文
-├── CHANGELOG.md			# 更新记录：概览
-├── CHANGELOG.zh_CN.md		# 详细更新记录：中文
-├── CNAME					# 用于重定向 github 的个人网站
-├── LICENSE					# 开源协议信息
-├── README.md				# 项目介绍：英文
-├── README.zh-CN.md			# 项目介绍：中文
-├── apps					# 子应用文件夹
-├── index.html				# 入口 html
-├── internal				# 内部功能文件夹
-├── mock					# 模拟请求
-├── node_modules			# npm 包
-├── package.json			# npm 配置
-├── packages				# 项目内部使用的组件库
-├── pnpm-lock.yaml			# 用于确保 pnpm 包的一致性的锁定文件
-├── pnpm-workspace.yaml		# 用于组织内部的子应用和子项目
-├── public					# 静态文件
-├── src						# 项目源码
-├── tsconfig.json			# ts 配置文件
-├── turbo.json				# 其他构建配置
-├── types					# 存放类型声明文件
-└── vite.config.ts			# vite 配置文件
+├── .browserslistrc  # 定义项目支持的浏览器范围，用于 Babel 和 Autoprefixer。
+├── .commitlintrc.cjs  # 配置 CommitLint 规则，用于规范提交信息的格式。
+├── .dockerignore  # 指定在构建 Docker 镜像时需要排除的文件或目录。
+├── .editorconfig  # 定义编辑器配置，如缩进样式、换行符等，以确保整个团队的一致性。
+├── .env  # 默认环境变量文件，用于开发过程中的环境配置。
+├── .env.analyze  # 针对分析环境的特定环境变量配置文件。
+├── .env.development  # 开发环境的环境变量配置文件。
+├── .env.docker  # Docker 容器环境的环境变量配置文件。
+├── .env.production  # 生产环境的环境变量配置文件。
+├── .env.test  # 测试环境的环境变量配置文件。
+├── .eslintignore  # 指定需要忽略 ESLint 检查的文件或目录。
+├── .eslintrc.cjs  # ESLint 的配置文件，定义代码规范和检查规则。
+├── .git  # Git 版本控制的相关目录和文件。
+├── .gitignore  # 指定 Git 忽略的文件或目录。
+├── .github  # 存放 GitHub 的相关配置文件，如 Actions 工作流配置等。
+├── .gitpod.yml  # Gitpod 在线开发环境的配置文件。
+├── .husky  # Git Hooks 工具 Husky 的配置文件，用于管理 Git 钩子。
+├── .npmrc  # npm 配置文件，用于配置 npm 的行为和参数。
+├── .prettierignore  # 指定需要忽略 Prettier 格式化的文件或目录。
+├── .prettierrc.cjs  # Prettier 的配置文件，定义代码格式化规则。
+├── .stylelintignore  # 指定需要忽略 Stylelint 检查的文件或目录。
+├── .stylelintrc.cjs  # Stylelint 的配置文件，定义样式表的规范和检查规则。
+├── .vscode  # 存放 VS Code 的相关配置文件，例如编辑器配置、调试配置等。
+├── CHANGELOG.en_US.md  # 英文版的项目变更日志。
+├── CHANGELOG.md  # 项目变更日志，可能包含所有语言的变更信息。
+├── CHANGELOG.zh_CN.md  # 中文版的项目变更日志。
+├── CNAME  # 用于 GitHub Pages 的自定义域名配置文件。
+├── Dockerfile  # 用于构建 Docker 镜像的 Dockerfile 配置文件。
+├── LICENSE  # 项目的开源许可证文件。
+├── README.md  # 项目的说明文档。
+├── README.zh-CN.md  # 项目的中文说明文档。
+├── apps  # 存放应用程序的源代码文件。
+├── dist  # 构建后的文件输出目录，用于部署应用程序。
+├── index.html  # 应用程序的入口 HTML 文件。
+├── internal  # 存放项目的内部模块或工具。
+├── mock  # 存放模拟数据和接口的目录。
+├── nginx.conf  # nginx 服务器的配置文件。
+├── node_modules  # npm 安装的依赖模块。
+├── package.json  # npm 项目的配置文件，定义了项目的依赖、脚本等信息。
+├── packages  # 存放多个包（packages）的目录，用于管理多个独立的 npm 包。
+├── pnpm-lock.yaml  # pnpm 包管理器的锁定文件，记录了精确的依赖版本信息。
+├── pnpm-workspace.yaml  # pnpm 多包工作区的配置文件。
+├── public  # 静态资源目录，存放不需要经过编译的静态文件。
+├── src  # 主要的源代码目录，包含应用程序的代码逻辑和资源。
+├── tsconfig.json  # TypeScript 的配置文件，定义 TypeScript 的编译选项。
+├── turbo.json  # Vite 构建工具的配置文件，用于指定 Vite 的插件和优化选项。
+├── types  # 存放类型声明文件（TypeScript 类型定义）的目录。
+├── uno.config.ts  # Vite 插件 Uno 的配置文件。
+└── vite.config.ts  # Vite 构建工具的配置文件，用于指定 Vite 的构建配置和插件。
 ```
 
 对比之下，多出的这些文件和文件夹主要有这些功能，我们会依照这些功能一一实现。
