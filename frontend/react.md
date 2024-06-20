@@ -994,3 +994,107 @@ commit 阶段的主要工作（即 Renderer 的工作流程）分为三部分：
 - before mutation 阶段，这个阶段 DOM 节点还没有被渲染到界面上去，过程中会触发 getSnapshotBeforeUpdate，也会处理 useEffect 钩子相关的调度逻辑。
 - mutation 阶段，这个阶段负责 DOM 节点的渲染。在渲染过程中，会遍历 effectList，根据 flags（effectTag）的不同，执行不同的 DOM 操作。
 - layout 阶段，这个阶段处理 DOM 渲染完毕之后的收尾逻辑。比如调用 componentDidMount/componentDidUpdate，调用 useLayoutEffect 钩子函数的回调等。除了这些之外，它还会把 fiberRoot 的 current 指针指向 workInProgress Fiber 树。
+
+# 组件 Ref 的应用
+
+### 父组件获取子组件自身 Ref
+
+- 父组件可以获取类式子组件 ref
+- 父组件无法获取函数式子组件 ref
+
+```jsx
+class ClassChild extends Component {
+  classChildMethod = () => {};
+
+  render() {
+    return <div>ClassChild</div>;
+  }
+}
+
+function FunctionChild() {
+  const functionChildMethod = () => {};
+
+  return <div>FunctionChild</div>;
+}
+
+export default class ClassFather extends Component {
+  componentDidMount() {
+    console.log("classChildRef", this.classChildRef); // 执行结果 子组件实例对象
+    console.log("functionChildRef", this.functionChildRef); // 执行结果 undefined
+  }
+  render() {
+    return (
+      <div>
+        <ClassChild ref={(x) => (this.classChildRef = x)} />
+        <FunctionChild ref={(x) => (this.functionChildRef = x)} />
+      </div>
+    );
+  }
+}
+```
+
+### forwardRef 函数组件 ref
+
+使用 forwardRef 和 useImperativeHandle 指定 函数式组件暴露的内容
+
+```jsx
+const FunctionChild = forwardRef(function Child(props, ref) {
+  const functionChildMethod = () => {};
+
+  useImperativeHandle(ref, () => {
+    return {
+      functionChildMethod,
+    };
+  });
+
+  return <div>FunctionChild</div>;
+});
+
+export default class ClassFather extends Component {
+  componentDidMount() {
+    console.log("classChildRef", this.classChildRef); // 执行结果 子组件实例对象
+    console.log("functionChildRef", this.functionChildRef); // 执行结果 子组件useImperativeHandle回掉返回的对象
+  }
+  render() {
+    return (
+      <div>
+        <ClassChild ref={(x) => (this.classChildRef = x)} />
+        <FunctionChild ref={(x) => (this.functionChildRef = x)} />
+      </div>
+    );
+  }
+}
+```
+
+### forwardRef 函数组件 ref 转发
+
+直接将 forwardRef 形参赋值给 dom 节点或者组件
+
+```jsx
+import React, { useEffect, useRef, forwardRef } from "react";
+
+const Child = forwardRef((props, ref) => {
+  console.log("ref", ref); // 调用组件后，传递过来的值 null
+  // 调用Child2的时候，设置的ref属性值函数
+  return (
+    <div>
+      Child
+      <button ref={ref}>点击</button>
+    </div>
+  );
+});
+
+function Demo() {
+  let childRef = useRef(null);
+  useEffect(() => {
+    console.log("childRef", childRef.current);
+  }, []);
+  return (
+    <div>
+      <Child ref={childRef} />
+    </div>
+  );
+}
+
+export default Demo;
+```
