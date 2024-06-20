@@ -21,13 +21,18 @@ async function bootstrap() {
 ```ts
 import type { App } from 'vue';
 import { createPinia } from 'pinia';
+import { registerPiniaPersistPlugin } from '@/store/plugin/persist';
 
 const store = createPinia();
+
+// 持久化插件
+registerPiniaPersistPlugin(store);
 
 export function setupStore(app: App<Element>) {
   app.use(store);
 }
 
 export { store };
+
 ```
 
