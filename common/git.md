@@ -1,4 +1,4 @@
-# GIT使用指南
+# GIT 使用指南
 
 ## 一、基本命令
 
@@ -27,8 +27,6 @@ git stash drop stash@{n}
 git stash clear
 ```
 
-
-
 ### git clone
 
 **简介**
@@ -45,13 +43,11 @@ git clone xxx.git
 git clone xxx.git -b branch_name
 ```
 
-
-
 ### git init
 
 **简介**
 
-初始化本地git仓库
+初始化本地 git 仓库
 
 **命令**
 
@@ -59,8 +55,6 @@ git clone xxx.git -b branch_name
 # 在当前文件夹创建一个git仓库
 git init
 ```
-
-
 
 ### git remote
 
@@ -77,8 +71,6 @@ git remote add origin xxx.git
 # 关联分支
 git push -u origin master
 ```
-
-
 
 ### git branch
 
@@ -99,8 +91,6 @@ git branch -r
 git branch -a
 ```
 
-
-
 ### git checkout
 
 **简介**
@@ -116,8 +106,6 @@ git checkout branch_name
 # 切换到指定分支，如果分支不存在则直接创建
 git checkout -b branch_name
 ```
-
-
 
 ### git add
 
@@ -138,8 +126,6 @@ git add .
 git add -A
 ```
 
-
-
 ### git commit
 
 **简介**
@@ -152,8 +138,6 @@ git add -A
 # 提交并输入提交信息
 git commit -m "xxx"
 ```
-
-
 
 ### git rm
 
@@ -170,8 +154,6 @@ git rm file_name
 # 删除指定目录
 git rm -r floder_name
 ```
-
-
 
 ### git push
 
@@ -198,8 +180,6 @@ git push origin --delete remote_branch_name
 git push --set-upstream origin branch_name
 ```
 
-
-
 ### git pull
 
 **简介**
@@ -213,13 +193,11 @@ git push --set-upstream origin branch_name
 git pull origin branch_name
 ```
 
-
-
 ### git fetch
 
 **简介**
 
-拉取远程分支的更新，但是不合并到本地，需要主动合并，获取更新后会返回一个FETCH_HEAD
+拉取远程分支的更新，但是不合并到本地，需要主动合并，获取更新后会返回一个 FETCH_HEAD
 
 **命令**
 
@@ -237,13 +215,11 @@ git merge origin/branch_name
 git log -p FETCH_HEAD
 ```
 
-
-
 ### git merge
 
 **简介**
 
-用于合并fetch或者合并其他分支
+用于合并 fetch 或者合并其他分支
 
 **命令**
 
@@ -254,8 +230,6 @@ git merge branch_name
 # 取消合并
 git merge --abort
 ```
-
-
 
 ### git log
 
@@ -270,8 +244,6 @@ git merge --abort
 git log
 ```
 
-
-
 ### git reflog
 
 **简介**
@@ -284,8 +256,6 @@ git log
 # 查看所有提交记录
 git reflog
 ```
-
-
 
 ### git reset
 
@@ -313,13 +283,11 @@ git reset --soft HEAD^
 git reset --hard HEAD^
 ```
 
-
-
 ### git revert
 
 **简介**
 
-保留记录的回滚，不会让commit消失，而是产生一个新的commit
+保留记录的回滚，不会让 commit 消失，而是产生一个新的 commit
 
 **命令**
 
@@ -329,13 +297,11 @@ git revert HEAD^
 git revert commit_id
 ```
 
-
-
 ### git cherry-pick
 
 **简介**
 
-用于挑选指定提交，然后合并到当前分支上，会产生新的提交记录，且会拥有不同的commit_id
+用于挑选指定提交，然后合并到当前分支上，会产生新的提交记录，且会拥有不同的 commit_id
 
 **命令**
 
@@ -365,8 +331,6 @@ git cherry-pick --abort
 git cherry-pick --quit
 ```
 
-
-
 ### git tag
 
 **简介**
@@ -392,8 +356,6 @@ git push origin tag_name
 git tag -d tag_name
 ```
 
-
-
 ### git rebase
 
 **简介**
@@ -410,15 +372,11 @@ git rebase master
 git rebase -i HEAD~n
 ```
 
-
-
-
-
-## 二、常用功能
+## 二、常用操作指南
 
 ### 01.撤销与回滚
 
-**-- 撤销git add**
+**-- 撤销 git add**
 
 ```shell
 # 以下命令等价
@@ -427,7 +385,7 @@ git reset HEAD
 git reset --mixed HEAD
 ```
 
-**-- 撤销git commit**
+**-- 撤销 git commit**
 
 ```shell
 # 以下命令等价
@@ -435,7 +393,7 @@ git reset HEAD^
 git reset --mixed HEAD^
 ```
 
-**-- 回滚到指定commit_id**
+**-- 回滚到指定 commit_id**
 
 ```shell
 # 查看需要回滚的commit_id
@@ -461,11 +419,9 @@ git reflog
 git reset --hard commit_id
 ```
 
-
-
 ### 02.本地的项目托管到远程
 
-**1.配置git**
+**1.配置 git**
 
 ```bash
 git config --global user.name rrrrrrrren
@@ -486,7 +442,7 @@ ssh-keygen -t rsa -b 4096 -C "dittorenard@outlook.com"
 
 **3.注册密钥**
 
-进入github设置页面：[Add new SSH keys (github.com)](https://github.com/settings/ssh/new)
+进入 github 设置页面：[Add new SSH keys (github.com)](https://github.com/settings/ssh/new)
 
 将密钥内容复制进输入框中，确认后即可生效。
 
@@ -514,14 +470,12 @@ git remote add origin https://github.com/xxx/xxx.git
 git push -u origin master
 ```
 
-切换http到ssh
+切换 http 到 ssh
 
 ```bash
 git remote set-url origin git@github.com:RRRRRRRRen/what_for_dinner_frontend.git
 git remote -v show // 查看当前源
 ```
-
-
 
 ### 03.删除分支
 
@@ -541,7 +495,7 @@ git branch -d  local_branch_name
 git push origin --delete origin_branch_name
 ```
 
-**3.删除tag**
+**3.删除 tag**
 
 ```shell
 # 删除本地tag
@@ -549,8 +503,6 @@ git tag -d tag_name
 # 删除远程tag
 git push origin --delete tag_name
 ```
-
-
 
 ### 04.submodule
 
@@ -616,11 +568,9 @@ git clone <git_repository_path> --recursive
 	git push
 ```
 
-
-
 ### 05.合并提记录
 
-**1.设置vscode编辑器**
+**1.设置 vscode 编辑器**
 
 ```shell
 # 查看git使用的编辑器
@@ -644,7 +594,7 @@ git rebase -i [hash]
 git rebase -i [old_hash] [new_hash]
 ```
 
-**3.操作范围内的commit**
+**3.操作范围内的 commit**
 
 | 缩写 | 命令   | 释义                                                 |
 | ---- | ------ | ---------------------------------------------------- |
@@ -680,91 +630,9 @@ git rebase -i [old_hash] [new_hash]
 
 ![image-20231225154008318](https://gitee.com/rrrrrrrren/note_image/raw/master/image-20231225154008318.png)
 
-
-
 ## 三、提交规范
 
-### 规范提交信息
-
-**1.安装`commitizen & cz-customizable`**
-
-```shell
-npm install -g commitizen cz-customizable
-```
-
-
-
-**2.配置自定义Adapter**
-
-```shell
-# 目录：根目录/.czrc
-```
-
-```json
-{ "path": "cz-customizable" }
-```
-
-
-
-**3.自定义Adapter内容**
-
-```shell
-# 目录：根目录/.cz-config.js
-```
-
-```js
-'use strict';
-
-module.exports = {
-
-  types: [
-    {
-      value: 'WIP',
-      name : '💪  WIP:      Work in progress'
-    },
-    {
-      value: 'feat',
-      name : '✨  feat:     A new feature'
-    },
-    {
-      value: 'fix',
-      name : '🐞  fix:      A bug fix'
-    },
-    {
-      value: 'refactor',
-      name : '🛠  refactor: A code change that neither fixes a bug nor adds a feature'
-    },
-    {
-      value: 'docs',
-      name : '📚  docs:     Documentation only changes'
-    },
-    {
-      value: 'test',
-      name : '🏁  test:     Add missing tests or correcting existing tests'
-    },
-    {
-      value: 'chore',
-      name : '🗯  chore:    Changes that don\'t modify src or test files. Such as updating build tasks, package manager'
-    },
-    {
-      value: 'style',
-      name : '💅  style:    Code Style, Changes that do not affect the meaning of the code (white-space, formatting, missing semi-colons, etc)'
-    },
-    {
-      value: 'revert',
-      name : '⏪  revert:   Revert to a commit'
-    }
-  ],
-
-  skipEmptyScopes: true,
-  allowCustomScopes: false,
-  allowBreakingChanges: ["feat", "fix"]
-};
-```
-
-
-
-**4.提交规范前缀**
+**前缀**
 
 ```shell
 wip:			开发中
