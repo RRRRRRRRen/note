@@ -1,7 +1,5 @@
 # 第 03 章 Java 的基本程序设计结构
 
-
-
 ## 3.1 一个简单的 java 程序
 
 **代码规则**
@@ -21,8 +19,6 @@
 - 修饰符用于控制程序的其他部分对这段代码的访问级别，例如`public`
 - java 虚拟机总是从指定类中`main`方法的代码开始执行
 - 每个 java 引用都必须有一个`main`方法
-
-
 
 ## 3.2 注释
 
@@ -57,8 +53,6 @@
   	@auther: ren
 */
 ```
-
-
 
 ## 3.3 数据类型
 
@@ -149,8 +143,6 @@
 if(0); // 编译直接报错：int类型无法转换为boolean类型
 ```
 
-
-
 ## 3.4 常量与变量
 
 ### 3.4.1 声明变量
@@ -233,8 +225,6 @@ Size s = Size.SMALL;
 **特性**
 
 枚举类型的变量只能存储声明中列出的值，或者 null。
-
-
 
 ## 3.5 运算符
 
@@ -436,8 +426,6 @@ System.out.println(season2);
 - 同一级别的运算符从左到右的次序进行计算
 - 除了右结合运算符。例如`+=`
 
-
-
 ## 3.6 字符串
 
 ### 3.6.1 子串
@@ -478,7 +466,7 @@ greeting = greeting.substring(0,3) + 'n'; // "heln"
 
 **特性**
 
-- String类对象不可变
+- String 类对象不可变
 
 ### 3.6.4 检测字符串是否相等
 
@@ -506,7 +494,7 @@ if(str.length() == 0);
 if(str.equals(""));
 ```
 
-检测字符串是否为null
+检测字符串是否为 null
 
 ```java
 if(str == null);
@@ -514,13 +502,13 @@ if(str == null);
 
 ### 3.6.6 码点与代码单元
 
-java字符串是一个char值序列，char数据类型是采用UTF-16编码鄙视Unicode码点的一个代码单元。
+java 字符串是一个 char 值序列，char 数据类型是采用 UTF-16 编码鄙视 Unicode 码点的一个代码单元。
 
-常用的Unicode自负可以采用一个代码单元表示，而辅助字符需要一对代码单元表示。
+常用的 Unicode 自负可以采用一个代码单元表示，而辅助字符需要一对代码单元表示。
 
-length方法将返回采用UTF-16编码表示给定字符串所需要的代码单元个数。
+length 方法将返回采用 UTF-16 编码表示给定字符串所需要的代码单元个数。
 
-不推荐使用char类型，过于底层。
+不推荐使用 char 类型，过于底层。
 
 代码单元个数：
 
@@ -538,7 +526,7 @@ System.out.println(count); // 1
 System.out.println(string.length()); // 2
 ```
 
-位置n的代码单元：
+位置 n 的代码单元：
 
 ```java
 String string = "A😊A";
@@ -552,7 +540,7 @@ char fourth = string.charAt(3); // A
 System.out.println(fourth);
 ```
 
-位置n的码点：
+位置 n 的码点：
 
 ```java
 String string = "A😊A";
@@ -590,9 +578,9 @@ System.out.println(str); // A😊A
 
 ### 3.6.7 String API
 
-常用API
+常用 API
 
-### 3.6.8 阅读联机API文档
+### 3.6.8 阅读联机 API 文档
 
 [Overview (Java Platform SE 8 ) (oracle.com)](https://docs.oracle.com/javase/8/docs/api/)
 
@@ -614,7 +602,7 @@ System.out.println(str); // ABBC
 
 **声明文本块**
 
-> (JDK15支持)
+> (JDK15 支持)
 
 ```java
 String str = """
@@ -630,8 +618,6 @@ String str = """
 - 行尾`\`会拼接下一行。
 - 行结束符会被标准化为`\n`
 - 自动去除公共缩进
-
-
 
 ## 3.7 输入与输出
 
@@ -669,11 +655,9 @@ PrintWriter out = new PrintWriter("myFile.txt", StandardCharsets.UTF_8);
 
 **注意：**
 
-- 生成的文件取决于虚拟机、shell运行所在的目录、ide控制。
+- 生成的文件取决于虚拟机、shell 运行所在的目录、ide 控制。
 - 推荐使用绝对路径名。
 - 每个反斜线之前需要再加一个反斜线。
-
-
 
 ## 3.8 控制流程
 
@@ -695,13 +679,13 @@ if (a > b) {
 }
 ```
 
-- else子语句与最邻近的if构成一组
+- else 子语句与最邻近的 if 构成一组
 - 推荐使用大括号让代码更加清晰。
-- 可以反复使用if...else if ...语句
+- 可以反复使用 if...else if ...语句
 
 ### 3.8.3 循环
 
-while循环会在条件为true时执行下一个语句或者下一个块语句。
+while 循环会在条件为 true 时执行下一个语句或者下一个块语句。
 
 ```java
 while (balance < goal)
@@ -713,7 +697,7 @@ while (balance < goal)
 }
 ```
 
-如果希望循环体至少执行一次，可以使用do while语句。
+如果希望循环体至少执行一次，可以使用 do while 语句。
 
 ```java
 do
@@ -727,11 +711,11 @@ do
 
 ### 3.8.4 确定性循环
 
-for语句第一部分：计数器初始化。
+for 语句第一部分：计数器初始化。
 
-for语句第二部分：每一轮循环前要检测的循环条件。
+for 语句第二部分：每一轮循环前要检测的循环条件。
 
-for语句第三部分：指定如何更新计数器。
+for 语句第三部分：指定如何更新计数器。
 
 ```java
 for (int i = 10; i > 0; i--)
@@ -741,25 +725,25 @@ for (int i = 10; i > 0; i--)
 }
 ```
 
-- for语句第一部分声明的变量会扩展到这个for循环的末尾。
-- for循环内部定义的变量只能在for循环体中使用。
+- for 语句第一部分声明的变量会扩展到这个 for 循环的末尾。
+- for 循环内部定义的变量只能在 for 循环体中使用。
 
 ### 3.8.5 多重选择：switch 语句
 
-case标签可以是：
+case 标签可以是：
 
-- 类型为char、byte、short、int的常量表达式。
+- 类型为 char、byte、short、int 的常量表达式。
 - 枚举常量。
 - 字符串字面量。
 - 多个字符串，用逗号分隔。
 
 特性：
 
-- switch语句从选项值相匹配的case标签开始执行，直到遇到下一个break语句，或者执行到switch语句结束。
-- 如果没有匹配的case标签，则会执行default子句（如果有的话）。
-- 有直通行为的形式中，每个case以一个冒号 `:` 结束。
-- 没有直通行为的形式中，每个case以一个箭头 `->` 结束。
-- switch表达式中具有yield关键字，与break蕾丝，yield会终止执行，但是yield会生成一个值，就是表达式的值。
+- switch 语句从选项值相匹配的 case 标签开始执行，直到遇到下一个 break 语句，或者执行到 switch 语句结束。
+- 如果没有匹配的 case 标签，则会执行 default 子句（如果有的话）。
+- 有直通行为的形式中，每个 case 以一个冒号 `:` 结束。
+- 没有直通行为的形式中，每个 case 以一个箭头 `->` 结束。
+- switch 表达式中具有 yield 关键字，与 break 蕾丝，yield 会终止执行，但是 yield 会生成一个值，就是表达式的值。
 
 直通表达式：
 
@@ -782,7 +766,7 @@ switch (day) {
 
 ### 3.8.6 中断控制流程的语句
 
-不带标签的break语句。退出当前循环。
+不带标签的 break 语句。退出当前循环。
 
 ```java
 while (year <= 100)
@@ -793,7 +777,7 @@ while (year <= 100)
 }
 ```
 
-带标签break语句。退出指定循环，包括嵌套的循环。
+带标签 break 语句。退出指定循环，包括嵌套的循环。
 
 ```java
 outerLoop: // Define a label for the outer loop
@@ -807,7 +791,7 @@ for (int i = 0; i < 5; i++) {
 }
 ```
 
-continue语句会越过当前循环体的剩余部分，直接跳到循环的首部。
+continue 语句会越过当前循环体的剩余部分，直接跳到循环的首部。
 
 ```java
 public class ContinueExample {
@@ -823,8 +807,6 @@ public class ContinueExample {
     }
 }
 ```
-
-
 
 ## 3.9 大数
 
@@ -846,10 +828,8 @@ BigInteger a = new BigInteger("2020200202020202020202002020202020");
 BigDecimal a = new BigDecimal("0.1");
 ```
 
-- 对于BigDecimal类，总是应当使用一个字符串参数来进行构造。
+- 对于 BigDecimal 类，总是应当使用一个字符串参数来进行构造。
 - 不能使用算数运算符去计算，而需要使用提供的方法。
-
- 
 
 ## 3.10 数组
 
@@ -871,7 +851,7 @@ int[] a = {1,2,3,4};
 
 特性：
 
-- java中允许长度为0的数组。
+- java 中允许长度为 0 的数组。
 - 通过一个整型索引可以访问数组中的每一个值。
 
 ### 3.10.2 访问数组元素
@@ -980,4 +960,4 @@ System.out.println(Arrays.toString(array)); // [1, 3, 4, 5, 12, 3244]
 
 ### 3.10.8 不规则数组
 
-java实际上没有多维数组，只有一位数组，多维数组被解释为数组的数组。
+java 实际上没有多维数组，只有一位数组，多维数组被解释为数组的数组。

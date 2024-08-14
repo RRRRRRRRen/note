@@ -175,7 +175,7 @@ int a = 10, b = 20;
 
 ### 比较运算符
 
-> 适用于除boolean之外的七种数据类型
+> 适用于除 boolean 之外的七种数据类型
 >
 > == 、!= 适用于引用类型
 
@@ -187,7 +187,7 @@ int a = 10, b = 20;
 | >=、<=     |      |                          |
 | instanceof |      | 面向对象多态位置再做说明 |
 
-###  逻辑运算符
+### 逻辑运算符
 
 > 只针对布尔值类型的计算
 >
@@ -214,11 +214,11 @@ int a = 10, b = 20;
 
 ### 条件运算符
 
-> 格式：(条件表达式) ? 表达式1 : 表达式2
+> 格式：(条件表达式) ? 表达式 1 : 表达式 2
 >
-> 条件表达式为Boolean类型
+> 条件表达式为 Boolean 类型
 >
-> 如果true执行1，否则执行2
+> 如果 true 执行 1，否则执行 2
 
 ## 四、流程控制语句
 
@@ -239,29 +239,29 @@ int a = 10, b = 20;
 可以省略大括号，但是只能执行一行
 
 ```JAVA
-    if(heartRate >= 40 && heartRate <= 80) 
+    if(heartRate >= 40 && heartRate <= 80)
       System.out.println("Heart rate is normal.");
     else if(heartRate < 40) {
       System.out.println("Heart rate is too low.");
-    } else 
+    } else
       System.out.println("Heart rate is too high.");
-    
+
 ```
 
 #### switch case
 
 **执行顺序**
 
-1.依次匹配case语句，一旦匹配上，则执行case语句
+1.依次匹配 case 语句，一旦匹配上，则执行 case 语句
 
-2.如果没有遇到break，则会穿透继续执行其他case
+2.如果没有遇到 break，则会穿透继续执行其他 case
 
-3.如果遇到break，则直接结束switch
+3.如果遇到 break，则直接结束 switch
 
 **注意事项**
 
-- switch中只允许使用 byte、short、char、int、枚举（JDK5）、String（JDK7）
-- default块的位置是随意的
+- switch 中只允许使用 byte、short、char、int、枚举（JDK5）、String（JDK7）
+- default 块的位置是随意的
 
 ```JAVA
 class Test {
@@ -302,15 +302,14 @@ class Test {
 循环四要素
 
 1. 初始化条件
-2. 循环条件（必须为Boolean格式）
+2. 循环条件（必须为 Boolean 格式）
 3. 循环体
 4. 迭代部分
 
 #### for
 
-> 1.124中如果有多个语句，需要使用逗号 `,` 隔开
-> 2.循环外不可使用内部变量
-> 3.break可以跳出循环
+> 1.124 中如果有多个语句，需要使用逗号 `,` 隔开 2.循环外不可使用内部变量
+> 3.break 可以跳出循环
 
 ```java
 class Test {
@@ -374,7 +373,7 @@ class Test {
 }
 ```
 
-### 关键字break、continue
+### 关键字 break、continue
 
 | 关键字   | 使用范围      | 作用             |
 | -------- | ------------- | ---------------- |
@@ -476,7 +475,7 @@ System.out.println(arr_1.length); // 3
 System.out.println(arr_1[0].length); // 4
 ```
 
-### Arrays工具类
+### Arrays 工具类
 
 **Arrays.equals(arr1, arr2)**
 
@@ -500,7 +499,7 @@ public class HelloWorld {
 
 **Arrays.toString(arr1)**
 
->输出数组元素信息
+> 输出数组元素信息
 
 ```java
 import java.util.Arrays;
@@ -516,7 +515,7 @@ public class HelloWorld {
 
 **Arrays.fill(arr1, 20);**
 
->填充数组
+> 填充数组
 
 ```java
 import java.util.Arrays;
@@ -566,9 +565,9 @@ public class HelloWorld {
 
 ## 其他
 
-### 使用Scanner
+### 使用 Scanner
 
-> 1.导包 
+> 1.导包
 >
 > 2.创建实例
 >
@@ -620,4 +619,3 @@ class Test {
   }
 }
 ```
-

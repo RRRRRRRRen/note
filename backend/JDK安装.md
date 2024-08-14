@@ -1,8 +1,6 @@
-# JDK安装
+# JDK 安装
 
-
-
-安装Jenny
+安装 Jenny
 
 ```shell
 brew install jenv
@@ -15,29 +13,25 @@ export PATH="$HOME/.jenv/bin:$PATH"
 eval "$(jenv init -)"
 ```
 
-查看所有jdk版本
+查看所有 jdk 版本
 
 ```shell
 jenv versions
 ```
 
-切换全局jdk版本
+切换全局 jdk 版本
 
 ```shell
 jenv global 17
 ```
 
-
-
-
-
-安装jdk
+安装 jdk
 
 ```shell
 brew install openjdk@8
 ```
 
-链接到jdk默认目录
+链接到 jdk 默认目录
 
 ![image-20240509214447921](https://gitee.com/rrrrrrrren/note_image/raw/master/image-20240509214447921.png)
 
@@ -53,11 +47,10 @@ sudo ln -sfn /usr/local/opt/openjdk@11/libexec/openjdk.jdk /Library/Java/JavaVir
 sudo ln -sfn /usr/local/opt/openjdk@17/libexec/openjdk.jdk /Library/Java/JavaVirtualMachines/openjdk-17.jdk
 ```
 
-添加jdk到jenv中
+添加 jdk 到 jenv 中
 
 ```shell
 jenv add /usr/local/opt/openjdk@8/libexec/openjdk.jdk/Contents/Home/
 jenv add /usr/local/opt/openjdk@11/libexec/openjdk.jdk/Contents/Home/
 jenv add /usr/local/opt/openjdk@17/libexec/openjdk.jdk/Contents/Home/
 ```
-
