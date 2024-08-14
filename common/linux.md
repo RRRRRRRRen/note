@@ -152,6 +152,13 @@ command parameters（命令 参数）
 - **短参数**：command -p 10（例如：ssh root@121.42.11.34 -p 22）
 - **长参数**：command --paramters=10（例如：ssh root@121.42.11.34 --port=22）
 
+### 获取帮助
+
+```bash
+# 基本语法
+command -h
+```
+
 ### 快捷键
 
 - 通过上下方向键 ↑ ↓ 来调取过往执行过的 `Linux` 命令；
@@ -424,6 +431,101 @@ ln -s file1 file2
 - 软连接：指向文件目录。原始文件删除后指向无效目录，则失效。
 - 硬链接：指向文件实体。原始文件删除后依然指向文件实体，实体所有硬链接都被删除才会真正被删除。
 
+### 查找文件
+
+#### 数据库方式搜索文件
+
+```bash
+# 更新数据库
+updatedb
+
+# 查找文件
+locate fil*.txt
+```
+
+【注意事项】
+
+- `locate` 命令会去文件数据库中查找命令，而不是全磁盘查找，因此刚创建的文件并不会更新到数据库中，所以无法被查找到，可以执行 `updatedb` 命令去更新数据库。
+
+#### 磁盘方式搜索文件
+
+【基本语法】
+
+```bash
+find <何处> <何物> <做什么>
+```
+
+【根据文件名查找】
+
+```bash
+# 当前目录以及子目录下通过名称查找文件
+find -name "file.txt"
+
+# 当前目录以及子目录下通过名称查找文件
+find . -name "syslog"
+
+# 整个硬盘下查找syslog
+find / -name "syslog"
+
+# 在指定的目录/var/log下查找syslog文件
+find /var/log -name "syslog"
+
+# 查找syslog1、syslog2 ... 等文件，通配符表示所有
+find /var/log -name "syslog*"
+
+# 查找包含syslog的文件
+find /var/log -name "*syslog*"
+```
+
+【根据文件大小查找】
+
+```bash
+# /var 目录下查找文件大小超过 10M 的文件
+find /var -size +10M
+
+# /var 目录下查找文件大小小于 50k 的文件
+find /var -size -50k
+
+# /var 目录下查找文件大小查过 1G 的文件
+find /var -size +1G
+
+# /var 目录下查找文件大小等于 1M 的文件
+find /var -size 1M
+```
+
+【根据文件最近访问时间查找】
+
+```bash
+# 近 7天内访问过的.txt结尾的文件
+find -name "*.txt" -atime -7
+```
+
+【仅查找目录或文件】
+
+```bash
+# 只查找当前目录下的file文件
+find . -name "file" -type f
+
+# 只查找当前目录下的file目录
+find . -name "file" -type d
+```
+
+【操作查找结果】
+
+```bash
+# 找出所有后缀为txt的文件，并按照 %p - %u\n 格式打印，其中%p=文件名，%u=文件所有者
+find -name "*.txt" -printf "%p - %u\n"
+
+# 删除当前目录以及子目录下所有.jpg为后缀的文件，不会有删除提示，因此要慎用
+find -name "*.jpg" -delete
+
+# 对每个.c结尾的文件，都进行 -exec 参数指定的操作，{} 会被查找到的文件替代，\; 是必须的结尾
+find -name "*.c" -exec chmod 600 {} \;
+
+# 和上面的功能一直，会多一个确认提示
+find -name "*.c" -ok chmod 600 {} \;
+```
+
 ## 用户与权限
 
 ### 基本概念
@@ -634,3 +736,68 @@ chmod 640 hello.c
 - 6 = 4 + 2 + 0 表示所有者具有 rw 权限
 - 4 = 4 + 0 + 0 表示群组用户具有 r 权限
 - 0 = 0 + 0 + 0 表示其它用户没有权限
+
+## 包管理器
+
+### 简介
+
+`Linux` 下软件是以包的形式存在，一个软件包其实就是软件的所有文件的压缩包，是二进制的形式，包含了安装软件的所有指令。 `Red Hat` 家族的软件包后缀名一般为 `.rpm` ， `Debian` 家族的软件包后缀是 `.deb` 。
+
+`Linux` 的包都存在一个仓库，叫做软件仓库，它可以使用 `yum` 来管理软件包， `yum` 是 `CentOS` 中默认的包管理工具，适用于 `Red Hat` 一族。可以理解成 `Node.js` 的 `npm` 。
+
+### 常用命令
+
+```bash
+# 更新软件包 方法一
+yum update
+# 更新软件包 方法二
+yum upgrade
+
+# 搜索相应的软件包
+yum search xxx
+
+# 安装软件包
+yum install xxx
+# 安装过程自动回复yes
+yum install -y xxx
+
+# 删除软件包
+yum remove xxx
+```
+
+### 切换下载源
+
+**查看软件源**
+
+```bash
+# 查看软件源列表
+yum repolist
+
+# 查看仓库配置文件列表
+ls /etc/yum.repos.d/
+
+# 查看具体内容
+cat /etc/yum.repos.d/CentOS-Base.repo
+```
+
+**备份原始配置**
+
+```bash
+mv /etc/yum.repos.d/CentOS-Base.repo /etc/yum.repos.d/CentOS-Base.repo.bak
+```
+
+**下载阿里云配置**
+
+```bash
+wget -O /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-7.repo
+```
+
+【注意事项】
+
+- 云服务器一般已经自动配置过下载源为对应服务商提供的下载源，无需额外配置
+
+**生成缓存**
+
+```bash
+yum makecache
+```
