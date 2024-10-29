@@ -6,7 +6,7 @@
 
 - java 区分大小写
 - 每个语句必须使用分号结束
-- java 中任何方法的代码都必须以 `{` 开始 `}` 结束
+- java 中任何方法的代码都必须以 `{` 开始，用 `}` 结束
 
 **类名的命名规则**
 
@@ -49,8 +49,9 @@
 
 ```java
 /**
-	文档注释
-  	@auther: ren
+	* 这个类演示了文档注释
+	* @author Ayan Amhed
+	* @version 1.2
 */
 ```
 
@@ -94,9 +95,9 @@
 
 **表示溢出和出错的浮点数**
 
-- 正无穷：`DOUBLE.POSITIVE_INFINITY`
-- 负无穷：`DOUBLE.NEGATIVE_INFINITY`
-- 非数字：`DOUBLE.NaN`
+- 正无穷：`Double.POSITIVE_INFINITY`
+- 负无穷：`Double.NEGATIVE_INFINITY`
+- 非数字：`Double.NaN`
   - 所有`NaN`都是不同的。
   - 可以使用`Double.isNaN()`判断。
 
@@ -387,6 +388,7 @@ var x = 0;
 String season1 = switch (x) {
     case 0 -> "A";
     case 1 -> "B";
+    default -> "C";
 };
 System.out.println(season1);
 
@@ -396,7 +398,6 @@ Size size = Size.A;
 String season2 = switch (size) {
     case A -> "A";
     case B -> "B";
-    case C -> "C";
 };
 System.out.println(season2);
 ```
@@ -404,7 +405,7 @@ System.out.println(season2);
 **特性**
 
 - switch 中只允许使用 byte、short、char、int、枚举（JDK5）、String（JDK7）
-- 使用枚举常量时，不需要为各个标签提供枚举名。
+- 使用枚举常量时，不需要为各个标签提供枚举名（default 非必须）。
 - 使用整数或者 String 操作数的 switch 必须有一个 default，因为表达式必须要生成一个值。
 
 ### 3.5.10 位运算符
@@ -447,13 +448,15 @@ String s2 = "world";
 String msg = s1 + s2; // "Hellw world"
 ```
 
-当将一个字符串与一个非字符串拼接时，后者会被转换成字符串。
-
 使用分隔符拼接
 
 ```java
 String all = String.join(" / ", "aa", 'bb'); // "aa / bb"
 ```
+
+**注意**
+
+- 当将一个字符串与一个非字符串拼接时，后者会被转换成字符串。
 
 ### 3.6.3 字符串不可变
 
@@ -475,6 +478,7 @@ greeting = greeting.substring(0,3) + 'n'; // "heln"
 ```java
 String a = "hello";
 a.equals("hello world"); // false
+a.equals("hello"); // true
 ```
 
 检测相等，但不区分大小写
@@ -502,13 +506,19 @@ if(str == null);
 
 ### 3.6.6 码点与代码单元
 
-java 字符串是一个 char 值序列，char 数据类型是采用 UTF-16 编码鄙视 Unicode 码点的一个代码单元。
+**特性**
 
-常用的 Unicode 自负可以采用一个代码单元表示，而辅助字符需要一对代码单元表示。
+- java 字符串是一个 char 值序列，char 数据类型是采用 UTF-16 编码表示 Unicode 码点的一个代码单元。
 
-length 方法将返回采用 UTF-16 编码表示给定字符串所需要的代码单元个数。
+- 常用的 Unicode 字符可以采用一个代码单元表示，而辅助字符需要一对代码单元表示。
 
-不推荐使用 char 类型，过于底层。
+- length 方法将返回采用 UTF-16 编码表示给定字符串所需要的代码单元个数。
+
+**注意**
+
+- 不推荐使用 char 类型，过于底层。
+
+**示例**
 
 代码单元个数：
 
@@ -641,7 +651,7 @@ System.out.printf("Hello %s, Next year, you'll be %d", name, age); // Hello AAA,
 
 ### 3.7.3 文件输入与输出
 
-文件输出
+文件输入
 
 ```java
 Scanner in = new Scanner(Path.of("myFile.txt"), StandardCharsets.UTF_8);
@@ -725,6 +735,8 @@ for (int i = 10; i > 0; i--)
 }
 ```
 
+**特性**
+
 - for 语句第一部分声明的变量会扩展到这个 for 循环的末尾。
 - for 循环内部定义的变量只能在 for 循环体中使用。
 
@@ -737,13 +749,13 @@ case 标签可以是：
 - 字符串字面量。
 - 多个字符串，用逗号分隔。
 
-特性：
+**特性**
 
 - switch 语句从选项值相匹配的 case 标签开始执行，直到遇到下一个 break 语句，或者执行到 switch 语句结束。
 - 如果没有匹配的 case 标签，则会执行 default 子句（如果有的话）。
 - 有直通行为的形式中，每个 case 以一个冒号 `:` 结束。
 - 没有直通行为的形式中，每个 case 以一个箭头 `->` 结束。
-- switch 表达式中具有 yield 关键字，与 break 蕾丝，yield 会终止执行，但是 yield 会生成一个值，就是表达式的值。
+- switch 表达式中具有 yield 关键字，与 break 类似，yield 会终止执行，但是 yield 会生成一个值，就是表达式的值。
 
 直通表达式：
 
@@ -849,7 +861,7 @@ var a = new int[100];
 int[] a = {1,2,3,4};
 ```
 
-特性：
+**特性**
 
 - java 中允许长度为 0 的数组。
 - 通过一个整型索引可以访问数组中的每一个值。
@@ -862,7 +874,7 @@ int[] a = {1,2,3,4};
 - 创建布尔数组时，所有元素初始值都是 `false`
 - 穿件对象数组时，所有元素初始值都是 `null`
 
-特性：
+**特性**
 
 - 当访问超过数组长度下表的元素时，会直接报错：数组索引越界。
 - `array.length` 属性可以获取数组的长度。
