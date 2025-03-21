@@ -1490,3 +1490,2036 @@ ORDER BY name;
 | 表结构要求 | 列数一致、类型兼容      | 可不一样，但需有连接条件   |
 | 常见用途   | 合并多个查询结果        | 表间数据的逻辑关联         |
 | 是否去重   | 默认去重，可用 ALL 保留 | 不涉及去重，取决于连接方式 |
+
+# 函数
+
+## 字符串函数
+
+### 1. 常用函数
+
+| **函数名**                 | **说明**           | **示例**                              |
+| -------------------------- | ------------------ | ------------------------------------- |
+| CONCAT(a, b, …)            | 字符串拼接         | CONCAT('Hello', 'World') → HelloWorld |
+| LENGTH(str)                | 字节长度           | LENGTH('abc') → 3                     |
+| CHAR_LENGTH(str)           | 字符长度（推荐用） | CHAR_LENGTH('你好') → 2               |
+| LOWER(str)                 | 转小写             | LOWER('AbC') → abc                    |
+| UPPER(str)                 | 转大写             | UPPER('AbC') → ABC                    |
+| TRIM(str)                  | 去除前后空格       | TRIM(' abc ') → 'abc'                 |
+| LEFT(str, n)               | 从左取 n 位        | LEFT('hello', 2) → he                 |
+| RIGHT(str, n)              | 从右取 n 位        | RIGHT('hello', 3) → llo               |
+| SUBSTRING(str, start, len) | 截取子串           | SUBSTRING('abcdef', 2, 3) → bcd       |
+| REPLACE(str, a, b)         | 替换字符串         | REPLACE('abcabc', 'a', 'x') → xbcxbc  |
+| INSTR(str, substr)         | 查找子串位置       | INSTR('hello', 'e') → 2               |
+
+### 2. 案例
+
+**LENGTH**
+
+用于返回字符串的字节数
+
+```sql
+SELECT LENGTH('😄') FROM DUAL; -- 4
+
+SELECT LENGTH('abc') FROM DUAL; -- 3
+
+SELECT LENGTH('我们') FROM DUAL; -- 6
+```
+
+**CONCAT**
+
+用于拼接字符串
+
+```sql
+SELECT CONCAT(employees.first_name, ' ', employees.last_name) AS fullName
+FROM employees
+```
+
+**CONCAT_WS**
+
+使用指定符号连接字符串
+
+```sql
+SELECT CONCAT_WS('_', employees.first_name, employees.last_name) AS fullName
+FROM employees
+```
+
+**LOWER**
+
+忽略大小写对比的筛选，但是 mysql 默认大小写不敏感。
+
+```sql
+SELECT last_name
+FROM employees
+WHERE LOWER(last_name) = 'king';
+```
+
+## 数值函数
+
+| **函数名**  | **说明**                | **示例**                |
+| ----------- | ----------------------- | ----------------------- |
+| ABS(n)      | 绝对值                  | ABS(-3) → 3             |
+| CEIL(n)     | 向上取整（天花板）      | CEIL(3.14) → 4          |
+| FLOOR(n)    | 向下取整（地板）        | FLOOR(3.9) → 3          |
+| ROUND(n, d) | 四舍五入，保留 d 位小数 | ROUND(3.1416, 2) → 3.14 |
+| MOD(a, b)   | 求余                    | MOD(10, 3) → 1          |
+| RAND()      | 生成随机小数 [0, 1)     | RAND() → 0.4567...      |
+| SQRT(n)     | 平方根                  | SQRT(9) → 3             |
+| POW(x, y)   | 幂运算（x^y）           | POW(2, 3) → 8           |
+
+## 日期时间函数
+
+| **函数名**                  | **说明**            | **示例**                                           |
+| --------------------------- | ------------------- | -------------------------------------------------- |
+| NOW()                       | 当前日期和时间      | 2025-03-17 10:33:00                                |
+| CURDATE()                   | 当前日期            | 2025-03-17                                         |
+| CURTIME()                   | 当前时间            | 10:33:00                                           |
+| YEAR(date)                  | 提取年份            | YEAR('2024-01-01') → 2024                          |
+| MONTH(date)                 | 提取月份            | MONTH('2024-01-01') → 1                            |
+| DAY(date)                   | 提取日              | DAY('2024-01-01') → 1                              |
+| DATE_FORMAT(dt, format)     | 格式化日期          | DATE_FORMAT(NOW(), '%Y-%m-%d')                     |
+| DATEDIFF(d1, d2)            | 相差天数（d1 - d2） | DATEDIFF('2024-03-01', '2024-02-01') → 29          |
+| TIMESTAMPDIFF(unit, d1, d2) | 精确时间差          | TIMESTAMPDIFF(MINUTE, '10:00:00', '10:30:00') → 30 |
+
+## 控制流函数
+
+> MySQL 中的 **控制流函数（Control Flow Functions）**，可以让我们像写程序一样，在 SQL 语句中做条件判断、分支处理，非常适用于 **条件列展示**、**动态赋值**、**分组处理逻辑** 等场景。
+
+| **函数名**                          | **说明**                              | **示例**                            |
+| ----------------------------------- | ------------------------------------- | ----------------------------------- |
+| IF(cond, t, f)                      | 如果 cond 为 true，返回 t，否则返回 f | IF(1 < 2, 'yes', 'no') → yes        |
+| IFNULL(expr, alt)                   | expr 为 null 返回 alt                 | IFNULL(NULL, 'N/A') → N/A           |
+| NULLIF(a, b)                        | 如果 a = b，返回 NULL；否则返回 a     | NULLIF(1,1) → NULL；NULLIF(1,2) → 1 |
+| CASE WHEN ... THEN ... ELSE ... END | 多条件判断                            | 见下方示例                          |
+
+### 1. IF
+
+就像 Java 的三目运算符：condition ? a : b
+
+```sql
+SELECT name,
+       IF(score >= 60, '及格', '不及格') AS result
+FROM students;
+```
+
+如果 score >= 60，结果是“及格”，否则是“不及格”。
+
+### 2. IFNULL
+
+用于处理 NULL 值的情况：
+
+```sql
+SELECT name,
+       IFNULL(nickname, '无昵称') AS display_name
+FROM users;
+```
+
+如果 nickname 是 NULL，就显示“无昵称”。
+
+### 3. CASE WHEN
+
+**简单 CASE：**
+
+```sql
+SELECT name,
+       CASE gender
+         WHEN 'M' THEN '男'
+         WHEN 'F' THEN '女'
+         ELSE '未知'
+       END AS gender_text
+FROM employees;
+```
+
+**搜索 CASE：**
+
+```sql
+SELECT name, score,
+       CASE
+         WHEN score >= 90 THEN '优秀'
+         WHEN score >= 60 THEN '及格'
+         ELSE '不及格'
+       END AS result
+FROM students;
+```
+
+## 加密函数
+
+**常用函数**
+
+| **函数名**    | **说明**                          |
+| ------------- | --------------------------------- |
+| MD5(str)      | 生成 MD5 哈希                     |
+| SHA1(str)     | 生成 SHA1 哈希                    |
+| PASSWORD(str) | 用于旧版 MySQL 密码加密（不推荐） |
+
+**注意**
+
+- 不建议使用 MySQL 函数，推荐在 Java 中使用 BCrypt / Argon2 等
+
+## 系统信息函数
+
+> 你可能是想问 **MySQL 信息函数**，也就是一些 **系统信息类函数**，用于获取当前数据库、用户、版本、连接状态等运行时信息。这类函数不直接处理业务数据，但在调试、监控、权限控制中非常实用。
+
+| **函数名**       | **含义说明**                                     |
+| ---------------- | ------------------------------------------------ |
+| DATABASE()       | 当前默认数据库的名称（即 USE 的那个）            |
+| USER()           | 当前连接的用户（包括主机）                       |
+| CURRENT_USER()   | MySQL 实际授权使用的用户（可能和 USER() 不一样） |
+| VERSION()        | 当前 MySQL 数据库版本                            |
+| CONNECTION_ID()  | 当前会话的唯一连接 ID                            |
+| CHARSET(str)     | 返回字符串 str 的字符集                          |
+| COLLATION(str)   | 返回字符串 str 的排序规则                        |
+| LAST_INSERT_ID() | 返回最近一次插入的自增 ID 值                     |
+| FOUND_ROWS()     | 返回上条 SQL 查询中匹配的行数（即使 LIMIT 了）   |
+| ROW_COUNT()      | 返回上条 SQL 影响的行数（如 UPDATE、DELETE）     |
+
+## 聚合函数
+
+> 聚合函数（Aggregate Functions）是 MySQL 中 **用于对一列数据执行汇总计算** 的函数，常用于 GROUP BY 分组、统计分析、报表处理等场景。
+
+| **函数名**     | **作用说明**           |
+| -------------- | ---------------------- |
+| COUNT()        | 统计数量               |
+| SUM()          | 求和                   |
+| AVG()          | 计算平均值             |
+| MAX()          | 获取最大值             |
+| MIN()          | 获取最小值             |
+| GROUP_CONCAT() | 将同组数据拼接成字符串 |
+
+### 1. COUNT()
+
+**统计数量**
+
+```sql
+SELECT COUNT(*) FROM employees;
+```
+
+- COUNT(\*)：统计总行数（包括 NULL）
+
+- COUNT(column)：统计某列非 NULL 的数量
+
+```sql
+SELECT COUNT(salary) FROM employees; -- 忽略 salary 为 NULL 的行
+```
+
+### 2. SUM()
+
+**求和**
+
+```sql
+SELECT SUM(salary) FROM employees;
+```
+
+- 汇总一列数值的总和
+
+- NULL 会被忽略
+
+### 3. AVG()
+
+**平均值**
+
+```sql
+SELECT AVG(salary) FROM employees;
+```
+
+- 返回某列的平均值（= SUM / COUNT）
+
+- NULL 会被忽略
+
+### 4. MAX() / MIN()
+
+**最大值 / 最小值**
+
+```sql
+SELECT MAX(salary), MIN(salary) FROM employees;
+```
+
+- 适用于查询数值类型、字符串类型、日期时间类型
+
+### 5. GROUP BY
+
+聚合函数 常与 GROUP BY 配合使用
+
+**示例：单个分组条件**
+
+每个部门的平均薪资
+
+```sql
+SELECT department_id, AVG(salary)
+FROM employees
+GROUP BY department_id;
+```
+
+**示例：多个分组条件**
+
+每个部门中每个岗位的平均薪资
+
+```sql
+SELECT department_id, job_id, AVG(salary)
+FROM employees
+GROUP BY department_id, job_id;
+```
+
+**注意**
+
+- 支持多维度分组
+- 如果`SELECT`存在未包含在`GROUP BY`的字段，则会报错
+- `GROUP BY`的顺序不影响结果，只影响显示效果
+
+### 6. GROUP_CONCAT()
+
+**分组拼接字符串**
+
+```sql
+SELECT department_id, GROUP_CONCAT(last_name)
+FROM employees
+GROUP BY department_id;
+```
+
+- 把同一部门的员工名字拼接起来
+
+- 默认用逗号分隔，可自定义分隔符：
+
+```sql
+GROUP_CONCAT(last_name SEPARATOR ' | ')
+```
+
+**注意**
+
+- 有最大长度限制，默认 1024 字节，可通过设置调整：
+
+```sql
+SET SESSION group_concat_max_len = 10000;
+```
+
+### 7. HAVING
+
+**📌 示例：按部门统计人数和总薪资**
+
+```sql
+SELECT department_id,
+       COUNT(*) AS num_employees,
+       SUM(salary) AS total_salary,
+       AVG(salary) AS avg_salary
+FROM employees
+GROUP BY department_id
+HAVING total_salary > 100000;
+```
+
+**注意**
+
+- 如果过滤条件中使用了聚合函数，就需要使用`HAVING`代替`WHERE`，否则就会报错。
+- `HAVING`必须放在`GROUP BY`后面，并且总是推荐出现在一起使用。
+- 极其不推荐将普通过滤条件写进`HAVING`中，应当保持使用`WHERE`过滤普通条件。
+
+### 8. WHERE 对比 HAVING
+
+> WHERE 和 HAVING 都用于 **筛选数据**，但它们的应用时机和作用对象不同，是 SQL 中一个很常见、但也容易混淆的点。
+
+**核心区别**
+
+- WHERE 是在 **分组/聚合之前** 过滤行，
+
+- HAVING 是在 **分组/聚合之后** 过滤组。
+
+**使用语法结构位置对比**
+
+```
+SELECT ...
+FROM ...
+WHERE ...        -- 行级过滤（还没分组）
+GROUP BY ...
+HAVING ...       -- 组级过滤（已分组、可用聚合函数）
+```
+
+**WHERE 示例：过滤原始行**
+
+```
+SELECT *
+FROM employees
+WHERE department_id = 90;
+```
+
+**HAVING 示例：过滤聚合结果**
+
+```
+SELECT department_id, AVG(salary) AS avg_salary
+FROM employees
+GROUP BY department_id
+HAVING avg_salary > 10000;
+```
+
+**同时使用 WHERE 和 HAVING**
+
+```
+SELECT department_id, COUNT(*) AS emp_count
+FROM employees
+WHERE salary > 5000             -- 先筛选行
+GROUP BY department_id
+HAVING emp_count > 3;           -- 再筛选组
+```
+
+# SQL 执行顺序
+
+**例子**
+
+```sql
+SELECT department_id, AVG(salary) AS avg_salary
+FROM employees
+WHERE salary > 5000
+GROUP BY department_id
+HAVING avg_salary > 10000
+ORDER BY avg_salary DESC
+LIMIT 3;
+```
+
+## 第 1 步：FROM（确定数据来源）
+
+```
+FROM employees
+```
+
+- **确定主查询表**
+
+- 数据库先去找这张表，把所有原始数据拿出来
+
+- 如果有 **多表连接（JOIN）**，也会在这一步处理连接
+
+## 第 2 步：JOIN 和 ON（连接其他表）
+
+```
+FROM employees
+JOIN departments ON employees.department_id = departments.id
+```
+
+- 多表连接在 FROM 阶段就已经处理
+
+- JOIN 的种类（INNER、LEFT、RIGHT）影响结果集的行数
+
+- ON 是连接条件，**不能用于行筛选**（不要在 ON 中写 salary > 5000）
+
+## 第 3 步：WHERE（行级过滤）
+
+```
+WHERE salary > 5000
+```
+
+- 在数据还**没分组、没聚合之前**，对原始数据进行行筛选
+
+- **不能用聚合函数**，如 AVG()、SUM() 等（此时还没开始聚合）
+
+## 第 4 步：GROUP BY（分组）
+
+```
+GROUP BY department_id
+```
+
+- 把上一阶段留下的记录，按某个字段（或表达式）分组
+
+- 每个组之后会成为一行结果
+
+- **这个阶段才开始产生聚合函数的“分组结果”**
+
+## 第 5 步：HAVING（组级过滤）
+
+```
+HAVING avg_salary > 10000
+```
+
+- 过滤的是每个分组的“统计值”，不是原始行
+
+- 可以使用聚合函数（如 SUM()、AVG()）
+
+- **WHERE 不能做的聚合条件判断，在这里可以做**
+
+## 第 6 步：SELECT（选择返回的字段）
+
+```
+SELECT department_id, AVG(salary) AS avg_salary
+```
+
+- 到这一步，系统已经知道每组统计后的结果了
+
+- 执行字段选择、聚合计算
+
+- 你也可以起别名（如 AS avg_salary），不过这个别名要等下一步才能被识别
+
+## 第 7 步：DISTINCT（可选，去重）
+
+```
+SELECT DISTINCT ...
+```
+
+- 如果你用了 DISTINCT，会在 SELECT 之后、ORDER BY 之前去重
+
+- 注意性能问题：去重操作可能非常耗资源
+
+## 第 8 步：ORDER BY（排序）
+
+```
+ORDER BY avg_salary DESC
+```
+
+- 按照前面 SELECT 出来的字段进行排序
+
+- 此时可以使用 SELECT 中的别名
+
+- 可以排序多个字段：ORDER BY a DESC, b ASC
+
+## 第 9 步：LIMIT（限制结果数量）
+
+```
+LIMIT 3
+```
+
+- 最后一步，控制结果数量
+
+- 通常用于分页或截取前几名
+
+## 总结
+
+```
+① FROM           -- 从哪张表查数据
+② JOIN           -- 多表连接处理
+③ ON             -- 联结条件
+④ WHERE          -- 行筛选（不能用聚合函数）
+⑤ GROUP BY       -- 分组
+⑥ HAVING         -- 组筛选（可用聚合函数）
+⑦ SELECT         -- 选择字段（聚合、表达式、别名）
+⑧ DISTINCT       -- 可选，去重
+⑨ ORDER BY       -- 排序（可用别名）
+⑩ LIMIT          -- 截取返回数据
+```
+
+# 子查询
+
+## 1. 什么是子查询
+
+子查询就是嵌套在 **另一个 SQL 查询中的查询语句**。你可以把它看成一个“临时产生的结果表”，这个表在主查询中被引用。
+
+**关键点**
+
+- 子查询必须被包含在括号 () 中
+
+- 可以出现在 `SELECT`、`FROM`、`WHERE`、`HAVING` 等地方
+
+## 2. 子查询的三种常见类型
+
+**① 标量子查询（Scalar Subquery）**
+
+> 子查询只返回 **一个值（一个单元格）**
+
+```sql
+SELECT first_name, salary
+FROM employees
+WHERE salary > (
+  SELECT AVG(salary)
+  FROM employees
+);
+```
+
+- 比较每位员工的工资是否高于全体平均值
+
+- SELECT AVG(salary) 返回一个标量
+
+**② 列子查询（Column Subquery）**
+
+> 子查询返回 **一列**
+
+```sql
+SELECT first_name, department_id
+FROM employees
+WHERE department_id IN (
+  SELECT department_id
+  FROM departments
+  WHERE location_id = 1700
+);
+```
+
+- 拿出所有在 1700 地点的部门中的员工
+
+- 子查询返回的是一个 department_id 列表
+
+**③ 行/表子查询（Row or Table Subquery）**
+
+> 子查询返回 **一整张表或一整行**
+
+```sql
+SELECT *
+FROM (
+  SELECT department_id, AVG(salary) AS avg_sal
+  FROM employees
+  GROUP BY department_id
+  HAVING AVG(salary) > 10000
+) AS high_salary_departments;
+```
+
+- 整个子查询结果被当成一张临时表 high_salary_departments
+
+- 外层可以继续做筛选、排序等操作
+
+## 3. 相关操作符搭配子查询
+
+| **操作符** | **用法说明**             |
+| ---------- | ------------------------ |
+| IN         | 是否属于子查询返回的列表 |
+| EXISTS     | 子查询是否返回了至少一行 |
+| =, <, >    | 搭配标量子查询使用       |
+| ANY, ALL   | 与集合比较（高级用法）   |
+
+**示例：EXISTS 子查询**
+
+```
+SELECT d.department_name
+FROM departments d
+WHERE EXISTS (
+  SELECT 1
+  FROM employees e
+  WHERE e.department_id = d.department_id
+);
+```
+
+- 只要某个部门下存在员工，就返回该部门
+
+- EXISTS 比 IN 更高效一些，尤其子查询大时
+
+## 4. 子查询 vs JOIN 的选择
+
+| **情况**                   | **建议用法**                        |
+| -------------------------- | ----------------------------------- |
+| 只取结果，不用关联额外字段 | ✅ 子查询（简洁）                   |
+| 需要拿子表中的字段一起展示 | ✅ JOIN（扩展性强）                 |
+| 数据量大、性能敏感         | ✅ JOIN 通常更好（尤其 IN vs JOIN） |
+
+## 5. 注意事项
+
+**注意事项**
+
+- 子查询 **不能返回多列**（除非用在 FROM 中）
+
+- 某些上下文中，子查询必须 **只返回一个值**（如 =、> 等运算符）
+
+- 子查询的 **性能可能不如 JOIN**，尤其在大数据量时
+
+- 有些数据库（比如早期 MySQL）对子查询优化能力较弱
+
+**应用场景**
+
+- 比较某个值是否高于平均（标量）
+
+- 从另一个表中取一列做过滤（列子查询）
+
+- 构造临时表进行进一步查询（表子查询）
+
+- 替代 JOIN 做权限或数据隔离（比如多租户）
+
+# 管理数据库
+
+## 1. 创建数据库
+
+**基本的语法**
+
+```sql
+CREATE DATABASE database_name;
+```
+
+**可选的参数**
+
+如果需要为数据库指定特定的字符集和排序规则，可以在创建时加入 CHARACTER SET 和 COLLATE 参数。例如：
+
+```sql
+CREATE DATABASE my_database
+    CHARACTER SET utf8
+    COLLATE utf8_general_ci;
+```
+
+- CHARACTER SET 用来指定字符集（例如 utf8）。
+
+- COLLATE 用来指定排序规则（例如 utf8_general_ci）。
+
+**最佳实践**
+
+```sql
+CREATE DATABASE
+IF NOT EXISTS my_database
+CHARACTER SET utf8
+```
+
+- 判断数据库是否存在
+- 如果存在则不创建，但是不报错
+- 如果不存在则创建成功
+
+## 2. 查看数据库
+
+**查看所有数据库的列表**
+
+```sql
+SHOW DATABASES;
+```
+
+**查看置顶数据库的创建信息**
+
+```sql
+SHOW CREATE DATABASE my_database;
+```
+
+- 可以查看数据库的字符集设置等信息
+
+## 3. 选择数据库
+
+```sql
+USE my_database;
+```
+
+## 4. 查看当前使用的数据库
+
+```sql
+SELECT DATABASE() FROM DUAL;
+```
+
+## 5. 查看数据表
+
+**当前数据库的数据表**
+
+```sql
+SHOW TABLES;
+```
+
+**指定数据库的数据表**
+
+```sql
+SHOW TABLES FROM my_database;
+```
+
+## 6. 修改数据库
+
+### 修改数据库字符集
+
+```sql
+ALTER DATABASE my_database CHARACTER SET 'utf-8';
+```
+
+## 7. 删除数据库
+
+**基础语法**
+
+```sql
+DROP DATABASE my_database;
+```
+
+**推荐做法**
+
+```sql
+DROP DATABASE IF EXISTS my_database;
+```
+
+- 如果数据库存在则删除成功
+
+## 8. 登录数据库
+
+```shell
+mysql -uroot -pmysql123456
+# 等价于
+mysql -u root -P 3306 -h localhost -pmysql123456
+```
+
+- -p 后可以不明文写入密码，根据提示再输入密码
+
+# 管理数据表
+
+## 1. 创建数据表
+
+**方式 1：创建新表**
+
+```sql
+CREATE TABLE IF NOT EXISTS test_table(
+	id INT,
+  emp_name VARCHAR(15),
+  hire_date DATE
+);
+```
+
+**方式 2：基于现有表，同时导入数据**
+
+```sql
+CREATE TABLE test_table
+AS
+SELECT employee_id a, last_name b
+FROM employee;
+```
+
+- 可以使用 select 的结果作为表数据进行对新表的填充
+
+- 当使用别名时，新表也会使用别名作为字段
+
+- 创建表时可以指定表的字符集，包括表的字符集或者字段的字符集
+
+## 2. 查看数据表结构
+
+```sql
+DESC test_table;
+```
+
+## 3. 修改表
+
+**语法**
+
+```sql
+ALTER TABLE
+```
+
+**关键字**
+
+| **操作**     | **语法关键词** | **说明**                 |
+| ------------ | -------------- | ------------------------ |
+| 添加字段     | ADD COLUMN     | 新增一个字段             |
+| 修改字段类型 | MODIFY COLUMN  | 改字段类型或约束，不改名 |
+| 重命名字段   | CHANGE COLUMN  | 改字段名，可以顺便改类型 |
+| 删除字段     | DROP COLUMN    | 删除指定字段             |
+
+### 添加字段
+
+**语法**
+
+```sql
+ALTER TABLE 表名 ADD COLUMN 字段名 数据类型 [约束] [位置];
+```
+
+- 位置 可选：
+
+- FIRST：添加到最前面
+
+- AFTER 某字段名：添加到指定字段之后
+
+**示例**
+
+```sql
+ALTER TABLE users
+ADD COLUMN age INT
+AFTER username;
+
+ALTER TABLE users
+ADD COLUMN created_at DATETIME
+DEFAULT CURRENT_TIMESTAMP;
+```
+
+### 修改字段
+
+**语法**
+
+```sql
+ALTER TABLE 表名 MODIFY COLUMN 字段名 新数据类型 [约束];
+```
+
+**示例**
+
+```sql
+ALTER TABLE users MODIFY COLUMN age TINYINT UNSIGNED NOT NULL;
+```
+
+### 重命名字段
+
+**语法**
+
+```sql
+ALTER TABLE 表名 CHANGE COLUMN 原字段名 新字段名 新数据类型 [约束];
+```
+
+**注意**
+
+- 必须提供新字段名和完整的数据类型。
+- 可以同时修改字段名和字段类型
+
+**示例**
+
+```sql
+ALTER TABLE users CHANGE COLUMN username user_name VARCHAR(100) NOT NULL;
+```
+
+### 删除字段
+
+**语法**
+
+```sql
+ALTER TABLE 表名 DROP COLUMN 字段名;
+```
+
+**示例**
+
+```sql
+ALTER TABLE users DROP COLUMN age;
+```
+
+## 4. 重命名表
+
+**语法 1**
+
+```sql
+RENAME TABLE 原表名 TO 新表名;
+```
+
+**语法 2**
+
+```sql
+ALTER TABLE 原表名 RENAME TO 新表名;
+```
+
+**示例**
+
+```sql
+RENAME TABLE users TO members;
+
+-- 或者
+ALTER TABLE users RENAME TO members;
+```
+
+**注意事项**
+
+- 重命名表不会影响表的数据或结构。
+
+- 表被重命名后，所有依赖旧表名的 SQL 语句（如外部查询）需要修改。
+
+- 若新表名已存在，则重命名会失败。
+
+## 5. 删除表
+
+**语法**
+
+```sql
+DROP TABLE 表名;
+```
+
+**示例**
+
+```sql
+DROP TABLE users;
+```
+
+**注意事项**
+
+- 表和其数据会**被永久删除**，**不可恢复**（慎用！）。
+
+- 如果你不确定表是否存在，可以加上 IF EXISTS：
+
+```sql
+DROP TABLE IF EXISTS users;
+```
+
+## 6. 清空表
+
+**语法**
+
+```sql
+TRUNCATE TABLE 表名;
+```
+
+**示例**
+
+```sql
+TRUNCATE TABLE users;
+```
+
+**注意事项**
+
+| **特点** | **与** DELETE **区别**                           |
+| -------- | ------------------------------------------------ |
+| 高速     | TRUNCATE 是**重新创建表**，删除速度比 DELETE 快  |
+| 无日志   | 不记录每一行删除操作，几乎不可恢复               |
+| 无触发器 | 不会触发 DELETE 触发器                           |
+| 自增重置 | 会将 AUTO_INCREMENT 的值重置为初始值（通常是 1） |
+| 无条件   | 不能带 WHERE 条件，**清空就是全部清空**          |
+
+# 数据库操作术语分类
+
+在 SQL 中，我们经常会看到一些缩写术语，比如 **DDL、DML、DCL、TCL** 等，它们是对 SQL 不同类型语句的分类，分别表示不同的操作范围和作用。
+
+## DDL（Data Definition Language）
+
+**数据定义语言** → 用来定义或修改数据库结构：数据库、表、字段、索引等。
+
+**常见 DDL 语句：**
+
+| **语句** | **作用说明**           |
+| -------- | ---------------------- |
+| CREATE   | 创建数据库、表、视图等 |
+| ALTER    | 修改数据库结构         |
+| DROP     | 删除数据库或表         |
+| TRUNCATE | 清空表数据，但保留结构 |
+| RENAME   | 重命名表或字段         |
+
+**原子化**
+
+**DDL 原子化**（Atomic DDL）是指：**DDL（数据定义语言）语句在执行时具备事务原子性**——**要么全部成功，要么全部失败，不会留下中间状态**。\*\*\*\*
+
+## DML（Data Manipulation Language）
+
+**数据操作语言** → 用来对表中的数据进行增、删、改、查。
+
+**常见 DML 语句：**
+
+| **语句** | **作用说明**                 |
+| -------- | ---------------------------- |
+| INSERT   | 插入新数据行                 |
+| UPDATE   | 修改已有数据                 |
+| DELETE   | 删除数据                     |
+| SELECT   | 查询数据（有时也归类为 DRL） |
+
+## DCL（Data Control Language）
+
+**数据控制语言** → 用来定义权限和安全级别。
+
+**常见 DCL 语句：**
+
+| **语句** | **作用说明**         |
+| -------- | -------------------- |
+| GRANT    | 授权用户执行某些操作 |
+| REVOKE   | 撤销用户权限         |
+
+## TCL（Transaction Control Language）
+
+**事务控制语言** → 用于控制事务的执行和一致性。
+
+**常见 TCL 语句：**
+
+| **语句**          | **作用说明**                 |
+| ----------------- | ---------------------------- |
+| BEGIN             | 开始一个事务（某些数据库用） |
+| START TRANSACTION | 开启事务（MySQL 推荐）       |
+| COMMIT            | 提交事务，保存修改           |
+| ROLLBACK          | 回滚事务，撤销未提交的修改   |
+| SAVEPOINT         | 设置一个事务保存点           |
+| RELEASE SAVEPOINT | 删除保存点                   |
+
+## DRL（Data Retrieval Language）
+
+**数据查询语言** → 也叫 **查询语言**，有时将 SELECT 单独列为一类：
+
+| **语句** | **作用说明**   |
+| -------- | -------------- |
+| SELECT   | 从表中查询数据 |
+
+## 小结对比
+
+| **缩写** | **全称**                     | **作用范围**     | **常见关键字**              |
+| -------- | ---------------------------- | ---------------- | --------------------------- |
+| DDL      | Data Definition Language     | 定义结构         | CREATE, ALTER, DROP, RENAME |
+| DML      | Data Manipulation Language   | 操作数据         | INSERT, UPDATE, DELETE      |
+| DCL      | Data Control Language        | 权限控制         | GRANT, REVOKE               |
+| TCL      | Transaction Control Language | 控制事务         | BEGIN, COMMIT, ROLLBACK     |
+| DRL      | Data Retrieval Language      | 查询数据（可选） | SELECT                      |
+
+## 回滚与提交
+
+### 1. 基本情况
+
+| **语句类型** | **语句**                                  | **是否可回滚**           | **说明**                             |
+| ------------ | ----------------------------------------- | ------------------------ | ------------------------------------ |
+| ✅ DML       | INSERT / UPDATE / DELETE                  | ✔️ 是                    | 只要未提交，都可以通过 ROLLBACK 撤销 |
+| ❌ DDL       | CREATE / DROP / ALTER / TRUNCATE / RENAME | ❌ 否                    | 一执行就立即生效，**不可回滚**       |
+| ❌ DCL       | GRANT / REVOKE                            | ❌ 否                    | 权限变更一旦执行即生效，不能撤销     |
+| ✅ TCL       | COMMIT / ROLLBACK / SAVEPOINT             | ✔️ 是                    | 本身就是用于事务控制                 |
+| ✅ SELECT    | SELECT 查询                               | 不涉及数据更改，无需回滚 |                                      |
+
+### 2. 特别说明
+
+- **DDL 语句是隐式提交事务的**，执行 DDL 会自动提交当前事务，然后再执行自己，所以**即使你写在事务中也无法回滚**。
+
+- TRUNCATE 虽然只是清空表，看似像 DELETE，但其实是 DDL 操作，**不能回滚！**
+
+- 如果你用的是 MyISAM 引擎的表（而不是 InnoDB），是不支持事务的，回滚也不会生效。
+
+# 数据增删改
+
+## 插入数据
+
+> 在 MySQL 中，**添加数据**主要通过 INSERT 语句来实现，它属于 **DML（数据操作语言）** 的一部分。
+
+### 1. 基本插入语法（INSERT INTO）
+
+#### 方式一：不指明添加的字段
+
+**语法**
+
+```sql
+INSERT INTO 表名 VALUES (值1, 值2, ...);
+```
+
+**示例**
+
+```sql
+INSERT INTO users VALUES (1, '张三', 25);
+```
+
+**注意**
+
+- 一定要按照声明字段的顺序进行添加
+- 不推荐省略字段名！字段顺序改变时容易出错
+
+#### 方式二：指明添加的字段
+
+**语法**
+
+```sql
+INSERT INTO 表名 (字段1, 字段2, ...) VALUES (值1, 值2, ...);
+```
+
+**示例**
+
+```sql
+INSERT INTO users (id, name, age) VALUES (1, '张三', 25);
+```
+
+**注意**
+
+- 没有被指定的字段会根据约束和默认值进行处理
+
+### 2. 批量插入多条数据
+
+**语法**
+
+```sql
+INSERT INTO 表名 (字段1, 字段2, ...) VALUES
+(值1, 值2, ...),
+(值1, 值2, ...),
+(值1, 值2, ...);
+```
+
+**示例**
+
+```sql
+INSERT INTO users (id, name, age) VALUES
+(3, '王五', 28),
+(4, '赵六', 22),
+(5, '钱七', 35);
+```
+
+### 3. 将查询结果插入数据
+
+**示例**
+
+```sql
+INSERT INTO new_users (id, name, age)
+SELECT id, name, age FROM users WHERE age > 30;
+```
+
+**注意**
+
+- 字段数量和名称必须一一对应
+- 需要确认数据类型和范围，可以防止风险
+
+### 4. 处理重复
+
+**1. INSERT IGNORE：忽略错误（如主键重复）**
+
+主键冲突时跳过这一行，其他行继续插入。
+
+```
+INSERT IGNORE INTO users (id, name, age) VALUES (1, '重复', 20);
+```
+
+**2. REPLACE INTO：主键冲突时先删除旧数据再插入新数据**
+
+有点暴力，会触发删除和插入，**主键/唯一键冲突时才生效**。
+
+```
+REPLACE INTO users (id, name, age) VALUES (1, '替换', 26);
+```
+
+**3. INSERT ... ON DUPLICATE KEY UPDATE：主键冲突时更新**
+
+```
+INSERT INTO users (id, name, age)
+VALUES (1, '张三', 25)
+ON DUPLICATE KEY UPDATE age = 26;
+```
+
+### 5. 注意事项
+
+**使用 DEFAULT 或 NULL 显式指定**
+
+```sql
+INSERT INTO users (id, name, age) VALUES (6, '吴九', DEFAULT);
+-- 或者
+INSERT INTO users (id, name, age) VALUES (7, '郑十', NULL);
+```
+
+## 更新数据
+
+> **MySQL 中修改数据** 的操作，这通常是通过 **UPDATE 语句** 来实现的，它属于 **DML（数据操作语言）** 的一部分。
+
+### 1. UPDATE 语法格式
+
+```
+UPDATE 表名
+SET 字段1 = 新值1, 字段2 = 新值2, ...
+[WHERE 条件];
+```
+
+**注意**
+
+- 更新数据可能不成功，可能是由于存在约束的原因。
+
+### 2. 基本使用示例
+
+```
+UPDATE users
+SET age = 28
+WHERE name = '张三';
+```
+
+### 3. WHERE 条件
+
+**示例**
+
+```
+UPDATE users
+SET age = 0;
+```
+
+没有 WHERE 会更新全表，这将把所有用户的 age 全部修改为 0
+
+**注意**
+
+- **一定要加 WHERE 限定条件**
+
+- 最好先用 SELECT 查询确认影响的行
+
+- 复杂修改前可以考虑加事务（START TRANSACTION）
+
+### 4. 更新多个字段
+
+```
+UPDATE users
+SET name = '李四', age = 30
+WHERE id = 1;
+```
+
+### 5. 特殊更新方法
+
+**基于原值更新**
+
+```
+UPDATE users
+SET age = age + 1
+WHERE id = 1;
+```
+
+**结合条件更新多个记录**
+
+```
+UPDATE users
+SET age = age + 2
+WHERE age < 25 AND name LIKE '张%';
+```
+
+**配合 ORDER BY 和 LIMIT**
+
+更新前 3 条记录，可用于定向修改。
+
+```
+UPDATE users
+SET age = age + 1
+ORDER BY created_at
+LIMIT 3;
+```
+
+**结合子查询更新**
+
+```
+UPDATE users
+SET age = (
+  SELECT AVG(age) FROM users
+)
+WHERE id = 1;
+```
+
+## 删除数据
+
+> **MySQL 中删除数据** 的操作，主要通过 DELETE 和 TRUNCATE 两种方式实现，它们虽然都能删数据，但作用范围、性能、可回滚性等方面都有区别。
+
+### DELETE —— 有选择地删除数据（DML）
+
+**语法**
+
+```
+DELETE FROM 表名 WHERE 条件;
+```
+
+**示例**
+
+```
+DELETE FROM users WHERE id = 3;
+```
+
+只删除 id = 3 的那一行。
+
+**注意**
+
+- 可以回滚
+- 如果不加 WHERE 条件, 这将删除表中 **所有数据**，但表结构仍然保留！
+
+```
+DELETE FROM users;
+```
+
+## 计算列(MySQL8 特性)
+
+> MySQL8 中的“计算列”，也叫作 生成列（Generated Columns）。
+> 这是一个很实用的功能，可以让你在表中定义由其他字段计算出来的列，比如自动拼接、自动求和、状态映射等 —— 而且这些列 不需要你每次手动更新，MySQL 会自动处理。
+
+### 1. 什么是计算列
+
+**定义**
+
+计算列是指一个字段的值 由其他字段计算得出，你在建表时定义好表达式，MySQL 自动生成。
+
+### 2. 语法
+
+```sql
+列名 数据类型 [GENERATED ALWAYS] AS (表达式) [VIRTUAL | STORED] [UNIQUE | NOT NULL | ...]
+```
+
+### 3. 虚拟列与持久列
+
+#### (1) VIRTUAL（虚拟）
+
+> 不存储，只在用到时动态计算（默认）
+
+**示例**
+
+```sql
+CREATE TABLE products (
+  name VARCHAR(50),
+  price DECIMAL(10,2),
+  quantity INT,
+  total_cost DECIMAL(12,2) AS (price * quantity) VIRTUAL
+);
+```
+
+#### (2) STORED（持久）
+
+> 计算后存储在磁盘上，提高查询性能
+
+**示例**
+
+```sql
+CREATE TABLE users (
+  first_name VARCHAR(20),
+  last_name VARCHAR(20),
+  full_name VARCHAR(50) AS (CONCAT(first_name, ' ', last_name)) STORED
+);
+```
+
+### 4. 修改为计算列
+
+**语法**
+
+```sql
+ALTER TABLE users
+ADD full_name VARCHAR(50) AS (CONCAT(first_name, ' ', last_name)) STORED;
+```
+
+### 5. 注意事项
+
+- VIRTUAL 一般不能建索引（除非是主键/唯一键）,STORED 可以建索引
+- 生成列不能引用其他生成列（不能套娃）
+- 表达式不能包含子查询、变量、函数如 RAND()、NOW()（不确定）
+- VIRTUAL 不占空间但计算开销大，STORED 反之
+- 若你用的是 STORED，插入或更新行时会自动计算好并存储
+
+# 数据类型
+
+## 数值类型
+
+### 1. 整数类型
+
+| **类型**      | **占用空间** | **范围（有符号）** | **范围（无符号）** |
+| ------------- | ------------ | ------------------ | ------------------ |
+| TINYINT       | 1 字节       | -128 ~ 127         | 0 ~ 255            |
+| SMALLINT      | 2 字节       | -32,768 ~ 32,767   | 0 ~ 65,535         |
+| MEDIUMINT     | 3 字节       | -8 百万 ~ 8 百万   | 0 ~ 1670 万        |
+| INT / INTEGER | 4 字节       | -21 亿 ~ 21 亿     | 0 ~ 42 亿          |
+| BIGINT        | 8 字节       | 非常大             | 更大               |
+
+### 2. 浮点型 & 定点型
+
+| **类型**     | **说明**                               |
+| ------------ | -------------------------------------- |
+| FLOAT        | 单精度浮点数（4 字节）                 |
+| DOUBLE       | 双精度浮点数（8 字节）                 |
+| DECIMAL(m,d) | 定点数，**用于存储精确小数**（如金额） |
+
+**注意**
+
+- 金额类数据 **必须用 DECIMAL**，不要用 FLOAT/DOUBLE，因为后者有精度误差
+- DECIMAL 的范围由 m 和 d 决定，占用空间为 m+2
+- DECIMAL 不指定 m 和 d 时，默认为(10,0)
+
+## 字符串类型
+
+| **类型**   | **说明**                                  |
+| ---------- | ----------------------------------------- |
+| CHAR(n)    | 定长字符串，最多 255 字符                 |
+| VARCHAR(n) | 变长字符串，最多 65535 字节（受编码限制） |
+| TEXT       | 长文本，最多 64KB                         |
+| TINYTEXT   | 最多 255 字节                             |
+| MEDIUMTEXT | 最多 16MB                                 |
+| LONGTEXT   | 最多 4GB                                  |
+
+### 1. CHAR VARCHAR
+
+| **类型** | **全称**        | **说明**                 |
+| -------- | --------------- | ------------------------ |
+| CHAR     | Fixed-length    | **定长**字符串，长度固定 |
+| VARCHAR  | Variable-length | **变长**字符串，长度可变 |
+
+**语法格式**
+
+```sql
+-- CHAR(n)：固定 n 个字符
+name CHAR(10);
+
+-- VARCHAR(n)：最多 n 个字符
+nickname VARCHAR(50);
+```
+
+> 注意：这里的 “字符” 不是字节，和字符集有关（比如 utf8 一个汉字是 3 个字节）。
+
+**对比**
+
+| **比较项**   | CHAR(n)                                    | VARCHAR(n)                          |
+| ------------ | ------------------------------------------ | ----------------------------------- |
+| 是否定长     | ✅ 是                                      | ❌ 否，变长                         |
+| 空间占用     | 固定分配 n 个字符的空间                    | 实际内容长度 + 1~2 字节的长度信息   |
+| 存储性能     | ✅ 更快（定长结构，容易缓存）              | ❌ 稍慢（每行长度不一致，处理复杂） |
+| 末尾空格处理 | 会自动填充并保留                           | 不保留末尾空格（自动截断）          |
+| 适用场景     | 长度基本一致的短字符串，如国家代码、性别等 | 可变长度的字符串，如用户名、邮箱等  |
+| 最大长度     | 最多 255 个字符                            | 最多 65535 字节（受行最大限制影响） |
+
+**示例**
+
+```sql
+CREATE TABLE country (
+  code CHAR(2),          -- 如 'CN', 'US'
+  name VARCHAR(100)
+);
+```
+
+- CHAR(2) 永远占两个字符，不管是 'US' 还是 'U'，后者会补空格 'U '。
+
+```sql
+CREATE TABLE user (
+  id INT,
+  nickname VARCHAR(20)  -- 实际长度随内容变
+);
+```
+
+- 插入 'Tom'：占 3 个字符 + 1 个长度字节
+
+- 插入 'AlexanderTheGreat'：占 19 字符 + 1 个长度字节
+
+**末尾空格处理**
+
+```sql
+-- CHAR 会保留末尾空格
+SELECT LENGTH(CHAR_FIELD) FROM table;
+
+-- VARCHAR 会自动截掉末尾空格
+SELECT LENGTH(VARCHAR_FIELD) FROM table;
+```
+
+**使用场景**
+
+| **场景**                               | **推荐类型** |
+| -------------------------------------- | ------------ |
+| 性别、国别码、身份证位数固定的字段     | CHAR         |
+| 用户名、邮箱、地址等长度不定字段       | VARCHAR      |
+| 性能更重要（数据量很大且字段长度一致） | CHAR         |
+| 节省空间更重要                         | VARCHAR      |
+
+### 2. TEXT 类
+
+| **类型名称** | **最大长度**               | **存储空间**   | **用途示例**                                 |
+| ------------ | -------------------------- | -------------- | -------------------------------------------- |
+| TINYTEXT     | 255 字符（255 字节）       | 1 字节长度信息 | 短文本，类似评论、标签、标题等               |
+| TEXT         | 65,535 字符（64 KB）       | 2 字节长度信息 | 一般的文章内容、评论等                       |
+| MEDIUMTEXT   | 16,777,215 字符（16 MB）   | 3 字节长度信息 | 中等长度的文本，例如日志、文章等             |
+| LONGTEXT     | 4,294,967,295 字符（4 GB） | 4 字节长度信息 | 用于存储非常长的文本，例如小说、数据库备份等 |
+
+**语法示例**
+
+```sql
+CREATE TABLE articles (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  title VARCHAR(255),
+  content TEXT
+);
+
+-- 插入文本内容
+INSERT INTO articles (title, content) VALUES
+('My First Article', 'This is the content of my first article. It is quite long...');
+```
+
+**注意事项**
+
+- **不能使用 TEXT 字段作为 PRIMARY KEY 或 UNIQUE KEY**：
+
+  - 由于 TEXT 类型存储较大，因此它不能用作索引字段，除非你指定索引的前缀长度（比如 VARCHAR(255)）。但需要注意的是，即使 TEXT 字段可以部分索引，它的索引性能可能会很差。
+
+- **性能问题**：
+
+  - TEXT 类型字段由于存储在外部，查询时需要额外的 I/O 操作，因此在查询长文本时可能会导致性能问题，尤其是在没有索引的情况下。
+
+- **不适用于存储短文本**：
+
+  - 如果字段内容较短，建议使用 VARCHAR，因为它会更高效，不会浪费存储空间。
+
+- **没有默认长度限制**：
+
+  - TEXT 类型的字段不像 VARCHAR 一样有字符数限制（最大为 65535 字节），它可以存储非常大的文本内容。
+
+- **与 BLOB 的比较**：
+  - TEXT 和 BLOB 都是变长字段，区别在于 TEXT 存储字符数据（通常使用字符集编码），而 BLOB 存储二进制数据。它们的存储方式和容量限制相似，但用途不同。
+
+## 日期和时间类型
+
+> MySQL 中的日期和时间类型，是做数据开发时非常常用的一类字段，特别是在记录创建时间、更新时间、业务时间线（比如订单时间、签到时间等）时。
+
+| **类型**  | **示例**              | **描述**                      | **精度支持（MySQL 5.6.4+）** |
+| --------- | --------------------- | ----------------------------- | ---------------------------- |
+| DATE      | '2025-03-20'          | 只包含日期，格式：YYYY-MM-DD  | ❌ 无小数秒                  |
+| TIME      | '12:34:56'            | 只包含时间，格式：hh:mm:ss    | ✅ 支持毫秒~微秒             |
+| DATETIME  | '2025-03-20 12:34:56' | 日期 + 时间，常用于业务记录   | ✅ 支持毫秒~微秒             |
+| TIMESTAMP | '2025-03-20 12:34:56' | 类似 DATETIME，但和时区强相关 | ✅ 支持毫秒~微秒             |
+| YEAR      | 2025                  | 只存年份（1901–2155）         | ❌ 无小数秒                  |
+
+### 1. YEAR
+
+**YEAR 类型基本特性**
+
+- 用于存储年份，例如 2025
+
+- 格式为：**YEAR(4)**（默认写作 YEAR）
+
+- 实际存储的是 **4 位整数**，但属于日期类型
+- 0000 也可以被存储，但必须是明确指定（比如做占位符时），不是默认行为。
+
+**存储范围**
+
+| **最小值** | **最大值** |
+| ---------- | ---------- |
+| 1901       | 2155       |
+
+**语法**
+
+```sql
+INSERT INTO t (graduation_year) VALUES (2025);
+INSERT INTO t (graduation_year) VALUES ('2025');
+INSERT INTO t (graduation_year) VALUES ('25'); -- 自动补成 2025
+```
+
+MySQL 会根据你插入的值自动转化：
+
+| **插入值** | **实际存储为** |
+| ---------- | -------------- |
+| '70'       | 1970           |
+| '99'       | 1999           |
+| '00'       | 2000           |
+| '69'       | 2069           |
+
+**重点：**
+
+- 插入两位数字时，MySQL 会使用 “切换点规则”：
+  - 00–69 → 2000–2069
+  - 70–99 → 1970–1999
+- **尽量避免插入两位年份，容易造成歧义**
+
+### 2. DATE
+
+**基本特性**
+
+| **特性**       | **说明**                                   |
+| -------------- | ------------------------------------------ |
+| 类型名         | DATE                                       |
+| 格式           | 'YYYY-MM-DD'                               |
+| 占用空间       | 3 字节                                     |
+| 范围           | **1000-01-01 ~ 9999-12-31**                |
+| 是否有时间部分 | ❌ 没有（只有年月日）                      |
+| 是否支持默认值 | ✅ 可以设置默认值，如 DEFAULT CURRENT_DATE |
+
+**插入语法**
+
+```sql
+INSERT INTO holidays (name, holiday_date) VALUES ('元旦', '2025-01-01');
+```
+
+**查询语法**
+
+```sql
+-- 查询所有今天的记录
+SELECT * FROM events WHERE event_date = CURRENT_DATE;
+
+-- 查询某个月的数据（比如 2025年3月）
+SELECT * FROM events
+WHERE event_date BETWEEN '2025-03-01' AND '2025-03-31';
+```
+
+**常用函数**
+
+| **函数**       | **作用**                      |
+| -------------- | ----------------------------- |
+| CURRENT_DATE() | 当前日期（和 CURDATE() 一样） |
+| DATE(NOW())    | 从 DATETIME 中提取出日期部分  |
+| DATE_ADD()     | 日期加天数/月份等             |
+| DATE_SUB()     | 日期减天数/月份等             |
+| DATEDIFF()     | 计算两个日期相差多少天        |
+| YEAR(date)     | 提取年份                      |
+| MONTH(date)    | 提取月份                      |
+| DAY(date)      | 提取日                        |
+
+```sql
+-- 计算距离今天还有几天
+SELECT DATEDIFF('2025-12-25', CURRENT_DATE) AS days_left;
+
+-- 提取年月日
+SELECT YEAR(birthday), MONTH(birthday), DAY(birthday) FROM users;
+```
+
+**注意事项**
+
+| **注意点**      | **说明**                                                                   |
+| --------------- | -------------------------------------------------------------------------- |
+| ❗ 插入非法日期 | MySQL 默认会报错，如 '2025-02-30' 会报错或变成 '0000-00-00'（看 SQL 模式） |
+| ❗ 空值问题     | NULL 和 '0000-00-00' 是不同的（是否允许取决于你的 SQL 模式）               |
+| ❗ 时区无关     | DATE 类型和系统时区无关，不会因时区偏移而改变                              |
+| ✅ 可以索引     | DATE 是常见的索引字段（比如订单日期、注册日期）                            |
+
+### 3. TIME
+
+**基本特性**
+
+| **特性**       | **说明**                       |
+| -------------- | ------------------------------ |
+| 类型名         | TIME                           |
+| 格式           | 'hh:mm:ss'                     |
+| 范围           | -838:59:59 到 838:59:59        |
+| 占用空间       | 3~5 字节（取决于是否有小数秒） |
+| 是否有日期     | ❌ 没有，纯时间                |
+| 是否受时区影响 | ❌ 不受时区影响                |
+
+**时间范围 & 精度**
+
+- 最大支持：**838 小时 59 分 59 秒**（不是 24 小时！）
+
+- 可选精度（MySQL 5.6.4+ 起支持小数秒）：
+
+```sql
+TIME(0)  -- 默认，精度到秒
+TIME(3)  -- 精确到毫秒
+TIME(6)  -- 精确到微秒
+```
+
+```sql
+'12:34:56.789'  -- TIME(3)
+'99:59:59.123456' -- TIME(6)
+```
+
+**插入与显示**
+
+```sql
+INSERT INTO schedule (start_time) VALUES ('08:30:00');
+```
+
+MySQL 接受多种格式：
+
+| **插入值** | **实际存储**     |
+| ---------- | ---------------- |
+| '10:20'    | '10:20:00'       |
+| '3:5:9'    | '03:05:09'       |
+| -12:00:00  | 负时间段（合法） |
+| '90:00:00' | 支持超过 24 小时 |
+
+**常用函数**
+
+| **函数**       | **描述**                 |
+| -------------- | ------------------------ |
+| CURTIME()      | 返回当前时间（不带日期） |
+| SEC_TO_TIME(n) | 将秒数转为时间格式       |
+| TIME_TO_SEC(t) | 将时间格式转为秒数       |
+| ADDTIME()      | 时间相加                 |
+| SUBTIME()      | 时间相减                 |
+| HOUR(t)        | 提取小时                 |
+| MINUTE(t)      | 提取分钟                 |
+| SECOND(t)      | 提取秒                   |
+
+```sql
+-- 获取当前时间
+SELECT CURTIME();  -- 例如 '16:45:22'
+
+-- 将 3661 秒转为时间
+SELECT SEC_TO_TIME(3661);  -- '01:01:01'
+
+-- 计算两个时间差
+SELECT SUBTIME('08:30:00', '07:15:00');  -- '01:15:00'
+```
+
+### 4. DATETIME
+
+> DATETIME 是 MySQL 中最通用的时间类型，用来准确记录“一个具体时间点”，**不受时区影响、支持微秒精度**，是你设计数据库时间字段的首选！
+
+**基本特性**
+
+| **特性**                 | **内容**                                              |
+| ------------------------ | ----------------------------------------------------- |
+| 类型名                   | DATETIME                                              |
+| 格式                     | 'YYYY-MM-DD HH:MM:SS'                                 |
+| 范围                     | '1000-01-01 00:00:00' ~ '9999-12-31 23:59:59'         |
+| 占用空间                 | 8 字节（无小数秒） / 9~13 字节（带小数秒）            |
+| 精度支持（MySQL 5.6.4+） | 可选精度：DATETIME(fsp)，fsp 可为 0~6，表示小数秒位数 |
+| 是否与时区有关           | ❌ 不受时区影响（不同于 TIMESTAMP）                   |
+
+**常用场景**
+
+| **场景**                   | **是否推荐用** DATETIME |
+| -------------------------- | ----------------------- |
+| 用户注册时间、更新时间     | ✅ 推荐                 |
+| 博客发布时间               | ✅ 推荐                 |
+| 订单生成时间               | ✅ 推荐                 |
+| 记录某年某月某日几点的事情 | ✅ 推荐                 |
+| 表示时间段（不含日期）     | ❌ 不推荐，用 TIME      |
+
+**插入与查询**
+
+```sql
+-- 插入 DATETIME 字面量
+INSERT INTO logs (log_time) VALUES ('2025-03-20 14:45:00');
+
+-- 获取当前时间（不带时区影响）
+INSERT INTO logs (log_time) VALUES (NOW());
+```
+
+**常用函数**
+
+| **函数**               | **含义**                               |
+| ---------------------- | -------------------------------------- |
+| NOW()                  | 当前日期时间（同 CURRENT_TIMESTAMP()） |
+| DATE(NOW())            | 提取日期部分                           |
+| TIME(NOW())            | 提取时间部分                           |
+| YEAR(), MONTH(), DAY() | 提取年月日                             |
+| DATE_FORMAT()          | 自定义格式输出                         |
+
+```sql
+-- 查询今天的记录
+SELECT * FROM logs WHERE DATE(log_time) = CURDATE();
+
+-- 查询 2024 年 12 月的记录
+SELECT * FROM logs
+WHERE log_time BETWEEN '2024-12-01 00:00:00' AND '2024-12-31 23:59:59';
+```
+
+**小数秒精度**
+
+支持精确到微秒：
+
+```sql
+CREATE TABLE t (
+  created_at DATETIME(3)  -- 精确到毫秒，例如 2025-03-20 14:45:30.123
+);
+```
+
+可选精度范围是 DATETIME(0) 到 DATETIME(6)，对应秒、小数秒、毫秒、微秒级别。
+
+**设计建议**
+
+```sql
+-- 可以自动记录插入和更新时间，常见于“记录最后修改时间”场景。
+CREATE TABLE orders (
+  id INT PRIMARY KEY,
+  customer_id INT,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+```
+
+**注意事项**
+
+| **注意点**                   | **说明**                                         |
+| ---------------------------- | ------------------------------------------------ |
+| 插入非法格式会报错           | 比如 '2025-02-30 00:00:00' 是非法的              |
+| 不支持 'YYYY-MM-DD' 直接插入 | 少了时间部分会默认补成 '00:00:00'                |
+| 不支持时区自动换算           | 与 TIMESTAMP 不同                                |
+| 可以加索引/做范围查询        | 日期区间查询效率很好                             |
+| 不推荐存文本时间             | 用字符串如 '2025-03-20 14:00' 会失去时间函数支持 |
+
+### 5. TIMESTAMP
+
+> TIMESTAMP 是一种紧凑、高效、支持自动更新时间戳的时间类型，**适合记录服务器时间点、日志、审计信息，受时区影响、最大支持到 2038 年**，相比 DATETIME 更偏系统层面用途。
+
+**基本特性**
+
+| **特性**       | **内容**                                                         |
+| -------------- | ---------------------------------------------------------------- |
+| 类型名         | TIMESTAMP                                                        |
+| 格式           | 'YYYY-MM-DD HH:MM:SS'                                            |
+| 时间范围       | '1970-01-01 00:00:01' ~ '2038-01-19 03:14:07'（Unix 时间戳限制） |
+| 占用空间       | 4 字节（无小数秒） / 5~9 字节（有小数秒）                        |
+| 是否受时区影响 | ✅ **受时区影响（存 UTC，显示按本地转换）**                      |
+| 默认值         | ✅ 支持 CURRENT_TIMESTAMP                                        |
+
+**举例**
+
+```sql
+CREATE TABLE logs (
+  id INT PRIMARY KEY,
+  message VARCHAR(100),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+```
+
+- 插入数据时记录当前时间
+
+- 每次更新行时自动更新 updated_at
+
+**小数秒支持**
+
+和 DATETIME 一样，可以加小数秒精度（最多 6 位）：
+
+```sql
+CREATE TABLE t (
+  ts TIMESTAMP(3)  -- 精确到毫秒
+);
+```
+
+插入：
+
+```sql
+INSERT INTO t VALUES ('2025-03-20 14:22:33.789');
+```
+
+**与时区有关**
+
+- TIMESTAMP 实际存储的是 **UTC 时间**
+
+- 查询时会根据 MySQL 的 time_zone 设置自动转换成本地时间
+
+```sql
+SET time_zone = '+00:00';
+SELECT CURRENT_TIMESTAMP;  -- 比北京时间少 8 小时
+
+SET time_zone = '+08:00';
+SELECT CURRENT_TIMESTAMP;  -- 显示北京时间
+```
+
+**注意事项**
+
+| **⚠️ 注意点**                         | **说明**                                                                               |
+| ------------------------------------- | -------------------------------------------------------------------------------------- |
+| 1️⃣ 超过 2038 年会出错                 | 因为底层是 32 位 Unix 时间戳                                                           |
+| 2️⃣ 时区切换会影响显示值               | 比如迁移数据或修改时区配置前要小心                                                     |
+| 3️⃣ 默认只能有一个自动更新的字段       | 一个表中只能有一个字段设置 ON UPDATE CURRENT_TIMESTAMP（除非 MySQL 5.6.5+ 并显式声明） |
+| 4️⃣ 如果默认值未设置，插入 NULL 会报错 | 除非声明为 NULL 类型                                                                   |
+
+### 6. DATETIME vs TIMESTAMP
+
+| **对比点**   | DATETIME                           | TIMESTAMP                         |
+| ------------ | ---------------------------------- | --------------------------------- |
+| 存储方式     | 存储**本地时间**，格式化后存储     | 存储**UTC 时间戳（Unix time）**   |
+| 时区影响     | ✅ 不受时区影响                    | ❌ 和当前系统时区有关             |
+| 存储范围     | 1000-01-01 ~ 9999-12-31            | 1970-01-01 ~ 2038-01-19           |
+| 默认值支持   | ❌ 不支持 CURRENT_TIMESTAMP 默认值 | ✅ 支持 DEFAULT CURRENT_TIMESTAMP |
+| 占用空间     | 8 字节                             | 4 字节（或更多，取决于精度）      |
+| 推荐使用场景 | 普通业务逻辑时间（创建时间等）     | 系统日志、事件时间戳（含时区）    |
+
+**开发建议**
+
+- 一般建议使用 DATETIME，避免时区干扰。
+
+- 如果做系统日志同步，涉及多个服务器，适合用 TIMESTAMP。
+
+**✅ 四、布尔类型（Boolean）**
+
+MySQL 没有真正的 BOOLEAN 类型，它是 TINYINT(1) 的别名。
+
+```
+CREATE TABLE example (
+  is_active BOOLEAN -- 实际就是 TINYINT(1)
+);
+```
+
+​ • TRUE = 1，FALSE = 0
+
+## 枚举与集合
+
+### 1. ENUM 类型
+
+> ENUM 是一个**枚举类型**，用于存储从一组预定义的值中选择一个值。它本质上是一个字符串类型，但是它的值是从定义时指定的值集合中选出的。
+
+**语法**
+
+```sql
+CREATE TABLE user (
+  id INT PRIMARY KEY,
+  gender ENUM('Male', 'Female', 'Other') NOT NULL
+);
+```
+
+在这个例子中，gender 字段只能是 'Male'、'Female' 或 'Other' 中的一个。
+
+**特性**
+
+| **特性** | **内容**                                                          |
+| -------- | ----------------------------------------------------------------- |
+| 允许的值 | 从定义的值集合中选择一个值                                        |
+| 存储方式 | 以整数形式存储，使用 1 字节、2 字节、3 字节等空间，取决于值的个数 |
+| 默认值   | 可以指定默认值，也可以为空（NULL）                                |
+| 空间占用 | 根据定义的可选项数量占用不同字节空间                              |
+| 比较操作 | 比较时，ENUM 值会按定义的顺序转换为整数进行比较                   |
+| 适用场景 | 用于表示有限的选择，如性别、状态、等级等                          |
+
+**优点：**
+
+- **存储效率**：由于 ENUM 值是按整数存储的，因此它比 VARCHAR 更节省空间，尤其是在有多个选项时。
+
+- **数据验证**：只能选择定义的几个值，有效避免无效数据的插入。
+
+**缺点：**
+
+- **灵活性差**：如果需要更改 ENUM 类型的值集合（例如，添加或删除选项），需要修改表结构。
+
+- **扩展性差**：随着选择项的增加，ENUM 字段可能变得不那么方便，尤其在值的集合变化较多的情况下。
+
+### 2. SET 类型
+
+> SET 类型用于存储从一组预定义的值中选择**零个或多个**值。和 ENUM 不同的是，SET 可以包含多个值，允许组合多个选项，而不是单一选项。
+
+**语法**
+
+```sql
+CREATE TABLE user (
+  id INT PRIMARY KEY,
+  hobbies SET('Reading', 'Swimming', 'Traveling', 'Gaming') NOT NULL
+);
+```
+
+在这个例子中，hobbies 字段可以包含多个选项，比如 'Reading, Traveling' 或 'Swimming, Gaming'。
+
+**特性**
+
+| **特性** | **内容**                                                        |
+| -------- | --------------------------------------------------------------- |
+| 允许的值 | 从定义的值集合中选择零个或多个值                                |
+| 存储方式 | 每个 SET 值以整数位图（bitmap）存储，这使得它比 ENUM 更节省空间 |
+| 默认值   | 可以指定默认值，也可以为空（NULL）                              |
+| 空间占用 | 存储多个值时，存储效率较高，适用于存储多个组合数据              |
+| 比较操作 | 采用位图方式，操作多个选项时，效率较高                          |
+| 适用场景 | 用于表示多个选项的组合，如兴趣爱好、权限控制等                  |
+
+**优点：**
+
+- **存储多个值**：可以同时存储多个选项，而不需要创建多个字段或表。
+
+- **灵活性**：非常适合存储可以组合的选项，例如用户的多个爱好或权限。
+
+**缺点：**
+
+- **查询和操作复杂**：与 ENUM 相比，SET 类型的查询和操作更加复杂，尤其是涉及到多选项的查询时。
+
+- **空间浪费**：如果选择的选项很多，但实际选择的值较少，可能会浪费存储空间。
+
+- **无法轻松修改**：如果要增加或删除选项，也需要修改表结构。
+
+### 3. ENUM 和 SET 对比
+
+| **特性**         | ENUM                                   | SET                                         |
+| ---------------- | -------------------------------------- | ------------------------------------------- |
+| 存储方式         | 用整数存储选项（一个整数代表一个选项） | 用位图存储选项（每个选项占一位）            |
+| 值的选择         | 每个字段只能选一个值                   | 每个字段可以选多个值                        |
+| 适用场景         | 适合表示互斥的选项（例如性别、状态）   | 适合表示可组合的选项（例如兴趣爱好、权限）  |
+| 查询和操作复杂度 | 较简单，只能查询单一选项               | 较复杂，通常需要使用 FIND_IN_SET() 或位操作 |
+| 最大选择项数     | 最多 65,535 个选项（实际使用时较少）   | 最多 64 个选项                              |
+| 空间占用         | 占用 1~3 字节，取决于选项数量          | 占用较小的空间，取决于选项数量和选中的组合  |
+| 修改字段         | 需要修改表结构才能修改选项集           | 修改选项集时需要修改表结构                  |
+
+**适用场景**
+
+| **场景**                       | **推荐使用** |
+| ------------------------------ | ------------ |
+| **性别、状态等单一选择项**     | ENUM         |
+| **多个权限、兴趣爱好等多选项** | SET          |
+| **固定的、有序的选择项**       | ENUM         |
+| **需要组合多个选项的场景**     | SET          |
+
+**示例**
+
+```sql
+-- ENUM 示例：性别字段
+CREATE TABLE users (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  name VARCHAR(100),
+  gender ENUM('Male', 'Female', 'Other') NOT NULL
+);
+-- 在这个例子中，gender 字段只能存储 'Male'、'Female' 或 'Other'，适合用于性别字段。
+```
+
+```sql
+-- SET 示例：兴趣爱好字段
+CREATE TABLE users (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  name VARCHAR(100),
+  hobbies SET('Reading', 'Swimming', 'Traveling', 'Gaming') NOT NULL
+);
+-- 在这个例子中，hobbies 字段可以存储多个选项，比如 'Reading, Traveling' 或 'Swimming, Gaming'，适合存储用户的多重兴趣爱好。
+```
+
+**总结**
+
+- **ENUM**：适合表示互斥的、有限选择项（如性别、状态、等级等），每个字段只能选择一个值。
+
+- **SET**：适合表示可以选择多个选项的场景（如兴趣爱好、权限等），每个字段可以选择一个或多个值。
+
+**✅ 六、JSON 类型（MySQL 5.7+）**
+
+```
+CREATE TABLE config (
+  id INT,
+  settings JSON
+);
+```
+
+​ • 可以存储结构化数据，MySQL 支持 JSON 查询
+
+​ • 不适合频繁更新、搜索的字段，适合存配置、嵌套数据
+
+---
+
+## 位类型（BIT）
+
+BIT 是一种**位类型（bit type）**，用来存储 **二进制位（0 和 1）**，非常适合表示开关、权限、状态等信息。
+
+```sql
+CREATE TABLE users (
+  id INT,
+  permissions BIT(8)
+);
+```
+
+- 用于存储位图，比如权限、开关等
+
+- 操作复杂，一般不推荐新手使用
+
+---
+
+**✅ 八、小结表格**
+
+| **类型分类** | **常见类型**              | **使用场景**               |
+| ------------ | ------------------------- | -------------------------- |
+| 数值         | INT、BIGINT、DECIMAL      | ID、计数、金额等           |
+| 字符串       | VARCHAR、TEXT、CHAR       | 名称、描述、内容           |
+| 时间         | DATE、DATETIME、TIMESTAMP | 创建时间、修改时间等       |
+| 布尔         | BOOLEAN（TINYINT）        | 状态开关                   |
+| 枚举         | ENUM、SET                 | 状态、分类标签             |
+| 特殊         | JSON、BIT                 | 配置、嵌套结构、位图权限等 |
+
+---
+
+如果你在做表设计，我可以帮你分析字段应该选什么类型、是否加索引、是否需要规范化等 —— 你也可以直接抛个例子给我看看 👀
