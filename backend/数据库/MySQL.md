@@ -3346,7 +3346,7 @@ CREATE TABLE example (
 );
 ```
 
-​ • TRUE = 1，FALSE = 0
+ • TRUE = 1，FALSE = 0
 
 ## 枚举与集合
 
@@ -3477,20 +3477,163 @@ CREATE TABLE users (
 
 - **SET**：适合表示可以选择多个选项的场景（如兴趣爱好、权限等），每个字段可以选择一个或多个值。
 
-**✅ 六、JSON 类型（MySQL 5.7+）**
+## JSON 类型
 
-```
-CREATE TABLE config (
-  id INT,
-  settings JSON
+> 在 MySQL 中，JSON 类型用于存储结构化的**JSON 数据**（JavaScript Object Notation）。JSON 是一种轻量级的数据交换格式，广泛应用于现代的Web开发和API接口中。MySQL 从 5.7 版本开始原生支持 JSON 类型，提供了对 JSON 数据的存储和操作功能。
+
+### 一、JSON 类型
+
+
+
+> JSON 类型用于存储结构化的 JSON 数据，MySQL 会自动对存储的 JSON 数据进行验证，确保数据符合 JSON 格式，并提供了 JSON 操作函数，可以对 JSON 数据进行查询、修改等操作。
+
+**定义方式**
+
+```sql
+CREATE TABLE example (
+  id INT PRIMARY KEY,
+  data JSON -- 用于存储 JSON 数据
 );
 ```
 
-​ • 可以存储结构化数据，MySQL 支持 JSON 查询
+**特性**
 
-​ • 不适合频繁更新、搜索的字段，适合存配置、嵌套数据
+| **特性** | **内容**                                         |
+| -------- | ------------------------------------------------ |
+| 存储方式 | 存储原生的 JSON 格式数据                         |
+| 存储格式 | 存储为优化过的二进制格式（比纯文本 JSON 更高效） |
+| 自动验证 | 自动验证插入的数据是否为合法的 JSON 格式         |
+| 查询能力 | 支持对 JSON 数据进行查询、更新、操作等           |
+| 索引支持 | 支持对 JSON 数据进行索引，提升查询性能           |
+| 空值处理 | 支持存储 NULL 或空 JSON 对象（{}）               |
 
----
+**存储格式**
+
+MySQL 使用一种优化过的二进制格式来存储 JSON 数据。虽然我们在插入时使用 JSON 字符串形式（如 {"name": "John", "age": 30}），但是 MySQL 会将其转为内部的二进制格式来进行存储。这种方式比纯文本存储 JSON 数据更高效，特别是对于大规模的数据。
+
+### 二、JSON 数据类型的操作
+
+**插入数据**
+
+插入 JSON 数据时，可以将有效的 JSON 字符串插入到表中：
+
+```sql
+INSERT INTO example (id, data)
+VALUES (1, '{"name": "Alice", "age": 25, "is_member": true}');
+```
+
+**查询 JSON 数据**
+
+使用 -> 运算符从 JSON 数据中提取字段：
+
+```sql
+SELECT data->'$.name' AS name
+FROM example
+WHERE id = 1;
+```
+
+该查询返回 data 字段中的 name 键对应的值。
+
+**更新 JSON 数据**
+
+更新 JSON 数据时，可以通过 MySQL 提供的 JSON_SET() 函数来修改指定的 JSON 键值对。
+
+```sql
+UPDATE example
+SET data = JSON_SET(data, '$.age', 26)
+WHERE id = 1;
+```
+
+这个查询将 id 为 1 的记录中 data 字段的 age 键的值更新为 26。
+
+**使用 JSON 数组**
+
+可以存储和操作 JSON 数组。例如，以下插入 JSON 数组：
+
+```sql
+INSERT INTO example (id, data)
+VALUES (2, '{"tags": ["web", "development", "mysql"]}');
+```
+
+查询时可以提取数组中的值：
+
+```sql
+SELECT data->'$.tags[0]' AS first_tag
+FROM example
+WHERE id = 2;
+```
+
+**查询 JSON 对象或数组的长度**
+
+
+
+可以使用 JSON_LENGTH() 函数查询 JSON 数组的长度或 JSON 对象中键的数量：
+
+```sql
+SELECT JSON_LENGTH(data->'$.tags') AS tags_count
+FROM example
+WHERE id = 2;
+```
+
+**JSON 查询运算符**
+
+- ->：从 JSON 数据中提取一个值（返回 JSON 格式）
+
+- ->>：从 JSON 数据中提取一个值并转换为文本
+
+- JSON_EXTRACT()：提取 JSON 中的指定路径
+
+- JSON_UNQUOTE()：提取值并去除引号
+
+### 三、JSON 数据的索引
+
+> MySQL 支持对 JSON 数据进行索引。由于 JSON 数据可能包含多个键值对，因此常常需要在某些特定字段上建立索引，以优化查询性能。
+
+**1. 使用 Generated Columns 创建索引**
+
+MySQL 支持通过**生成列**（generated columns）来索引 JSON 数据中的字段。生成列是 MySQL 5.7 版本开始引入的功能，它允许基于其他列的值自动计算出一列。
+
+```
+CREATE TABLE example (
+  id INT PRIMARY KEY,
+  data JSON,
+  name VARCHAR(255) GENERATED ALWAYS AS (data->>'$.name') STORED
+);
+```
+
+上述例子中，name 列是根据 data 列中的 JSON 数据自动生成的。STORED 表示生成列的数据会被存储到磁盘上，因此可以被索引。
+
+**2. 创建索引**
+
+在生成列基础上创建索引：
+
+```
+CREATE INDEX idx_name ON example(name);
+```
+
+这样可以提高基于 JSON 数据字段的查询效率。
+
+### 四、使用场景
+
+**优势**
+
+- **灵活性高**：JSON 数据结构是动态的，可以轻松存储不同格式的数据，而不需要像传统数据库一样严格定义表结构。
+
+- **复杂数据存储**：适用于存储复杂的数据结构，例如嵌套的对象或数组。
+
+- **查询方便**：MySQL 提供了丰富的 JSON 操作函数，支持对 JSON 数据的灵活查询和修改。
+
+- **节省空间**：在某些情况下，JSON 数据比传统的关系型数据库结构更节省空间，尤其是对于不规则或动态变化的数据。
+
+**使用场景**
+
+- **存储配置数据**：当需要存储大量不规则的配置项，且每个配置项的结构可能不同，JSON 可以非常适合。
+
+- **API 数据交换**：很多 Web API 返回的数据是 JSON 格式，MySQL 直接存储 JSON 数据能有效减少转换的开销。
+
+- **日志存储**：存储日志信息时，JSON 可以灵活存储不同类型的日志数据，如时间戳、用户信息、操作细节等。
+
+- **动态属性**：用于存储具有动态属性的对象，例如存储用户自定义的额外属性。
 
 ## 位类型（BIT）
 
@@ -3507,19 +3650,496 @@ CREATE TABLE users (
 
 - 操作复杂，一般不推荐新手使用
 
----
+## 二进制类型
 
-**✅ 八、小结表格**
+| **类型**   | **特点**                      | **适用场景**                                 |
+| ---------- | ----------------------------- | -------------------------------------------- |
+| BINARY     | 固定长度，存储二进制数据      | 适合存储长度固定的二进制数据（如加密数据）   |
+| VARBINARY  | 可变长度，存储二进制数据      | 适合存储长度不固定的二进制数据（如图片文件） |
+| BLOB       | 存储大二进制数据，最大 4 GB   | 用于存储大文件数据（如图像、音频、视频等）   |
+| TINYBLOB   | 存储最大 255 字节的二进制数据 | 用于存储小型二进制数据（如小图标等）         |
+| MEDIUMBLOB | 存储最大 16 MB 的二进制数据   | 用于存储中等大小的二进制数据                 |
+| LONGBLOB   | 存储最大 4 GB 的二进制数据    | 用于存储非常大的二进制数据                   |
 
-| **类型分类** | **常见类型**              | **使用场景**               |
-| ------------ | ------------------------- | -------------------------- |
-| 数值         | INT、BIGINT、DECIMAL      | ID、计数、金额等           |
-| 字符串       | VARCHAR、TEXT、CHAR       | 名称、描述、内容           |
-| 时间         | DATE、DATETIME、TIMESTAMP | 创建时间、修改时间等       |
-| 布尔         | BOOLEAN（TINYINT）        | 状态开关                   |
-| 枚举         | ENUM、SET                 | 状态、分类标签             |
-| 特殊         | JSON、BIT                 | 配置、嵌套结构、位图权限等 |
+# 约束
 
----
+> 在 MySQL 中，**约束（Constraint）用于定义表中字段的规则和限制，确保数据的完整性、准确性**和**一致性**。通过设置约束，可以防止非法或不符合业务规则的数据被插入或更新到数据库中。
 
-如果你在做表设计，我可以帮你分析字段应该选什么类型、是否加索引、是否需要规范化等 —— 你也可以直接抛个例子给我看看 👀
+## NOT NULL：非空约束
+
+### 1. 添加 NOT NULL
+
+**创建表时直接定义**
+
+```sql
+CREATE TABLE users (
+  id INT PRIMARY KEY,
+  name VARCHAR(100) NOT NULL
+);
+```
+
+**修改已有表字段为 NOT NULL**
+
+```sql
+ALTER TABLE users
+MODIFY name VARCHAR(100) NOT NULL;
+```
+
+- 字段中不能存在 NULL 值，否则修改失败
+- 得先处理现有的 NULL 数据，然后再修改约束。
+
+```sql
+UPDATE users SET name = '未知' WHERE name IS NULL;
+```
+
+### 2. 修改为允许 NULL
+
+```sql
+ALTER TABLE users
+MODIFY name VARCHAR(100) NULL;
+```
+
+### 3. 删除 NOT NULL
+
+本质上是修改字段为 NULL，MySQL 不提供 DROP NOT NULL 语法，而是通过 MODIFY COLUMN 实现
+
+```sql
+ALTER TABLE users
+MODIFY name VARCHAR(100) NULL;
+```
+
+### 4. 注意事项
+
+**修改为 NOT NULL 前要保证无 NULL 数据**
+
+否则会报错：
+
+```
+ERROR 1138 (22004): Invalid use of NULL value
+```
+
+建议步骤：
+
+```sql
+-- 1. 查找空值
+SELECT * FROM users WHERE name IS NULL;
+
+-- 2. 用默认值替换空值
+UPDATE users SET name = '未知' WHERE name IS NULL;
+
+-- 3. 添加约束
+ALTER TABLE users MODIFY name VARCHAR(100) NOT NULL;
+```
+
+**NOT NULL 不等于有值**
+
+空字符串（''），默认值并不是NULL
+
+## DEFAULT：默认值
+
+> 设置字段的默认值，在插入数据时如果没有提供该字段的值，则使用默认值。
+
+```sql
+CREATE TABLE users (
+  id INT PRIMARY KEY,
+  status VARCHAR(20) DEFAULT 'active'
+);
+```
+
+## UNIQUE：唯一约束
+
+> 确保字段中的值唯一，可以应用在一个或多个字段上。
+
+**单列**
+
+```sql
+CREATE TABLE users (
+  id INT PRIMARY KEY,
+  email VARCHAR(255) UNIQUE
+);
+```
+
+**复合**
+
+```sql
+CREATE TABLE users (
+  first_name VARCHAR(50),
+  last_name VARCHAR(50),
+  UNIQUE (first_name, last_name)
+);
+```
+
+**命名复合约束**
+
+```sql
+CREATE TABLE users (
+  first_name VARCHAR(50),
+  last_name VARCHAR(50),
+  CONSTRAINT unique_name UNIQUE (first_name, last_name)
+);
+-- 等价
+CREATE TABLE users (
+  first_name VARCHAR(50),
+  last_name VARCHAR(50),
+  UNIQUE KEY unique_name  (first_name, last_name)
+);
+```
+
+**注意**
+
+- 可以为UNIQUE约束多次添加NULL
+- 复合唯一性约束中，只要有一个字段不同即认为是唯一的
+
+### 1. 添加 UNIQUE 约束
+
+**字段级添加**
+
+```sql
+CREATE TABLE users (
+  id INT PRIMARY KEY,
+  email VARCHAR(255) UNIQUE
+);
+```
+
+**表级添加（可命名）**
+
+```sql
+CREATE TABLE users (
+  id INT PRIMARY KEY,
+  email VARCHAR(255),
+  CONSTRAINT uq_email UNIQUE (email)
+);
+```
+
+- CONSTRAINT uq_email 是给唯一约束起的名字（MySQL 会自动创建唯一索引）。
+
+**修改时添加单字段唯一约束**：
+
+```sql
+ALTER TABLE users
+ADD CONSTRAINT uq_email UNIQUE (email);
+```
+
+**修改时添加多字段（联合唯一）约束**：
+
+```sql
+ALTER TABLE users
+ADD CONSTRAINT uq_name_email UNIQUE (first_name, email);
+```
+
+### 2. 删除 UNIQUE 约束
+
+> MySQL 把 UNIQUE 约束当作唯一索引，所以**删除唯一约束 = 删除唯一索引**。
+
+**查看唯一索引（约束）**
+
+```sql
+SHOW INDEX FROM users;
+```
+
+- 找到对应的 Key_name（索引名），比如是 uq_email。
+
+**删除唯一约束/索引**
+
+```sql
+ALTER TABLE users DROP INDEX uq_email;
+```
+
+### 3. 注意事项
+
+**唯一约束允许 NULL 值**
+
+- 一个字段被 UNIQUE 约束修饰，但可以插入多个 NULL：
+
+- 因为在 SQL 标准中，NULL ≠ NULL，它被认为是“未知”，所以不会冲突。
+
+```sql
+INSERT INTO users (email) VALUES (NULL), (NULL); -- 合法
+```
+
+**多个唯一约束可共存**
+
+- 一个表可以有多个 UNIQUE，但每个字段或组合必须保持唯一性。
+
+```sql
+ALTER TABLE users
+ADD CONSTRAINT uq_username UNIQUE (username),
+ADD CONSTRAINT uq_email UNIQUE (email);
+```
+
+**组合唯一**
+
+- 适用于多个字段联合起来保证唯一，而单字段本身可能重复。
+
+```sql
+-- 允许有两个张三，但不能有两个“张三 + 李四”组合。
+ALTER TABLE users
+ADD CONSTRAINT uq_fullname UNIQUE (first_name, last_name);
+```
+
+**重复数据**
+
+- 插入重复数据时报错
+- 添加约束时，如果表中已存在重复数据，也会失败。
+
+```
+ERROR 1062 (23000): Duplicate entry 'xxx' for key 'uq_email'
+```
+
+
+
+## PRIMARY KEY：主键约束
+
+### 1. 添加主键
+
+**创建表时添加主键**
+
+（1）字段级添加（适用于单字段主键）
+
+```sql
+CREATE TABLE users (
+  id INT PRIMARY KEY,
+  name VARCHAR(100)
+);
+```
+
+（2）表级添加（支持多字段联合主键）
+
+```sql
+CREATE TABLE orders (
+  order_id INT,
+  product_id INT,
+  quantity INT,
+  PRIMARY KEY (order_id, product_id)
+);
+```
+
+**已有表添加主键**
+
+（1）添加单字段主键
+
+```sql
+ALTER TABLE users
+ADD PRIMARY KEY (id);
+```
+
+（2）添加联合主键
+
+```sql
+ALTER TABLE orders
+ADD PRIMARY KEY (order_id, product_id);
+```
+
+### 2. 注意事项
+
+- 表中数据必须满足主键约束
+  - 不允许注意事项有重复值
+  - 不能有 NULL 值
+  - 如果是组合主键，任一字段字段都不能为 NULL
+
+- 一个表只能有一个主键
+
+- 自增字段必须是主键或唯一键
+
+- 联合主键字段的顺序很重要
+
+  - ```sql
+    PRIMARY KEY (a, b) ≠ PRIMARY KEY (b, a)
+    ```
+
+  - 这个顺序会影响 **索引使用效率**
+
+  - 一般将**唯一性强/查询频率高的字段放前面**。
+
+- 字段数据类型建议用整数
+
+  - INT
+
+  - BIGINT
+
+  - 避免 VARCHAR、UUID 等长字符串作为主键，会导致索引性能下降。
+
+## FOREIGN KEY：外键约束
+
+> MySQL 中的 FOREIGN KEY（外键）是关系型数据库的重要概念，用于**建立表与表之间的引用关系**，实现数据的完整性和一致性。
+
+### 1. 定义
+
+FOREIGN KEY 是一种约束，用来**限制某一字段的值必须来自另一个表的主键或唯一键**。
+
+它建立两个表之间的关系：
+
+- **主表（parent / referenced table）**：被引用的表（一般是主键或唯一键）。
+
+- **子表（child / referencing table）**：包含外键的表。
+
+### 2. 添加外键
+
+**创建表时添加外键**
+
+```sql
+CREATE TABLE orders (
+  id INT PRIMARY KEY,
+  user_id INT,
+  FOREIGN KEY (user_id) REFERENCES users(id)
+);
+```
+
+- orders.user_id 的值必须来自 users.id。
+
+**表级添加外键**
+
+```sql
+CREATE TABLE orders (
+  id INT PRIMARY KEY,
+  user_id INT,
+  CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES users(id)
+);
+```
+
+- fk_user 是外键约束名，便于后续修改或删除。
+
+**修改表添加外键**
+
+```sql
+ALTER TABLE orders
+ADD CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES users(id);
+```
+
+### 3. 删除外键
+
+```sql
+ALTER TABLE orders DROP FOREIGN KEY fk_user;
+```
+
+- 这里 fk_user 是约束名（不是字段名）。
+
+### 4. 查看外键
+
+```sql
+SHOW CREATE TABLE orders;
+```
+
+或者查看信息表：
+
+```sql
+SELECT * FROM information_schema.KEY_COLUMN_USAGE
+WHERE TABLE_NAME = 'orders';
+```
+
+### 5. 注意事项
+
+| **要点**                      | **说明**                                    |
+| ----------------------------- | ------------------------------------------- |
+| 1. 引用字段必须是主键或唯一键 | 否则会报错                                  |
+| 2. 类型必须匹配               | 数据类型、长度、符号要一致（如 INT 对 INT） |
+| 3. 引用表必须存在             | 必须先创建主表，再创建子表                  |
+| 4. 引擎必须支持外键           | MyISAM 不支持外键，需使用 **InnoDB**        |
+| 5. 外键字段的值必须存在于主表 | 否则插入会失败                              |
+
+### 6. 外键的级联操作
+
+MySQL 支持外键在更新/删除主表数据时，对子表的行为进行定义：
+
+| **动作**  | **说明**                                                     |
+| --------- | ------------------------------------------------------------ |
+| CASCADE   | 主表更新/删除时，子表也跟着更新/删除                         |
+| SET NULL  | 主表更新/删除时，子表字段设为 NULL（子表字段必须允许为 NULL） |
+| RESTRICT  | 如果子表中有引用，不允许删除/更新主表（默认行为）            |
+| NO ACTION | 和 RESTRICT 类似（MySQL 实际上不区分）                       |
+
+**示例：删除主表时，自动删除子表记录**
+
+```sql
+CREATE TABLE orders (
+  id INT PRIMARY KEY,
+  user_id INT,
+  CONSTRAINT fk_user FOREIGN KEY (user_id)
+    REFERENCES users(id)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE
+);
+```
+
+- 当 users 表中某用户被删除，该用户的所有订单会自动删除。
+
+**注意**
+
+- 外键约束较为消耗资源，推荐在应用层处理
+
+## CHECK：检查约束
+
+> MySQL 8.0+ 支持，限制字段必须满足某个条件。
+
+```sql
+CREATE TABLE products (
+  id INT PRIMARY KEY,
+  price DECIMAL(10, 2),
+  CHECK (price >= 0)
+);
+```
+
+## AUTO_INCREMENT 自增列
+
+> 在 MySQL 中，自增列（AUTO_INCREMENT）是数据库常用的机制，**用于自动生成唯一的整数值**，通常作为主键使用。
+
+### 1. 语法
+
+```sql
+CREATE TABLE users (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(50)
+);
+```
+
+每次插入新行时，id 会自动 +1。
+
+### 2. 使用规则
+
+- 数据类型必须是整数类（如 INT, BIGINT）
+- 不能对 VARCHAR、DATE 等非整数类型使用自增。
+
+- 必须搭配 PRIMARY KEY 或 UNIQUE 使用
+
+```
+Incorrect table definition; there can be only one auto column and it must be defined as a key
+```
+
+### 3. 手动插入自增值
+
+你也可以手动指定值：
+
+```sql
+INSERT INTO users (id, name) VALUES (10, 'Spike');
+```
+
+接下来系统将从 11 继续自动生成：
+
+```sql
+INSERT INTO users (name) VALUES ('Tyke');  -- id = 11
+```
+
+### 4. 修改起始值和步长
+
+**设置起始值**
+
+```sql
+ALTER TABLE users AUTO_INCREMENT = 100;
+```
+
+**设置步长**
+
+```sql
+-- 每次递增 2
+SET @@auto_increment_increment = 2;
+```
+
+### 5. 删除记录后编号不会回退
+
+```sql
+DELETE FROM users WHERE id = 3;
+INSERT INTO users (name) VALUES ('Tuffy'); -- id 依然是 4
+```
+
+- 重启数据库后可以回退
+- 8.0中永远不会回退
