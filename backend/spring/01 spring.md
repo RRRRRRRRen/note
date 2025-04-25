@@ -48,10 +48,8 @@
 #### 1.1 容器的类型
 
 - **BeanFactory**
-
   - 基础容器，提供最基本的 DI 支持（懒加载）。
   - 通过 `XmlBeanFactory` 读取 XML 配置（已过时，不推荐）。
-
 - **ApplicationContext**
   - `BeanFactory` 的子接口，功能更丰富（推荐使用）。
   - 支持事件发布、国际化、资源加载等。
@@ -81,12 +79,11 @@
   ```
 
 - **注解配置**（现代主流方式）
-
   - `@Component`：通用组件标记。
   - 衍生注解：
     - `@Service`（业务层）
     - `@Repository`（数据层）
-    - `@Controller`/`@RestController`（Web 层）
+    - `@Controller` / `@RestController`（Web 层）
 
   ```java
   @Service
@@ -111,10 +108,9 @@
 #### 2.2 Bean 的核心特性
 
 - **作用域（Scope）**：
-
   - `singleton`（默认，单例）
   - `prototype`（每次请求新实例）
-  - `request`/`session`（Web 环境）
+  - `request` / `session`（Web 环境）
 
   ```java
   @Scope("prototype")
@@ -123,7 +119,6 @@
   ```
 
 - **生命周期回调**：
-
   - `@PostConstruct`：初始化后执行。
   - `@PreDestroy`：销毁前执行。
 
@@ -139,7 +134,6 @@
   ```
 
 - **依赖注入（DI）方式**：
-
   - **字段注入**（`@Autowired` 直接标注字段，简洁但不易测试）。
   - **构造器注入**（推荐，显式声明依赖，避免循环依赖）。
   - **Setter 注入**（灵活性高，适合可选依赖）。
@@ -231,6 +225,7 @@ public class Main {
   ```
 
 - **IoC 模式**：将控制权交给框架/容器，由容器负责对象的生命周期和依赖关系。
+
   ```java
   // IoC 方式：容器注入依赖
   class UserService {
@@ -252,7 +247,6 @@ public class Main {
 #### 2.2 三种注入方式
 
 - **构造器注入（推荐）**
-
   - 通过构造方法注入，依赖不可变（`final`），避免空指针。
 
   ```java
@@ -268,7 +262,6 @@ public class Main {
   ```
 
 - **Setter 注入**
-
   - 通过 Setter 方法注入，适合可选依赖。
 
   ```java
@@ -285,6 +278,7 @@ public class Main {
 
 - **字段注入（不推荐）**
   - 直接通过 `@Autowired` 注入字段，代码简洁但难以测试。
+
   ```java
   @Service
   public class UserService {
@@ -345,7 +339,7 @@ for (String name : names) {
 }
 ```
 
-- ioc 容器中自带很多组件
+- Ioc 容器中自带很多组件
 
 ### 4. 从 ioc 中精确获取组件对象
 
@@ -371,11 +365,9 @@ Map<String, Dog> type = ioc.getBeansOfType(Dog.class);
 
 - 组件不存在，抛出异常
 - 组件不唯一
-
   - 按照名字获取，组件名字相同，则返回最先声明的那个
   - 按照类型获取，组件类型相同，抛出异常
   - 可正常通过 List 集合获取
-
 - 组件唯一，则返回该对象
 
 **组件对象创建的特征**
@@ -598,6 +590,7 @@ public class AppConfig {
 
 - `@Configuration` 类在启动时会被解析，避免在 `@Bean` 方法中执行耗时操作。
 - 轻量级配置类可标记为 `@Configuration(proxyBeanMethods = false)`，关闭代理以提升性能（Spring 5.2+）：
+
   ```java
   @Configuration(proxyBeanMethods = false) // 适用于无跨 @Bean 方法调用的场景
   public class SimpleConfig {
@@ -795,7 +788,7 @@ public interface UserMapper {
 
 ### 总结
 
-- **Controller**：`@RestController` + `@GetMapping`/`@PostMapping`，处理 HTTP 请求。
+- **Controller**：`@RestController` + `@GetMapping` / `@PostMapping`，处理 HTTP 请求。
 - **Service**：`@Service` + `@Transactional`，实现业务逻辑。
 - **Repository**：`@Repository` 或 `@Mapper`，操作数据库。
 - **通用规则**：接口分离、依赖注入、DTO 隔离、事务控制。
@@ -1118,3 +1111,767 @@ public class AppConfig {}
 - **高级功能**：通过 `ImportSelector` 和 `ImportBeanDefinitionRegistrar` 实现条件化加载。
 - **适用场景**：模块化配置、框架扩展、第三方库集成。
 - **最佳实践**：在大型项目中替代散落的 `@ComponentScan`，提升配置的可维护性。
+
+---
+
+## **`@Scope` 注解详解**
+
+> `@Scope` 是 Spring 中用于**定义 Bean 作用域**的注解，它决定了 Spring 容器如何创建和管理 Bean 实例（如单例、原型、请求作用域等）。合理使用 `@Scope` 可以优化内存使用、保证线程安全，并适应不同场景的需求。
+
+### 1. 核心作用域类型
+
+| **作用域**       | **描述**                                                  | **适用场景**                      |
+| ------------- | ------------------------------------------------------- | ----------------------------- |
+| `singleton`   | **默认作用域**，容器中仅存在一个共享实例。                                 | 无状态的工具类、Service、DAO 等。        |
+| `prototype`   | 每次请求（`getBean()` 或注入）都创建新实例。                            | 需要维护状态的 Bean（如购物车），或线程不安全的对象。 |
+| `request`     | 每个 HTTP 请求创建一个实例（仅限 Web 环境）。                            | 存储请求相关的数据（如用户登录信息）。           |
+| `session`     | 每个用户会话（Session）创建一个实例（仅限 Web 环境）。                       | 购物车、用户个性化设置。                  |
+| `application` | 整个 Web 应用共享一个实例（类似 `singleton`，但上下文为 `ServletContext`）。 | 全局缓存、应用级配置。                   |
+| `websocket`   | 每个 WebSocket 会话一个实例（仅限 WebSocket 环境）。                   | 实时通信场景（如聊天室）。                 |
+
+### 2. 使用方法
+
+#### 2.1 基本语法
+
+在 `@Component` 或 `@Bean` 上标注 `@Scope`，指定作用域名称：
+
+```java
+@Component
+@Scope("prototype") // 或 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+public class ShoppingCart {}
+```
+
+#### 2 .2 查看 Bean 的作用域
+
+通过 `ApplicationContext` 获取 Bean 的定义：
+
+```java
+ConfigurableListableBeanFactory factory = context.getBeanFactory();
+BeanDefinition definition = factory.getBeanDefinition("userService");
+System.out.println(definition.getScope()); // 输出 "singleton"
+```
+
+#### 2.3 示例
+
+**单例（Singleton）**
+
+```java
+@Service
+@Scope("singleton") // 可省略，默认即为单例
+public class UserService {
+    // 所有请求共享同一个实例
+}
+```
+
+**原型（Prototype）**
+
+```java
+@Component
+@Scope("prototype")
+public class TaskProcessor {
+    // 每次注入或 getBean() 时创建新实例
+}
+```
+
+### 3. 关键注意事项
+
+#### 3.1 单例 Bean 的线程安全
+
+- **问题**：单例 Bean 被所有线程共享，若包含可变状态（如成员变量），需自行保证线程安全。
+- **解决**：
+  - 使用无状态设计（避免成员变量）。
+  - 使用 `ThreadLocal` 或同步机制（如 `synchronized`）。
+
+#### 3.2 原型 Bean 的资源释放
+
+- **问题**：Spring 不管理原型 Bean 的生命周期，`@PreDestroy` 不会触发。
+- **解决**：手动调用销毁方法，或实现 `DisposableBean` 接口。
+
+#### 3.3 自定义作用域
+
+Spring 允许通过 `Scope` 接口扩展自定义作用域（如线程作用域、集群作用域），但是不建议滥用自定义作用域。
+
+---
+
+## **`@Lazy` 注解详解**
+
+> `@Lazy` 是 Spring 框架中用于**延迟初始化（懒加载）Bean**的注解。它的核心作用是推迟 Bean 的创建时机，直到首次被真正使用时才会初始化，从而优化应用启动性能，尤其适合资源消耗大或使用频率低的组件。
+
+### 1. 核心作用
+
+- **延迟初始化**：标记 `@Lazy` 的 Bean 不会在容器启动时立即创建，而是在第一次被依赖注入或显式调用 `getBean()` 时初始化。
+- **解决循环依赖**：配合 `@Lazy` 可以打破某些循环依赖场景。
+- **减少启动时间**：避免加载暂时用不到的 Bean，加快应用启动速度。
+
+### 2. 使用方式
+
+#### 2.1 在 `@Component` 或 `@Bean` 上使用
+
+```java
+@Component
+@Lazy // 该 Bean 延迟初始化
+public class HeavyResourceService {
+    public HeavyResourceService() {
+        System.out.println("HeavyResourceService 初始化！");
+    }
+}
+```
+
+```java
+@Configuration
+public class AppConfig {
+    @Bean
+    @Lazy // 延迟初始化
+    public DataSource dataSource() {
+        return new HikariDataSource();
+    }
+}
+```
+
+#### 2.2 在注入点（`@Autowired`）使用
+
+即使 Bean 本身未标记 `@Lazy`，也可以通过注入点控制延迟加载：
+
+```java
+@Service
+public class UserService {
+    @Autowired
+    @Lazy // 延迟注入
+    private HeavyResourceService heavyResourceService;
+}
+```
+
+### 3. 常见场景
+
+#### 3.1 优化启动性能
+
+**场景**：某些 Bean 初始化耗时（如数据库连接池、缓存预热），但并非启动后立即需要。
+**解决**：
+
+```java
+@Bean
+@Lazy
+public CacheManager cacheManager() {
+    // 初始化耗时 2s
+    return new RedisCacheManager();
+}
+```
+
+#### 3.2 解决循环依赖
+
+**问题**：Bean A 依赖 B，B 又依赖 A，直接启动会报 `BeanCurrentlyInCreationException`。
+**解决**：对其中一个 Bean 使用 `@Lazy` 延迟注入。
+
+```java
+@Service
+public class ServiceA {
+    private final ServiceB serviceB;
+    
+    public ServiceA(@Lazy ServiceB serviceB) { // 延迟注入
+        this.serviceB = serviceB;
+    }
+}
+
+@Service
+public class ServiceB {
+    @Autowired
+    private ServiceA serviceA;
+}
+```
+
+#### 3.3 条件化加载
+
+结合 `@Conditional`，仅在首次使用时检查条件：
+
+```java
+@Bean
+@Lazy
+@ConditionalOnProperty(name = "feature.enabled", havingValue = "true")
+public FeatureService featureService() {
+    return new FeatureService();
+}
+```
+
+### 4. 注意事项
+
+#### 4.1 作用域影响
+
+- **单例 Bean**：`@Lazy` 仅延迟到首次使用，之后一直复用该实例。
+- **原型 Bean**：每次 `getBean()` 或注入时都会触发初始化（但仍延迟到调用时）。
+
+#### 4.2 与 `@Scope` 的配合
+
+- **Web 作用域**（如 `@RequestScope`）：默认已是懒加载，无需额外加 `@Lazy`。
+- **显式配置**：若需强制立即初始化，可结合 `@Scope(proxyMode = ScopedProxyMode.NO)`。
+
+#### 4.3 代理机制
+
+- **CGLIB 代理**：延迟的 Bean 会被代理包裹，直到实际调用方法时才初始化真实对象。
+- **调试提示**：直接打印 `@Lazy` 注入的 Bean 会显示代理类名（如 `HeavyResourceService$$EnhancerBySpringCGLIB$$...`）。
+
+#### 4.4 不要滥用
+
+- **适合场景**：
+  - 初始化耗时的 Bean（如大数据连接）。
+  - 可能不使用的可选依赖（如插件化功能）。
+- **不适合场景**：
+  - 启动时必须初始化的核心组件（如安全配置）。
+  - 高频使用的轻量级 Bean（代理会带来微小性能开销）。
+
+### 5. 原理剖析
+
+#### 5.1 底层实现
+
+- **代理模式**：Spring 为 `@Lazy` Bean 生成代理对象，首次调用方法时触发真实对象的初始化。
+- **依赖处理**：对于 `@Lazy` 依赖，Spring 注入代理而非真实 Bean，解决循环依赖。
+
+#### 5.2 生命周期
+
+```mermaid
+sequenceDiagram
+    participant Container
+    participant Proxy
+    participant RealBean
+
+    Container->>Proxy: 创建代理对象
+    Proxy-->>Container: 返回代理
+    Note over Container,Proxy: 应用启动完成
+    Proxy->>RealBean: 首次方法调用
+    RealBean-->>Proxy: 初始化真实对象
+    Proxy->>RealBean: 转发后续调用
+```
+
+### 6. 示例
+
+#### 6.1 基础用法
+
+```java
+@Configuration
+public class AppConfig {
+    @Bean
+    @Lazy
+    public ExpensiveBean expensiveBean() {
+        System.out.println("ExpensiveBean 初始化！");
+        return new ExpensiveBean();
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        ApplicationContext context = new AnnotationConfigApplicationContext(AppConfig.class);
+        System.out.println("容器启动完成");
+        // 直到调用 getBean() 时才初始化
+        ExpensiveBean bean = context.getBean(ExpensiveBean.class);
+    }
+}
+```
+
+**输出**：
+
+```
+容器启动完成
+ExpensiveBean 初始化！
+```
+
+#### 6.2 解决循环依赖
+
+```java
+@Service
+public class OrderService {
+    private final UserService userService;
+    
+    public OrderService(@Lazy UserService userService) {
+        this.userService = userService; // 延迟注入
+    }
+}
+
+@Service
+public class UserService {
+    @Autowired
+    private OrderService orderService;
+}
+```
+
+### 总结
+
+- **核心价值**：延迟初始化，提升启动速度，解决循环依赖。
+- **适用场景**：耗时组件、可选依赖、条件化 Bean。
+- **慎用场景**：高频轻量级 Bean、启动必备组件。
+- **本质**：通过代理机制实现按需加载。
+
+---
+
+## `FactoryBean` 详解
+
+> `FactoryBean` 是 Spring 框架中一个特殊的接口，用于**定制化 Bean 的创建逻辑**。与普通 `@Bean` 或 `@Component` 不同，`FactoryBean` 本身是一个工厂，负责生成最终的 Bean 实例。它是 Spring 扩展性的重要体现，常用于集成第三方库（如 MyBatis 的 `SqlSessionFactoryBean`）或复杂对象的构建。
+
+### 1. 核心作用
+
+- **封装复杂初始化逻辑**：将繁琐的 Bean 构建过程（如配置解析、依赖组装）隐藏在工厂内部。
+- **动态生成 Bean**：根据运行时条件返回不同的实现类或代理对象。
+- **与现有框架集成**：为无法直接通过注解管理的类提供 Spring 容器支持。
+
+### 2. 接口定义
+
+`FactoryBean` 接口包含三个关键方法：
+
+```java
+public interface FactoryBean<T> {
+    T getObject() throws Exception;    // 返回实际要注册的 Bean
+    Class<?> getObjectType();         // 返回 Bean 的类型
+    boolean isSingleton();            // 是否为单例
+}
+```
+
+### 3. 使用示例
+
+#### 3.1 基础实现
+
+创建一个 `FactoryBean` 来生成 `Connection` 对象：
+
+```java
+public class ConnectionFactoryBean implements FactoryBean<Connection> {
+    private String url;
+    private String username;
+    private String password;
+
+    // Setter 方法省略...
+
+    @Override
+    public Connection getObject() throws Exception {
+        return DriverManager.getConnection(url, username, password);
+    }
+
+    @Override
+    public Class<?> getObjectType() {
+        return Connection.class;
+    }
+
+    @Override
+    public boolean isSingleton() {
+        return false; // 每次请求返回新连接
+    }
+}
+```
+
+#### 3.2 注册到 Spring 容器
+
+通过 `@Bean` 或 XML 配置注册 `FactoryBean`：
+
+```java
+@Configuration
+public class AppConfig {
+    @Bean
+    public ConnectionFactoryBean connection() {
+        ConnectionFactoryBean factory = new ConnectionFactoryBean();
+        factory.setUrl("jdbc:mysql://localhost:3306/test");
+        factory.setUsername("root");
+        factory.setPassword("123456");
+        return factory;
+    }
+}
+```
+
+#### 3.3 获取 Bean
+
+- **获取实际产品**（`Connection`）：
+
+  ```java
+  Connection conn = context.getBean("connection", Connection.class);
+  ```
+
+- **获取工厂本身**：在 Bean 名称前加 `&`：
+
+  ```java
+  ConnectionFactoryBean factory = context.getBean("&connection", ConnectionFactoryBean.class);
+  ```
+
+### 4. 常见应用场景
+
+#### 4.1 集成第三方库
+
+**示例：MyBatis 的 `SqlSessionFactoryBean`**
+
+```java
+@Bean
+public SqlSessionFactoryBean sqlSessionFactory(DataSource dataSource) {
+    SqlSessionFactoryBean factory = new SqlSessionFactoryBean();
+    factory.setDataSource(dataSource);
+    factory.setMapperLocations(new PathMatchingResourcePatternResolver().getResources("classpath:mappers/*.xml"));
+    return factory;
+}
+```
+
+#### 4.2 动态代理生成
+
+创建 AOP 代理对象的工厂：
+
+```java
+public class ProxyServiceFactoryBean implements FactoryBean<Object> {
+    private Object target;
+    private Class<?> interfaceType;
+
+    @Override
+    public Object getObject() throws Exception {
+        return Proxy.newProxyInstance(
+            interfaceType.getClassLoader(),
+            new Class[]{interfaceType},
+            (proxy, method, args) -> {
+                System.out.println("Before method: " + method.getName());
+                return method.invoke(target, args);
+            }
+        );
+    }
+
+    // 其他方法省略...
+}
+```
+
+#### 4.3 条件化 Bean 创建
+
+根据配置返回不同实现：
+
+```java
+public class PaymentServiceFactoryBean implements FactoryBean<PaymentService> {
+    @Value("${payment.mode}")
+    private String paymentMode;
+
+    @Override
+    public PaymentService getObject() throws Exception {
+        return paymentMode.equals("credit") ? 
+            new CreditCardPaymentService() : new AlipayPaymentService();
+    }
+}
+```
+
+### 5. 注意事项
+
+#### 5.1 与普通 Bean 的区别
+
+| **特性**          | **`FactoryBean`**                     | **普通 `@Bean`**                     |
+|-------------------|---------------------------------------|--------------------------------------|
+| **注册对象**      | 工厂本身 + `getObject()` 返回的产品   | 直接注册方法返回的对象               |
+| **获取方式**      | 加 `&` 前缀获取工厂，不加获取产品     | 直接获取 Bean 实例                   |
+| **适用场景**      | 复杂初始化、动态代理、条件化创建      | 简单直接的 Bean 创建                 |
+
+#### 5.2 生命周期回调
+
+- **初始化**：`FactoryBean` 本身的 `@PostConstruct` 会先执行，再调用 `getObject()`。
+- **销毁**：若产品是单例且实现 `DisposableBean`，容器关闭时会调用其 `destroy()` 方法。
+
+#### 5.3 原型作用域
+
+- **工厂单例 + 产品原型**：
+
+  ```java
+  @Override
+  public boolean isSingleton() {
+      return false; // 每次 getBean() 调用 getObject() 创建新实例
+  }
+  ```
+
+#### 5.4 循环依赖问题
+
+- **避免在 `getObject()` 中注入其他 Bean**：可能导致循环依赖异常，推荐在工厂的构造方法或 Setter 中注入依赖。
+
+### 6. 高级技巧
+
+#### 6.1 结合 `SmartFactoryBean`
+
+扩展 `SmartFactoryBean` 接口可控制更精细的生命周期：
+
+```java
+public class AdvancedFactoryBean implements SmartFactoryBean<Object> {
+    @Override
+    public boolean isEagerInit() {
+        return true; // 是否在启动时立即初始化
+    }
+    // 其他方法同 FactoryBean...
+}
+```
+
+#### 6.2 与 `@Configuration` 配合
+
+在配置类中组合多个 `FactoryBean`：
+
+```java
+@Configuration
+public class FactoryConfig {
+    @Bean
+    public FactoryBeanA factoryBeanA() {
+        return new FactoryBeanA();
+    }
+
+    @Bean
+    @DependsOn("factoryBeanA") // 依赖关系
+    public FactoryBeanB factoryBeanB() {
+        return new FactoryBeanB();
+    }
+}
+```
+
+### 总结
+
+- **核心角色**：`FactoryBean` 是 Spring 中“工厂的工厂”，分离了对象的创建与使用。
+- **典型用途**：复杂对象构建、动态代理、条件化实例生成。
+- **关键区别**：通过 `&` 前缀区分工厂和产品。
+- **适用场景**：框架集成（如 MyBatis）、性能优化（延迟初始化）、多态 Bean 创建。
+
+---
+
+## `@Conditional` 注解详解
+
+> `@Conditional` 是 Spring 4.0 引入的核心注解，用于**根据特定条件动态决定是否注册 Bean 或加载配置类**。它是 Spring Boot 自动配置的基石（如 `@ConditionalOnClass`、`@ConditionalOnProperty` 等衍生注解的底层基础），广泛应用于模块化配置、多环境适配和条件化组件加载。
+
+### 1. 核心作用
+
+- **条件化注册 Bean**：仅在满足条件时创建并注册 Bean。
+- **灵活配置切换**：根据环境变量、类路径、系统属性等动态选择配置。
+- **避免冗余加载**：排除不必要的组件，提升启动速度和资源利用率。
+
+### 2. 基本用法
+
+#### 2.1 实现 `Condition` 接口
+
+自定义条件需实现 `Condition` 接口，重写 `matches()` 方法：
+
+```java
+public class MyCustomCondition implements Condition {
+    @Override
+    public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
+        // 判断条件：检查某个属性是否为 true
+        Environment env = context.getEnvironment();
+        return "true".equals(env.getProperty("myfeature.enabled"));
+    }
+}
+```
+
+#### 2.2 在 `@Bean` 或 `@Configuration` 上使用
+
+```java
+@Configuration
+public class AppConfig {
+    @Bean
+    @Conditional(MyCustomCondition.class) // 仅当条件满足时注册
+    public MyService myService() {
+        return new MyService();
+    }
+}
+```
+
+### 3. 常见内置条件注解
+
+Spring Boot 在 `@Conditional` 基础上扩展了多个专用注解，开箱即用：
+
+#### `@ConditionalOnProperty`
+
+**作用**
+根据配置属性决定是否加载
+**示例**
+`@ConditionalOnProperty(name = "cache.type", havingValue = "redis")`
+
+#### `@ConditionalOnClass`
+
+**作用**
+类路径下存在指定类时生效
+**示例**
+`@ConditionalOnClass(name = "com.example.ThirdPartyClass")`
+
+#### `@ConditionalOnMissingBean`
+
+**作用**
+容器中不存在指定类型的 Bean 时生效
+**示例**
+`@ConditionalOnMissingBean(type = DataSource.class)`
+
+#### `@ConditionalOnWebApplication`
+
+**作用**
+仅在 Web 环境中生效
+**示例**
+`@ConditionalOnWebApplication(type = SERVLET)`
+
+`@ConditionalOnExpression`
+
+**作用**
+
+基于 SpEL 表达式判断
+
+**示例**
+
+`@ConditionalOnExpression("${feature.enabled:false} && T(java.time.LocalTime.now().getHour() > 9)")`
+
+#### 组合使用
+
+```java
+@Configuration
+@ConditionalOnClass(DataSource.class) // 1. 检查类路径是否存在 DataSource
+@ConditionalOnProperty(prefix = "spring.datasource", name = "url") // 2. 检查配置
+public class DataSourceAutoConfig {
+    @Bean
+    @ConditionalOnMissingBean // 3. 容器中无 DataSource 时注册
+    public DataSource dataSource() {
+        return new HikariDataSource();
+    }
+}
+```
+
+### 4. 自定义条件注解
+
+通过元注解（Meta-annotation）封装常用条件逻辑：
+
+#### 4.1 定义注解
+
+```java
+@Target({ElementType.TYPE, ElementType.METHOD})
+@Retention(RetentionPolicy.RUNTIME)
+@Conditional(OnProductionEnvCondition.class) // 关联条件类
+public @interface ConditionalOnProductionEnv {
+    String value() default "prod"; // 可传递参数
+}
+```
+
+#### 4.2 实现条件逻辑
+
+```java
+public class OnProductionEnvCondition implements Condition {
+    @Override
+    public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
+        // 获取注解属性值
+        String env = (String) metadata.getAnnotationAttributes(ConditionalOnProductionEnv.class.getName()).get("value");
+        // 检查当前环境
+        return context.getEnvironment().acceptsProfiles(env);
+    }
+}
+```
+
+#### 4.3 使用自定义注解
+
+```java
+@Configuration
+@ConditionalOnProductionEnv // 仅在生产环境生效
+public class ProductionConfig {
+    @Bean
+    public AuditService auditService() {
+        return new ProductionAuditService();
+    }
+}
+```
+
+### 5. 高级技巧
+
+#### 5.1 条件组合
+
+使用 `AnyNestedCondition`、`AllNestedCondition` 或 `NoneNestedCondition` 实现复杂逻辑：
+
+```java
+public class OnCacheAndDatabaseCondition extends AllNestedCondition {
+    public OnCacheAndDatabaseCondition() {
+        super(ConfigurationPhase.REGISTER_BEAN);
+    }
+
+    @ConditionalOnProperty("cache.enabled")
+    static class CacheEnabled {}
+
+    @ConditionalOnClass(DataSource.class)
+    static class DatabaseExists {}
+}
+
+// 使用
+@Configuration
+@Conditional(OnCacheAndDatabaseCondition.class)
+public class CacheConfig { /* 仅当缓存启用且数据库存在时加载 */ }
+```
+
+#### 5.2 调试条件匹配
+
+- **启动日志**：添加 `--debug` 参数查看条件评估详情：
+
+  ```bash
+  java -jar myapp.jar --debug
+  ```
+
+- **输出示例**：
+
+  ```
+  MyService:
+    Did not match:
+      - @ConditionalOnProperty (myfeature.enabled=true) did not find property 'myfeature.enabled'
+  ```
+
+### 6. 常见问题解答
+
+#### Q 1：`@Conditional` 和 `@Profile` 的区别？
+
+| **特性**   | **`@Conditional`** | **`@Profile`**           |
+| -------- | ------------------ | ------------------------ |
+| **灵活性**  | 支持任意复杂条件（通过代码实现）   | 仅基于简单的 profile 名称匹配      |
+| **使用场景** | 类/方法级别，精细控制        | 通常用于整个配置类的环境隔离           |
+| **底层实现** | 基于 `Condition` 接口  | 本质是 `@Conditional` 的派生注解 |
+
+**最佳实践**：
+- 简单环境切换用 `@Profile`（如 `@Profile("dev")`）。
+- 复杂条件判断用 `@Conditional`（如类路径检查、属性组合逻辑）。
+
+#### Q 2：条件注解在什么时候被评估？
+
+- **`@Configuration` 类**：在容器启动时解析配置类前评估。
+- **`@Bean` 方法**：在首次需要创建该 Bean 时评估（懒加载模式下可能延迟）。
+
+#### Q 3：如何测试条件逻辑？
+
+通过 `ApplicationContextRunner` 或 `ConditionEvaluator` 直接测试：
+
+```java
+@Test
+void testCondition() {
+    ApplicationContextRunner contextRunner = new ApplicationContextRunner()
+        .withPropertyValues("myfeature.enabled=true")
+        .withUserConfiguration(AppConfig.class);
+
+    contextRunner.run(context -> {
+        assertThat(context).hasBean("myService"); // 验证条件通过
+    });
+}
+```
+
+### 7. 使用场景
+
+#### 7.1 多数据源动态切换
+
+```java
+@Configuration
+public class DataSourceConfig {
+    @Bean
+    @ConditionalOnProperty(name = "datasource.primary.enabled", havingValue = "true")
+    public DataSource primaryDataSource() {
+        return createDataSource("primary");
+    }
+
+    @Bean
+    @ConditionalOnProperty(name = "datasource.backup.enabled", havingValue = "true")
+    public DataSource backupDataSource() {
+        return createDataSource("backup");
+    }
+}
+```
+
+#### 7.2 功能开关控制
+
+```java
+@RestController
+@ConditionalOnProperty(name = "features.api-v2.enabled", matchIfMissing = false)
+public class ApiV2Controller {
+    // 仅当 features.api-v2.enabled=true 时生效
+}
+```
+
+### **总结**
+
+- **核心价值**：通过条件化加载实现“按需配置”，避免资源浪费。
+- **灵活扩展**：结合 `Condition` 接口和元注解满足定制需求。
+- **Spring Boot 集成**：活用 `@ConditionalOnXxx` 系列注解简化自动配置。
+- **最佳实践**：
+  - 简单条件用内置注解（如 `@ConditionalOnClass`）。
+  - 复杂逻辑自定义 `Condition` 实现。
+  - 避免过度使用，保持配置可读性。
