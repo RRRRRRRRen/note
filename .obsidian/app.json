@@ -1,4 +1,8 @@
 {
   "useTab": false,
-  "promptDelete": false
+  "promptDelete": false,
+  "newFileLocation": "root",
+  "useMarkdownLinks": true,
+  "attachmentFolderPath": "attachments",
+  "readableLineLength": true
 }

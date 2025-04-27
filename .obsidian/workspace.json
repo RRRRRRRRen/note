@@ -8,20 +8,35 @@
         "type": "tabs",
         "children": [
           {
-            "id": "bf4239334734e17a",
+            "id": "d3f0bee6df2894aa",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "backend/spring/01 spring.md",
+                "file": "common/linux/03 文件系统.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "01 spring"
+              "title": "03 文件系统"
+            }
+          },
+          {
+            "id": "74765004f647945e",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "common/vim/01 vim基本概念与常用操作.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "01 vim基本概念与常用操作"
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -78,7 +93,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 325.5
+    "width": 257.5
   },
   "right": {
     "id": "c964bde6db0477ba",
@@ -94,7 +109,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "backend/spring/01 spring.md",
+                "file": "common/vim/01 vim基本概念与常用操作.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -104,7 +119,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "01 spring 的反向链接列表"
+              "title": "01 vim基本概念与常用操作 的反向链接列表"
             }
           },
           {
@@ -113,12 +128,12 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "backend/spring/01 spring.md",
+                "file": "common/vim/01 vim基本概念与常用操作.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "01 spring 的出链列表"
+              "title": "01 vim基本概念与常用操作 的出链列表"
             }
           },
           {
@@ -142,13 +157,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "backend/spring/01 spring.md",
-                "followCursor": true,
+                "file": "common/vim/01 vim基本概念与常用操作.md",
+                "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "01 spring 的大纲"
+              "title": "01 vim基本概念与常用操作 的大纲"
             }
           },
           {
@@ -162,11 +177,11 @@
             }
           }
         ],
-        "currentTab": 3
+        "currentTab": 4
       }
     ],
     "direction": "horizontal",
-    "width": 344.5
+    "width": 266.5
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -180,20 +195,37 @@
       "obsidian-excalidraw-plugin:新建绘图文件": false
     }
   },
-  "active": "da7ea6bc3bff8842",
+  "active": "07f512a1fc605f3a",
   "lastOpenFiles": [
-    "backend/spring/02 springMVC.md",
-    "backend/spring/01 spring.md",
-    "backend/MySQL/01 运算符.md",
-    "common/linux/05 包管理器.md",
-    "common/linux/04 用户与权限.md",
+    "common/CentOS/02 文件系统.md",
+    "common/vim/01 vim基本概念与常用操作.md",
+    "common/vim",
+    "common/CentOS/03 远程登录.md",
     "common/linux/03 文件系统.md",
+    "common/CentOS/01 虚拟机中安装CentOS.md",
+    "common/linux/04 用户与权限.md",
     "common/linux/02 终端操作基础.md",
     "common/linux/01 启动 ubuntu.md",
+    "common/CentOS",
+    "common/linux/05 包管理器.md",
+    "backend/spring/01 Spring Framework/05 AOP.md",
+    "backend/spring/01 Spring Framework/04 组件生命周期.md",
+    "backend/spring/01 Spring Framework/02 容器注册.md",
+    "backend/spring/01 Spring Framework/03 容器注入.md",
+    "attachments/Pasted image 20250426133605.png",
+    "backend/spring/01 Spring Framework/01 概述.md",
+    "backend/spring/02 springMVC.md",
+    "backend/spring/01 spring.md",
+    "未命名.md",
+    "backend/spring/01 Spring Framework",
+    "attachments/Pasted image 20250425183543.png",
+    "attachments",
+    "Pasted image 20250425183308.png",
+    "plan.md",
+    "backend/MySQL/01 运算符.md",
     "test.md",
     "backend/Java/03 Java的基本程序设计结构.md",
     "backend/spring/05 springBoot.md",
-    "plan.md",
     "未命名.canvas",
     "未命名 1.canvas",
     "Excalidraw/Drawing 2025-04-25 12.27.37.excalidraw.md",
