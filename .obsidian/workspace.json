@@ -4,35 +4,35 @@
     "type": "split",
     "children": [
       {
-        "id": "72130092dfe144e6",
+        "id": "e807c0ecebb791eb",
         "type": "tabs",
         "children": [
           {
-            "id": "d3f0bee6df2894aa",
+            "id": "a7c41857ec4047b2",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "common/linux/03 文件系统.md",
+                "file": "backend/spring/02 SpringMVC/01 请求处理.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "03 文件系统"
+              "title": "01 请求处理"
             }
           },
           {
-            "id": "74765004f647945e",
+            "id": "80c0b73c3f7bcf6e",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "common/vim/01 vim基本概念与常用操作.md",
+                "file": "backend/spring/02 SpringMVC/02 响应处理.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "01 vim基本概念与常用操作"
+              "title": "02 响应处理"
             }
           }
         ],
@@ -109,7 +109,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "common/vim/01 vim基本概念与常用操作.md",
+                "file": "backend/spring/02 SpringMVC/02 响应处理.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -119,7 +119,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "01 vim基本概念与常用操作 的反向链接列表"
+              "title": "02 响应处理 的反向链接列表"
             }
           },
           {
@@ -128,12 +128,12 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "common/vim/01 vim基本概念与常用操作.md",
+                "file": "backend/spring/02 SpringMVC/02 响应处理.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "01 vim基本概念与常用操作 的出链列表"
+              "title": "02 响应处理 的出链列表"
             }
           },
           {
@@ -157,13 +157,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "common/vim/01 vim基本概念与常用操作.md",
+                "file": "backend/spring/02 SpringMVC/02 响应处理.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "01 vim基本概念与常用操作 的大纲"
+              "title": "02 响应处理 的大纲"
             }
           },
           {
@@ -181,7 +181,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 266.5
+    "width": 453.5
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -191,45 +191,48 @@
       "daily-notes:打开/创建今天的日记": false,
       "templates:插入模板": false,
       "command-palette:打开命令面板": false,
-      "obsidian-git:Open Git source control": false,
-      "obsidian-excalidraw-plugin:新建绘图文件": false
+      "obsidian-git:Open Git source control": false
     }
   },
   "active": "07f512a1fc605f3a",
   "lastOpenFiles": [
-    "common/CentOS/02 文件系统.md",
-    "common/vim/01 vim基本概念与常用操作.md",
-    "common/vim",
-    "common/CentOS/03 远程登录.md",
-    "common/linux/03 文件系统.md",
-    "common/CentOS/01 虚拟机中安装CentOS.md",
-    "common/linux/04 用户与权限.md",
-    "common/linux/02 终端操作基础.md",
-    "common/linux/01 启动 ubuntu.md",
-    "common/CentOS",
-    "common/linux/05 包管理器.md",
+    "backend/spring/02 SpringMVC/02 响应处理.md",
+    "backend/spring/02 springMVC.md",
+    "backend/spring/02 SpringMVC/01 请求处理.md",
+    "backend/spring/02 SpringMVC",
+    "backend/spring/01 Spring Framework/06 事务管理.md",
+    "attachments/Pasted image 20250429002948.png",
     "backend/spring/01 Spring Framework/05 AOP.md",
+    "backend/MySQL/99 其他.md",
+    "backend/MySQL/01 运算符.md",
     "backend/spring/01 Spring Framework/04 组件生命周期.md",
+    "common/CentOS/991 CentOS 7 安装 docker.md",
+    "common/vim/01 vim基本概念与常用操作.md",
+    "common/CentOS/05 用户管理.md",
+    "common/CentOS/02 文件系统.md",
+    "common/CentOS/04 系统操作.md",
+    "common/linux/04 用户与权限.md",
+    "common/CentOS/03 远程登录.md",
+    "common/linux/05 包管理器.md",
+    "common/linux/01 启动 ubuntu.md",
+    "common/linux/02 终端操作基础.md",
+    "common/linux/03 文件系统.md",
+    "common/vim",
+    "common/CentOS/01 虚拟机中安装CentOS.md",
+    "common/CentOS",
     "backend/spring/01 Spring Framework/02 容器注册.md",
     "backend/spring/01 Spring Framework/03 容器注入.md",
     "attachments/Pasted image 20250426133605.png",
     "backend/spring/01 Spring Framework/01 概述.md",
-    "backend/spring/02 springMVC.md",
     "backend/spring/01 spring.md",
-    "未命名.md",
     "backend/spring/01 Spring Framework",
     "attachments/Pasted image 20250425183543.png",
     "attachments",
     "Pasted image 20250425183308.png",
     "plan.md",
-    "backend/MySQL/01 运算符.md",
     "test.md",
-    "backend/Java/03 Java的基本程序设计结构.md",
-    "backend/spring/05 springBoot.md",
     "未命名.canvas",
     "未命名 1.canvas",
-    "Excalidraw/Drawing 2025-04-25 12.27.37.excalidraw.md",
-    "Excalidraw",
-    "frontend/javascript/01 基础.md"
+    "Excalidraw"
   ]
 }
