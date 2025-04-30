@@ -1,5 +1,18 @@
 {
-  "translucency": true,
-  "theme": "obsidian",
-  "cssTheme": "AnuPpuccin"
+  "translucency": false,
+  "theme": "system",
+  "cssTheme": "",
+  "accentColor": "",
+  "enabledCssSnippets": [
+    "extended-colorschemes",
+    "custom-background",
+    "custom-rainbow-colors",
+    "floating-search-bar",
+    "floating-status-bar",
+    "its-frontmatter",
+    "minimal-cards",
+    "notion-cards",
+    "overflow"
+  ],
+  "nativeMenus": false
 }

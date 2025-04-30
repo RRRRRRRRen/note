@@ -4,39 +4,24 @@
     "type": "split",
     "children": [
       {
-        "id": "e807c0ecebb791eb",
+        "id": "970ead322525b745",
         "type": "tabs",
         "children": [
           {
-            "id": "a7c41857ec4047b2",
+            "id": "05d2d0d233ef7fab",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "backend/spring/02 SpringMVC/01 请求处理.md",
+                "file": "【BackEnd】Spring/02 SpringMVC/03 执行流程.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "01 请求处理"
-            }
-          },
-          {
-            "id": "80c0b73c3f7bcf6e",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "backend/spring/02 SpringMVC/02 响应处理.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "02 响应处理"
+              "title": "03 执行流程"
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "vertical"
@@ -93,7 +78,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 257.5
+    "width": 254.5
   },
   "right": {
     "id": "c964bde6db0477ba",
@@ -157,13 +142,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "backend/spring/02 SpringMVC/02 响应处理.md",
+                "file": "【BackEnd】Spring/02 SpringMVC/03 执行流程.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "02 响应处理 的大纲"
+              "title": "03 执行流程 的大纲"
             }
           },
           {
@@ -181,58 +166,62 @@
       }
     ],
     "direction": "horizontal",
-    "width": 453.5
+    "width": 355.5
   },
   "left-ribbon": {
     "hiddenItems": {
       "switcher:打开快速切换": false,
       "graph:查看关系图谱": false,
       "canvas:新建白板": false,
-      "daily-notes:打开/创建今天的日记": false,
       "templates:插入模板": false,
       "command-palette:打开命令面板": false,
-      "obsidian-git:Open Git source control": false
+      "obsidian-git:Open Git source control": false,
+      "daily-notes:打开/创建今天的日记": false
     }
   },
   "active": "07f512a1fc605f3a",
   "lastOpenFiles": [
-    "backend/spring/02 SpringMVC/02 响应处理.md",
-    "backend/spring/02 springMVC.md",
-    "backend/spring/02 SpringMVC/01 请求处理.md",
-    "backend/spring/02 SpringMVC",
-    "backend/spring/01 Spring Framework/06 事务管理.md",
-    "attachments/Pasted image 20250429002948.png",
-    "backend/spring/01 Spring Framework/05 AOP.md",
-    "backend/MySQL/99 其他.md",
-    "backend/MySQL/01 运算符.md",
-    "backend/spring/01 Spring Framework/04 组件生命周期.md",
-    "common/CentOS/991 CentOS 7 安装 docker.md",
-    "common/vim/01 vim基本概念与常用操作.md",
-    "common/CentOS/05 用户管理.md",
-    "common/CentOS/02 文件系统.md",
-    "common/CentOS/04 系统操作.md",
-    "common/linux/04 用户与权限.md",
-    "common/CentOS/03 远程登录.md",
-    "common/linux/05 包管理器.md",
-    "common/linux/01 启动 ubuntu.md",
-    "common/linux/02 终端操作基础.md",
-    "common/linux/03 文件系统.md",
-    "common/vim",
-    "common/CentOS/01 虚拟机中安装CentOS.md",
-    "common/CentOS",
-    "backend/spring/01 Spring Framework/02 容器注册.md",
-    "backend/spring/01 Spring Framework/03 容器注入.md",
-    "attachments/Pasted image 20250426133605.png",
-    "backend/spring/01 Spring Framework/01 概述.md",
-    "backend/spring/01 spring.md",
-    "backend/spring/01 Spring Framework",
-    "attachments/Pasted image 20250425183543.png",
-    "attachments",
-    "Pasted image 20250425183308.png",
-    "plan.md",
-    "test.md",
+    "【BackEnd】Spring/02 SpringMVC/02 响应处理.md",
+    "【BackEnd】Spring/02 SpringMVC/03 执行流程.md",
+    "【FrontEnd】Javascript/01 基础.md",
+    "【BackEnd】Spring/02 SpringMVC/01 请求处理.md",
     "未命名.canvas",
-    "未命名 1.canvas",
-    "Excalidraw"
+    "【FrontEnd】Format/format.md",
+    "【FrontEnd】Format",
+    "【FrontEnd】Vue/vue.md",
+    "【FrontEnd】Open Source",
+    "【FrontEnd】Webpack/第二章 指南.md",
+    "【FrontEnd】Vue",
+    "【FrontEnd】Webpack",
+    "【FrontEnd】React",
+    "【BackEnd】Node",
+    "【FrontEnd】Javascript",
+    "【Basic】Browser/01 Http基础.md",
+    "【BackEnd】MySql/01 运算符.md",
+    "【Basic】Browser",
+    "【BackEnd】Spring",
+    "【BackEnd】Java/03 Java的基本程序设计结构.md",
+    "【BackEnd】MySql",
+    "【Utils】Regex/01 字符串匹配.md",
+    "【Utils】PicGo/picGo.md",
+    "【ENV】Git/git.md",
+    "【BackEnd】Maven/Maven.md",
+    "【ENV】JDK/JDK.md",
+    "backend/spring/02 springMVC.md",
+    "【BackEnd】Spring/01 Spring Framework/06 事务管理.md",
+    "attachments/Pasted image 20250429002948.png",
+    "【BackEnd】Spring/01 Spring Framework/05 AOP.md",
+    "【BackEnd】MySql/99 其他.md",
+    "【BackEnd】Spring/01 Spring Framework/04 组件生命周期.md",
+    "【OS】CentOS/991 CentOS 7 安装 docker.md",
+    "【Utils】Vim/01 vim基本概念与常用操作.md",
+    "【OS】CentOS/05 用户管理.md",
+    "【OS】CentOS/02 文件系统.md",
+    "【OS】CentOS/04 系统操作.md",
+    "【OS】Ubuntu/04 用户与权限.md",
+    "attachments/Pasted image 20250426133605.png",
+    "attachments/Pasted image 20250425183543.png",
+    "Pasted image 20250425183308.png",
+    "未命名 1.canvas"
   ]
 }

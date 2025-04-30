@@ -1,0 +1,18 @@
+{
+  "things-style@@mobile-black-background": false,
+  "things-style@@progress-color": false,
+  "things-style@@default-font-color": false,
+  "anuppuccin-theme-settings-extended@@anp-theme-ext-light": true,
+  "anuppuccin-theme-settings-extended@@anp-theme-ext-dark": true,
+  "anuppuccin-theme-settings-extended@@anp-theme-ext-amoled": true,
+  "anuppuccin-theme-settings-extended@@catppuccin-theme-extended": "ctp-atom-light",
+  "anuppuccin-theme-settings-extended@@catppuccin-theme-dark-extended": "ctp-dracula",
+  "anuppuccin-theme-settings@@anuppuccin-theme-light": "ctp-latte",
+  "anuppuccin-theme-settings@@anp-alt-rainbow-style": "anp-full-rainbow-color-toggle",
+  "id@@colorblind_protan-deutan": false,
+  "id@@colorblind_tritan": false,
+  "id@@callout-on": true,
+  "id@@h1-underline": false,
+  "id@@h2-underline": false,
+  "id@@headers-one-color": true
+}

@@ -4,5 +4,6 @@
   "newFileLocation": "root",
   "useMarkdownLinks": true,
   "attachmentFolderPath": "attachments",
-  "readableLineLength": true
+  "readableLineLength": true,
+  "showLineNumber": false
 }
