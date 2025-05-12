@@ -1,7 +1,7 @@
 {
   "translucency": false,
   "theme": "system",
-  "cssTheme": "",
+  "cssTheme": "GitHub Theme",
   "accentColor": "",
   "enabledCssSnippets": [
     "extended-colorschemes",

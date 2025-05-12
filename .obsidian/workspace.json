@@ -4,21 +4,21 @@
     "type": "split",
     "children": [
       {
-        "id": "970ead322525b745",
+        "id": "ccad98ebce5a921f",
         "type": "tabs",
         "children": [
           {
-            "id": "05d2d0d233ef7fab",
+            "id": "3cf1ce0df972901f",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "【BackEnd】Spring/02 SpringMVC/03 执行流程.md",
+                "file": "【FrontEnd】React/react.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "03 执行流程"
+              "title": "react"
             }
           }
         ]
@@ -54,7 +54,7 @@
               "type": "search",
               "state": {
                 "query": "",
-                "matchingCase": false,
+                "matchingCase": true,
                 "explainSearch": false,
                 "collapseAll": false,
                 "extraContext": false,
@@ -78,7 +78,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 254.5
+    "width": 255.5
   },
   "right": {
     "id": "c964bde6db0477ba",
@@ -142,13 +142,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "【BackEnd】Spring/02 SpringMVC/03 执行流程.md",
+                "file": "【FrontEnd】React/react.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "03 执行流程 的大纲"
+              "title": "react 的大纲"
             }
           },
           {
@@ -166,12 +166,11 @@
       }
     ],
     "direction": "horizontal",
-    "width": 355.5
+    "width": 320.5
   },
   "left-ribbon": {
     "hiddenItems": {
       "switcher:打开快速切换": false,
-      "graph:查看关系图谱": false,
       "canvas:新建白板": false,
       "templates:插入模板": false,
       "command-palette:打开命令面板": false,
@@ -181,47 +180,53 @@
   },
   "active": "07f512a1fc605f3a",
   "lastOpenFiles": [
-    "【BackEnd】Spring/02 SpringMVC/02 响应处理.md",
-    "【BackEnd】Spring/02 SpringMVC/03 执行流程.md",
-    "【FrontEnd】Javascript/01 基础.md",
-    "【BackEnd】Spring/02 SpringMVC/01 请求处理.md",
-    "未命名.canvas",
-    "【FrontEnd】Format/format.md",
-    "【FrontEnd】Format",
+    "个人资料.md",
+    "【FrontEnd】React/react.md",
+    "【FrontEnd】Vue/02 vue3 基础.md",
+    "【FrontEnd】Vue/05 vue-router（未整理）.md",
+    "【FrontEnd】Vue/04 pinia（未整理）.md",
+    "【FrontEnd】Vue/03 vuex（未整理）.md",
+    "【FrontEnd】Vue/01 vue 核心.md",
+    "【FrontEnd】Vite/vite.md",
     "【FrontEnd】Vue/vue.md",
-    "【FrontEnd】Open Source",
-    "【FrontEnd】Webpack/第二章 指南.md",
-    "【FrontEnd】Vue",
-    "【FrontEnd】Webpack",
-    "【FrontEnd】React",
-    "【BackEnd】Node",
-    "【FrontEnd】Javascript",
-    "【Basic】Browser/01 Http基础.md",
-    "【BackEnd】MySql/01 运算符.md",
-    "【Basic】Browser",
-    "【BackEnd】Spring",
-    "【BackEnd】Java/03 Java的基本程序设计结构.md",
-    "【BackEnd】MySql",
-    "【Utils】Regex/01 字符串匹配.md",
-    "【Utils】PicGo/picGo.md",
-    "【ENV】Git/git.md",
-    "【BackEnd】Maven/Maven.md",
-    "【ENV】JDK/JDK.md",
-    "backend/spring/02 springMVC.md",
-    "【BackEnd】Spring/01 Spring Framework/06 事务管理.md",
-    "attachments/Pasted image 20250429002948.png",
-    "【BackEnd】Spring/01 Spring Framework/05 AOP.md",
-    "【BackEnd】MySql/99 其他.md",
-    "【BackEnd】Spring/01 Spring Framework/04 组件生命周期.md",
-    "【OS】CentOS/991 CentOS 7 安装 docker.md",
-    "【Utils】Vim/01 vim基本概念与常用操作.md",
-    "【OS】CentOS/05 用户管理.md",
-    "【OS】CentOS/02 文件系统.md",
-    "【OS】CentOS/04 系统操作.md",
-    "【OS】Ubuntu/04 用户与权限.md",
-    "attachments/Pasted image 20250426133605.png",
-    "attachments/Pasted image 20250425183543.png",
-    "Pasted image 20250425183308.png",
+    "【FrontEnd】Webpack/Webpack.md",
+    "【FrontEnd】Javascript/01 基础.md",
+    "【FrontEnd】Javascript/06 模块化.md",
+    "【BackEnd】Spring/03 MyBatis.md",
+    "【BackEnd】Open Source/sky/01 环境搭建.md",
+    "【BackEnd】Open Source/gulimall/02 运行环境搭建.md",
+    "【BackEnd】Open Source/gulimall/03 开发环境搭建.md",
+    "【BackEnd】Open Source/sky/day01/苍穹外卖-day01.md",
+    "【BackEnd】Open Source/sky/day12/assets/image-20230131160929202.png",
+    "【BackEnd】Open Source/sky/day12/assets/image-20230131160647328.png",
+    "【BackEnd】Open Source/sky/day12/assets/image-20230131155111294.png",
+    "【BackEnd】Open Source/sky/day12/assets/image-20230131152610559.png",
+    "【BackEnd】Open Source/sky/day12/assets/image-20230131151132672.png",
+    "【BackEnd】Open Source/sky/day12/assets/image-20230131113255962.png",
+    "【BackEnd】Open Source/sky/day12/assets/image-20230131112905034.png",
+    "【BackEnd】Open Source/sky/day12/assets/image-20230131110856903.png",
+    "【BackEnd】Open Source/sky/day12/assets/image-20230131110839959.png",
+    "【BackEnd】Open Source/sky/day12/assets/image-20230131110810568.png",
+    "【BackEnd】Open Source/sky/day12/assets",
+    "【BackEnd】Open Source/sky/day12/苍穹外卖-day12.md",
+    "【BackEnd】Open Source/sky/day11/assets",
+    "【BackEnd】Open Source/sky/day11/苍穹外卖-day11.md",
+    "【BackEnd】Open Source/sky/day10/assets",
+    "【BackEnd】Open Source/sky/day10/苍穹外卖-day10.md",
+    "【BackEnd】Open Source/sky/day08/assets",
+    "【BackEnd】Open Source/sky/day08/苍穹外卖-day08.md",
+    "【BackEnd】Open Source/sky/day07/assets",
+    "【BackEnd】Open Source/sky/day07/苍穹外卖-day07.md",
+    "【BackEnd】Open Source/sky/day06/assets",
+    "【BackEnd】Open Source/sky/day06/苍穹外卖-day06.md",
+    "【BackEnd】Open Source/sky/day05/assets",
+    "【BackEnd】Open Source/sky/day05/苍穹外卖-day05.md",
+    "【BackEnd】Open Source/sky/day03/assets",
+    "【BackEnd】Open Source/sky/day03/苍穹外卖-day03.md",
+    "【BackEnd】Open Source/sky/day02/assets",
+    "【BackEnd】Open Source/sky/day02/苍穹外卖-day02.md",
+    "【BackEnd】Open Source/sky/day01/assets",
+    "未命名.canvas",
     "未命名 1.canvas"
   ]
 }
