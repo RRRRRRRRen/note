@@ -10,7 +10,6 @@
           {
             "id": "4fce7df996fc8f97",
             "type": "leaf",
-            "pinned": true,
             "state": {
               "type": "markdown",
               "state": {
@@ -18,25 +17,8 @@
                 "mode": "source",
                 "source": false
               },
-              "pinned": true,
               "icon": "lucide-file",
               "title": "07 性能优化"
-            }
-          },
-          {
-            "id": "bc68e2af187d5756",
-            "type": "leaf",
-            "pinned": true,
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "【FrontEnd】Javascript/渲染优化.md",
-                "mode": "source",
-                "source": false
-              },
-              "pinned": true,
-              "icon": "lucide-file",
-              "title": "渲染优化"
             }
           },
           {
@@ -45,12 +27,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "【FrontEnd】Javascript/07 性能优化.md",
+                "file": "【FrontEnd】Javascript/存储和后台任务优化.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "07 性能优化"
+              "title": "存储和后台任务优化"
             }
           },
           {
@@ -67,8 +49,7 @@
               "title": "调度优化"
             }
           }
-        ],
-        "currentTab": 3
+        ]
       }
     ],
     "direction": "vertical"
@@ -189,13 +170,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "【FrontEnd】Javascript/调度优化.md",
+                "file": "【FrontEnd】Javascript/07 性能优化.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "调度优化 的大纲"
+              "title": "07 性能优化 的大纲"
             }
           },
           {
@@ -227,9 +208,10 @@
   },
   "active": "07f512a1fc605f3a",
   "lastOpenFiles": [
-    "【FrontEnd】Javascript/渲染优化.md",
+    "【FrontEnd】Javascript/存储和后台任务优化.md",
     "【FrontEnd】Javascript/07 性能优化.md",
     "【FrontEnd】Javascript/调度优化.md",
+    "【FrontEnd】Javascript/渲染优化.md",
     "【BackEnd】MySql/01 运算符.md",
     "【BackEnd】MySql/03 分页.md",
     "【BackEnd】MySql/02 排序.md",
@@ -253,7 +235,6 @@
     "【FrontEnd】Open Source/vue-vben-admin/[Vben Admin 源码实现] 10_状态管理.md",
     "【FrontEnd】Open Source/vue-vben-admin/[Vben Admin 源码实现] 09_路由配置.md",
     "【FrontEnd】Open Source/vue-vben-admin/[Vben Admin 源码实现] 08_其他配置.md",
-    "【FrontEnd】Open Source/vue-vben-admin/[Vben Admin 源码实现] 07_Vite配置.md",
     "【BackEnd】Open Source/sky/day12/assets/image-20230131160929202.png",
     "【BackEnd】Open Source/sky/day12/assets/image-20230131160647328.png",
     "【BackEnd】Open Source/sky/day12/assets/image-20230131155111294.png",
