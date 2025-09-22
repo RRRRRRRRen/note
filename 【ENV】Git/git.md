@@ -546,26 +546,26 @@ git clone <git_repository_path> --recursive
 
 ```shell
 # 1.取消子模块追踪
-	git rm --cached <submodule_folder_path>
+ git rm --cached <submodule_folder_path>
 # 2.删除子模块文件
-	rm -rf <submodule_folder_path>
+ rm -rf <submodule_folder_path>
 # 3.删除子模块配置
-	# 进入.gitmodules文件
-	# 删除对应模块配置内容：例如
-	# [submodule "assets"]
-  # 	path = assets
-  # 	url = https://github.com/maonx/vimwiki-assets.git
+ # 进入.gitmodules文件
+ # 删除对应模块配置内容：例如
+ # [submodule "assets"]
+  #  path = assets
+  #  url = https://github.com/maonx/vimwiki-assets.git
 # 4.删除git模块配置
-	# 进入.git/config文件
-	# 删除对应模块配置内容：例如
-	# [submodule "assets"]
-  # 	url = https://github.com/maonx/vimwiki-assets.git
+ # 进入.git/config文件
+ # 删除对应模块配置内容：例如
+ # [submodule "assets"]
+  #  url = https://github.com/maonx/vimwiki-assets.git
 # 5.删除子模块追踪文件
-	rm -rf .git/modules/<submodule_folder_path>
+ rm -rf .git/modules/<submodule_folder_path>
 # 6.提交修改
-	git add .
-	git commit -m "message"
-	git push
+ git add .
+ git commit -m "message"
+ git push
 ```
 
 ### 05.合并提记录
@@ -635,13 +635,25 @@ git rebase -i [old_hash] [new_hash]
 **前缀**
 
 ```shell
-wip:			开发中
-feat:			增加新功能
-fix:			修复问题/BUG
-refactor:	重构
-docs:			文档/注释
-test:			测试相关
-chore:		依赖更新/脚手架配置修改等
-style:		代码风格相关无影响运行结果的
-revert:		撤销修改
+wip:   开发中
+feat:   增加新功能
+fix:   修复问题/BUG
+refactor: 重构
+docs:   文档/注释
+test:   测试相关
+chore:  依赖更新/脚手架配置修改等
+style:  代码风格相关无影响运行结果的
+revert:  撤销修改
+```
+
+## 四、配置ssh代理
+
+/Users/ren/.ssh/config
+
+```text
+Host github.com
+  HostName ssh.github.com
+  Port 443
+  User git
+  ProxyCommand nc -x 127.0.0.1:7897 %h %p
 ```
