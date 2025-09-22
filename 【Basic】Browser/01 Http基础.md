@@ -60,7 +60,7 @@ POST 和 PUT 都是用于向服务器发送数据的 HTTP 请求方法，但它�
 
 - **POST** 请求示例：
 
-  ```
+  ```http
   POST /users HTTP/1.1
   Host: example.com
   Content-Type: application/json
@@ -75,7 +75,7 @@ POST 和 PUT 都是用于向服务器发送数据的 HTTP 请求方法，但它�
 
 - **PUT** 请求示例：
 
-  ```
+  ```http
   PUT /users/123 HTTP/1.1
   Host: example.com
   Content-Type: application/json
@@ -105,7 +105,7 @@ POST 和 PUT 都是用于向服务器发送数据的 HTTP 请求方法，但它�
 
    预检请求示例：
 
-   ```
+   ```http
    OPTIONS /api/resource HTTP/1.1
    Host: example.com
    Access-Control-Request-Method: POST
@@ -122,7 +122,7 @@ POST 和 PUT 都是用于向服务器发送数据的 HTTP 请求方法，但它�
 
    预检响应示例：
 
-   ```
+   ```http
    HTTP/1.1 200 OK
    Access-Control-Allow-Methods: POST
    Access-Control-Allow-Headers: X-Custom-Header
@@ -134,7 +134,7 @@ POST 和 PUT 都是用于向服务器发送数据的 HTTP 请求方法，但它�
 
    实际请求示例：
 
-   ```
+   ```http
    POST /api/resource HTTP/1.1
    Host: example.com
    Content-Type: application/json
@@ -149,7 +149,7 @@ POST 和 PUT 都是用于向服务器发送数据的 HTTP 请求方法，但它�
 
    实际响应示例：
 
-   ```
+   ```http
    HTTP/1.1 200 OK
    Content-Type: application/json
 
@@ -171,7 +171,7 @@ POST 和 PUT 都是用于向服务器发送数据的 HTTP 请求方法，但它�
 
    配置示例：
 
-   ```
+   ```http
    Access-Control-Max-Age: 86400  // 预检响应缓存24小时
    ```
 
@@ -582,7 +582,7 @@ Set-Cookie: <cookie-name>=<cookie-value>; Domain=<domain-value>; Secure; HttpOnl
 - HEAD：获取报文首部，但是不返回报文主体内容，例如下载大文件前用于先获取文件大小，再来决定是否下载文件。
 - OPTIONS：浏览器自动执行的，用来询问支持的请求方法，判断跨域请求、预检请求、目标是否安全
 
-## 8.`HTTP1.0`和`HTTP1.1 `之间的区别
+## 8.`HTTP1.0`和`HTTP1.1`之间的区别
 
 | 协议     | HTTP1.0                                | HTTP1.1                                                      |
 | -------- | -------------------------------------- | ------------------------------------------------------------ |
@@ -592,7 +592,7 @@ Set-Cookie: <cookie-name>=<cookie-value>; Domain=<domain-value>; Secure; HttpOnl
 | host     | 认为每台服务器都只绑定一个 IP 地址     | 增加 host 字段，这样九可以将请求发送到同一服务器上的不同网站 |
 | 请求方法 | GET、POST                              | 怎加了 PUT、HEAD、OPTIONS                                    |
 
-## 9.`HTTP1.1 `和 `HTTP2.0`的区别
+## 9.`HTTP1.1`和 `HTTP2.0`的区别
 
 | 协议       | HTTP1.1                                  | HTTP2.0                                                          |
 | ---------- | ---------------------------------------- | ---------------------------------------------------------------- |
