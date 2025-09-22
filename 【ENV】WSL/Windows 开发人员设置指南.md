@@ -2,27 +2,27 @@
 
 - [🔭概述](#概述)
 - [☑先决条件](#先决条件)
-- [🐧 WSL](#-wsl-1-2-3)
+- [🐧 WSL \[^1\] \[^2\] \[^3\]](#-wsl-1-2-3)
   - [安装 WSL 2](#安装-wsl-2)
   - [用户配置](#用户配置)
   - [更新 Linux](#更新-linux)
   - [映射你的 Linux 驱动器](#映射你的-linux-驱动器)
     - [固定代码目录](#固定代码目录)
   - [重启 WSL](#重启-wsl)
-- [👨💻 Windows 终端](#-windows-终端4)
+- [👨💻 Windows 终端 \[^4\]](#-windows-终端-4)
   - [安装 Windows 终端](#安装-windows-终端)
   - [终端设置](#终端设置)
     - [默认配置文件](#默认配置文件)
     - [开始目录](#开始目录)
-- [📝 Git 配置](#-git-配置5)
+- [📝 Git 配置 \[^5\]](#-git-配置-5)
   - [姓名](#姓名)
   - [电子邮件](#电子邮件)
   - [用户名](#用户名)
-- [😺 GitHub 凭据](#-github-凭据6)
+- [😺 GitHub 凭据 \[^6\]](#-github-凭据-6)
   - [创建你的个人访问令牌](#创建你的个人访问令牌)
   - [Git 凭据管理器](#git-凭据管理器)
   - [存储令牌](#存储令牌)
-- [💤 Zsh](#-zsh7)
+- [💤 Zsh \[^7\]](#-zsh-7)
   - [安装 Zsh](#安装-zsh)
   - [OhMyZsh](#ohmyzsh)
   - [cURL](#curl)
@@ -30,7 +30,7 @@
   - [更多插件](#更多插件)
     - [zsh-autosuggestions](#zsh-autosuggestions)
     - [zsh-syntax-highlighting](#zsh-syntax-highlighting)
-- [📦 Node.js](#-nodejs8)
+- [📦 Node.js \[^8\]](#-nodejs-8)
   - [NVM](#nvm)
     - [安装 NVM](#安装-nvm)
     - [更改node版本](#更改node版本)
@@ -39,7 +39,7 @@
   - [更改默认主题](#更改默认主题)
   - [远程扩展](#远程扩展)
   - [更多扩展](#更多扩展)
-- [🍫Chocolatey](#Chocolatey9)
+- [🍫Chocolatey \[^9\]](#chocolatey-9)
   - [管理shell](#管理shell)
     - [选项 1](#选项-1)
     - [选项 2](#选项-2)
@@ -49,6 +49,14 @@
   - [Windows 应用程序](#windows-应用程序)
 - [🪜 Chrome 扩展](#-chrome-扩展)
 - [🇺🇸 VetsWhoCode Web App](#-vetswhocode-web-app)
+- [➕其他环境](#其他环境)
+  - [Ruby](#ruby)
+  - [Rails](#rails)
+  - [Windows 上的 Python 开发](#windows-上的-python-开发)
+  - [RStudio Server](#rstudio-server)
+  - [PHP7](#php7)
+  - [PHP8](#php8)
+  - [安装数据库](#安装数据库)
 
 ## 🔭概述
 
@@ -70,7 +78,6 @@
 ### 安装 WSL 2
 
 WSL 2 是 WSL 的最新版本，增加了新功能，如全 Linux 内核和全系统调用兼容性。过去安装它需要几个步骤，但我们现在只需要在 PowerShell 或命令提示符中输入以下命令：
-
 
 ```sh
 wsl --install
@@ -101,7 +108,6 @@ wsl --install
 
 建议你定期更新和升级软件包。在 Ubuntu 或 Debian 中，我们使用 `apt` 包管理器：
 
-
 ```sh
 sudo apt update && sudo apt upgrade
 ```
@@ -114,21 +120,21 @@ Windows 不会自动更新或升级你的 Linux 发行版。这是大多数 Linu
 
 1. 从文件资源管理器打开 `\\wsl$\` 位置：
 
-<p align="center">
-<img src="images/search-bar.jpg" alt="File explorer search bar" width="800px" />
-</p>
+    <p align="center">
+    <img src="images/search-bar.jpg" alt="File explorer search bar" width="800px" />
+    </p>
 
 2. 右键单击 Ubuntu 文件夹，然后选择 `Map network drive`：
 
-<p align="center">
-<img src="images/drive-map.jpg" alt="Mapping network drive" width="800px" />
-</p>
+    <p align="center">
+    <img src="images/drive-map.jpg" alt="Mapping network drive" width="800px" />
+    </p>
 
 3. 选择你要使用的驱动器号，保留 `Reconnect at sign-in` 选中和 `Connect using different credentials` 未选中，然后单击完成（我的看起来会略有不同，因为它已经完成）：
 
-<p align="center">
-<img src="images/network-folder.jpg" alt="Mapping network drive" />
-</p>
+    <p align="center">
+    <img src="images/network-folder.jpg" alt="Mapping network drive" />
+    </p>
 
 4. 最终结果应该如下所示：
 
@@ -159,7 +165,6 @@ Windows 不会自动更新或升级你的 Linux 发行版。这是大多数 Linu
 
 如果由于某种原因 WSL 停止工作，你可以使用 PowerShell/命令提示符中的以下两个命令重新启动它：
 
-
 ```sh
 wsl.exe --shutdown
 wsl.exe
@@ -185,15 +190,15 @@ Windows 终端默认启动时会打开 PowerShell 或命令提示符 shell，以
 
 1. 从 Windows 终端中选择 `˅` 图标并转到设置菜单：
 
-<p align="center">
-<img src="images/term-settings.jpg" alt="Windows terminal settings" width="800px" />
-</p>
+    <p align="center">
+    <img src="images/term-settings.jpg" alt="Windows terminal settings" width="800px" />
+    </p>
 
 2. 在启动部分，你将找到默认配置文件下拉列表，选择 Ubuntu。在它下面，选择 Windows 终端作为默认终端应用程序：
 
-<p align="center">
-<img src="images/default-profile.jpg" alt="Default shell profile" width="800px" />
-</p>
+    <p align="center">
+    <img src="images/default-profile.jpg" alt="Default shell profile" width="800px" />
+    </p>
 
 #### 开始目录
 
@@ -217,7 +222,6 @@ Windows 终端默认启动时会打开 PowerShell 或命令提示符 shell，以
 
 Git 应该预装在大多数（如果不是所有的话）WSLLinux 发行版上。为确保你拥有最新版本，请在基于 Ubuntu 或 Debian 的发行版中使用以下命令：
 
-
 ```sh
 sudo apt install git
 ```
@@ -226,15 +230,13 @@ sudo apt install git
 
 要设置你的 Git 配置文件，请打开 WSL 命令行并使用此命令设置你的姓名（将“你的姓名”替换为你的首选用户名）：
 
-
 ```sh
 git config --global user.name "Your Name"
 ```
 
 ### 电子邮件
 
-使用此命令设置你的电子邮件（将“youremail@domain.com”替换为你喜欢的电子邮件）：
-
+使用此命令设置你的电子邮件（将“<youremail@domain.com>”替换为你喜欢的电子邮件）：
 
 ```sh
 git config --global user.email "youremail@domain.com"
@@ -243,7 +245,6 @@ git config --global user.email "youremail@domain.com"
 ### 用户名
 
 最后，添加你的 GitHub 用户名以将其链接到 git（区分大小写！）：
-
 
 ```sh
 git config --global user.username "GitHub username"
@@ -279,7 +280,6 @@ GitHub 已删除在远程存储库中工作时使用传统密码的功能。你�
 
 安装 Git Credential Manager 后，你可以将其设置为与 WSL 一起使用。打开你的 WSL 终端并输入以下命令：
 
-
 ```sh
 git config --global credential.helper "/mnt/c/Program\ Files/Git/mingw64/libexec/git-core/git-credential-manager-core.exe"
 ```
@@ -289,7 +289,6 @@ git config --global credential.helper "/mnt/c/Program\ Files/Git/mingw64/libexec
 Z shell 的工作原理几乎与默认 Linux 安装中的标准 BASH shell 相同。它的不同之处在于它对插件和主题的支持，以及一些额外的功能，如拼写更正和递归路径扩展。是时候把 BASH 扔进垃圾桶了！
 
 ### 安装 Zsh
-
 
 ```sh
 sudo apt install zsh
@@ -305,7 +304,6 @@ sudo apt install zsh
 
 首先，我们需要确保安装了[cURL](https://curl.se/)。“客户端 URL”的缩写，它是一种从命令行传输数据的方法，这就是我们下载 OhMyZsh 的方式。
 
-
 ```sh
 sudo apt install curl
 ```
@@ -313,7 +311,6 @@ sudo apt install curl
 ### 安装 OhMyZsh
 
 在你的终端中输入以下命令以安装 OhMyZsh：
-
 
 ```sh
 sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
@@ -329,17 +326,15 @@ zsh 的自动建议，它根据历史记录和完成情况在你键入时建议�
 
 1. 将此存储库克隆到 `$ZSH_CUSTOM/plugins`（默认情况下 `~/.oh-my-zsh/custom/plugins`）
 
-
-```sh
-git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
-```
+    ```sh
+    git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
+    ```
 
 2. 将插件添加到要加载的 Oh My Zsh 的插件列表中（在 `~/.zshrc` 中）：
 
-
-```sh
-plugins=(git zsh-autosuggestions)
-```
+    ```sh
+    plugins=(git zsh-autosuggestions)
+    ```
 
 3. 开始新的终端会话。
 
@@ -349,17 +344,15 @@ plugins=(git zsh-autosuggestions)
 
 1. 在 oh-my-zsh 的 plugins 目录中克隆此存储库：
 
-
-```sh
-git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
-```
+    ```sh
+    git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
+    ```
 
 2. 激活 `~/.zshrc` 中的插件：
 
-
-```sh
-plugins=(git zsh-autosuggestions zsh-syntax-highlighting)
-```
+    ```sh
+    plugins=(git zsh-autosuggestions zsh-syntax-highlighting)
+    ```
 
 3. 开始新的终端会话。
 
@@ -375,66 +368,59 @@ Node.js 是一个 JavaScript 运行时环境，它在 Web 浏览器之外执行 
 
 1. 打开你的 Ubuntu 命令行并使用以下命令安装 nvm：
 
+    ```sh
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
+    ```
 
-```sh
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
-```
-
-要验证安装，请输入： `command-v nvm`。这应该返回“nvm”，如果你收到“未找到命令”或根本没有响应，请关闭当前终端，重新打开它，然后重试。
+    要验证安装，请输入： `command-v nvm`。这应该返回“nvm”，如果你收到“未找到命令”或根本没有响应，请关闭当前终端，重新打开它，然后重试。
 
 2. 列出当前安装了哪些版本的 Node（此时应该没有）：
 
+    ```sh
+    nvm ls
+    ```
 
-```sh
-nvm ls
-```
-
-<p align="center">
-<img src="images/nvm-nonode.png" alt="Ubuntu terminal displaying node not installed" width="800px" />
-</p>
+    <p align="center">
+    <img src="images/nvm-nonode.png" alt="Ubuntu terminal displaying node not installed" width="800px" />
+    </p>
 
 3. 安装当前和稳定的 LTS 版本的 Node.js.
 
-安装 Node.js 的当前稳定 LTS 版本（推荐用于生产应用）：
+    安装 Node.js 的当前稳定 LTS 版本（推荐用于生产应用）：
 
+    ```sh
+    nvm install --lts
+    ```
 
-```sh
-nvm install --lts
-```
+    安装当前版本的 Node.js（用于测试最新的 Node.js 功能和改进，但更有可能出现问题）：
 
-安装当前版本的 Node.js（用于测试最新的 Node.js 功能和改进，但更有可能出现问题）：
-
-
-```sh
-nvm install node
-```
+    ```sh
+    nvm install node
+    ```
 
 4. 列出安装了哪些版本的 Node：
 
+    ```sh
+    nvm ls
+    ```
 
-```sh
-nvm ls
-```
+    现在你应该看到列出了你刚刚安装的两个版本。
 
-现在你应该看到列出了你刚刚安装的两个版本。
-
-<p align="center">
-<img src="images/nvm-node.png" alt="Ubuntu terminal displaying node installed" width="800px" />
-</p>
+    <p align="center">
+    <img src="images/nvm-node.png" alt="Ubuntu terminal displaying node installed" width="800px" />
+    </p>
 
 5. 验证是否安装了 Node.js 和当前版本：
 
+    ```sh
+    node --version
+    ```
 
-```sh
-node --version
-```
+    然后验证你是否也安装了 npm：
 
-然后验证你是否也安装了 npm：
-
-
-```sh
-npm --version
-```
+    ```sh
+    npm --version
+    ```
 
 #### 更改node版本
 
@@ -442,20 +428,17 @@ npm --version
 
 要切换到当前版本：
 
-
 ```sh
 nvm use node
 ```
 
 要切换到 LTS 版本：
 
-
 ```sh
 nvm use --lts
 ```
 
 你还可以将特定编号用于你安装的任何其他版本：
-
 
 ```sh
 nvm use v8.2.1.
@@ -469,7 +452,7 @@ nvm use v8.2.1.
 
 ### 安装 VS Code
 
-VS Code 在 Windows、macOS 和 Linux 上可用。你可以下载最新的 Windows 安装程序[here](https://code.visualstudio.com/)。我建议使用稳定版本。
+VS Code 在 Windows、macOS 和 Linux 上可用。你可以下载最新的 Windows 安装程序[click here](https://code.visualstudio.com/)。我建议使用稳定版本。
 
 ### 更改默认主题
 
@@ -492,7 +475,6 @@ WSL2 shell 可以通过按下 `Ctrl` + `Shift` + `P` 并键入/选择终端：�
 此扩展还允许你使用 `code` 命令直接从你的 WSL 终端启动 VS Code。
 
 如果我在我的存储库的根目录中，我会使用 `code.` 在 VS Code 中启动整个目录。
-
 
 ```sh
 cd my-project
@@ -568,14 +550,13 @@ Chocolatey 是一个类似于[homebrew](https://brew.sh/)的包管理器，但�
 
 3. 如果返回 `Restricted`，则运行 `Set-ExecutionPolicy AllSigned` 或 `Set-ExecutionPolicy Bypass-Scope Process`。
 
->使用 PowerShell，你必须确保 Get-ExecutionPolicy 不受限制。我们建议使用 Bypass 绕过策略以安装或 AllSigned 以提高安全性。
+    >使用 PowerShell，你必须确保 Get-ExecutionPolicy 不受限制。我们建议使用 Bypass 绕过策略以安装或 AllSigned 以提高安全性。
 
 4. 现在运行以下命令：
 
-
-```sh
-Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
-```
+    ```sh
+    Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+    ```
 
 5. 如果你没有看到任何错误，你就可以使用 Chocolatey 了！现在键入 `choco` 或 `choco-?`，或参见[开始使用](https://docs.chocolatey.org/en-us/getting-started)了解使用说明。
 
@@ -585,13 +566,11 @@ Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManage
 
 安装一个新包：
 
-
 ```ps
 choco install filename
 ```
 
 删除包：
-
 
 ```ps
 choco uninstall filename
@@ -599,20 +578,17 @@ choco uninstall filename
 
 列出所有已安装的软件包：
 
-
 ```ps
 choco list
 ```
 
 更新：
 
-
 ```ps
 choco upgrade filename
 ```
 
 或一次更新所有内容：
-
 
 ```ps
 choco upgrade all
@@ -634,7 +610,6 @@ choco upgrade all
 - [微软 PowerToys](https://docs.microsoft.com/en-us/windows/powertoys/?WT.mc_id=twitter-0000-docsmsft)-一组高级用户实用程序
 
 你可以在 admin shell 中使用 chocolatey 使用以下命令一次下载所有这些：
-
 
 ```sh
 choco install wox runjs responsively zeal figma drawio github-desktop postman notion powertoys -y
@@ -658,97 +633,91 @@ choco install wox runjs responsively zeal figma drawio github-desktop postman no
 
 1. 克隆回购
 
-使用 `git clone` 从 GitHub 下载存储库：
+    使用 `git clone` 从 GitHub 下载存储库：
 
+    ```sh
+    git clone https://github.com/Vets-Who-Code/vets-who-code-app.git
+    ```
 
-```sh
-git clone https://github.com/Vets-Who-Code/vets-who-code-app.git
-```
+    <p align="center">
+    <img src="images/clone.jpg" alt="Using git clone" width="800px" />
+    </p>
 
-<p align="center">
-<img src="images/clone.jpg" alt="Using git clone" width="800px" />
-</p>
-
-这需要几分钟。
+    这需要几分钟。
 
 2. 更改目录
 
-切换到新克隆的目录：
+    切换到新克隆的目录：
 
+    ```sh
+    cd vets-who-code-app
+    ```
 
-```sh
-cd vets-who-code-app
-```
-
-<p align="center">
-<img src="images/cd.jpg" alt="Changing to the app directory" width="800px" />
-</p>
+    <p align="center">
+    <img src="images/cd.jpg" alt="Changing to the app directory" width="800px" />
+    </p>
 
 3. 安装 Node.js
 
-使用 `nvm install` 将安装 VWC 应用程序所需的 Node.js 版本：
+    使用 `nvm install` 将安装 VWC 应用程序所需的 Node.js 版本：
 
+    ```sh
+    nvm install
+    ```
 
-```sh
-nvm install
-```
-
-<p align="center">
-<img src="images/nvm.jpg" alt="Install node with NVM" width="800px" />
-</p>
+    <p align="center">
+    <img src="images/nvm.jpg" alt="Install node with NVM" width="800px" />
+    </p>
 
 4. 安装依赖项
 
-`npm install` 是我们安装 React、Next、Bootstrap 和应用程序所需的所有其他技术的方式。这也需要几分钟。
+    `npm install` 是我们安装 React、Next、Bootstrap 和应用程序所需的所有其他技术的方式。这也需要几分钟。
 
+    ```sh
+    npm install
+    ```
 
-```sh
-npm install
-```
+    会显示**一大堆**的警告和其他消息，但这是正常的。
 
-会显示**一大堆**的警告和其他消息，但这是正常的。
+    <p align="center">
+    <img src="images/npm1.jpg" alt="Installing dependencies with npm" width="800px" />
+    </p>
 
-<p align="center">
-<img src="images/npm1.jpg" alt="Installing dependencies with npm" width="800px" />
-</p>
-
-<p align="center">
-<img src="images/npm2.jpg" alt="Installing dependencies with npm continued" width="800px" />
-</p>
+    <p align="center">
+    <img src="images/npm2.jpg" alt="Installing dependencies with npm continued" width="800px" />
+    </p>
 
 5. 环境变量
 
-环境变量保存秘密 API 密钥，并且需要通过连接到 Contentful API 来运行博客。
+    环境变量保存秘密 API 密钥，并且需要通过连接到 Contentful API 来运行博客。
 
-我们可以创建一个默认的. env 文件，该文件将在本地运行博客时使用模拟数据。从 vets-wh-code-app 目录的根目录使用以下命令：
+    我们可以创建一个默认的. env 文件，该文件将在本地运行博客时使用模拟数据。从 vets-wh-code-app 目录的根目录使用以下命令：
 
+    ```sh
+    cp .env.example .env
+    ```
 
-```sh
-cp .env.example .env
-```
-
-<p align="center">
-<img src="images/env.jpg" alt="Creating the .env file" width="800px" />
-</p>
+    <p align="center">
+    <img src="images/env.jpg" alt="Creating the .env file" width="800px" />
+    </p>
 
 6. 运行应用程序
 
-最后，我们可以在本地服务器上启动应用程序：
+    最后，我们可以在本地服务器上启动应用程序：
 
+    ```sh
+    npm run dev
+    ```
 
-```sh
-npm run dev
-```
+    <p align="center">
+    <img src="images/run.jpg" alt="Run the vwc app locally" width="800px" />
+    </p>
 
-<p align="center">
-<img src="images/run.jpg" alt="Run the vwc app locally" width="800px" />
-</p>
+    你应该能够在本地查看网站，网址为<http://localhost:3000/>.
 
-你应该能够在本地查看网站，网址为http://localhost:3000/.
+    `CTRL` + `Left-Click` 在终端的 localhost 链接上启动浏览器中的应用程序。
 
-`CTRL` + `Left-Click` 在终端的 localhost 链接上启动浏览器中的应用程序。
-
-`CTRL` + `C` 完成后关闭开发服务器。
+    `CTRL` + `C` 完成后关闭开发服务器。
 
 ## ➕其他环境
 
@@ -778,7 +747,7 @@ npm run dev
 
 >以下是分步指南，帮助你开始在 Windows 上使用 Python 进行 Web 开发，使用 Windows 子系统 Linux（WSL）。
 
-- [开始在 Windows 上使用 Python 进行 Web 开发]（https://docs.microsoft.com/en-us/windows/python/web-frameworks）
+- [开始在 Windows 上使用 Python 进行 Web 开发]（<https://docs.microsoft.com/en-us/windows/python/web-frameworks）>
 
 </details>
 
@@ -801,7 +770,7 @@ npm run dev
 
 >RStudio Server 使你能够为在远程 Linux 服务器上运行的 R 版本提供基于浏览器的界面，将 RStudio IDE 的强大功能和生产力带到基于服务器的 R 部署中。
 
-- [在 Windows WSL2 中使用 RStudio Server]（https://support.rstudio.com/hc/en-us/articles/360049776974-Using-RStudio-Server-in-Windows-WSL2）
+- [在 Windows WSL2 中使用 RStudio Server]（<https://support.rstudio.com/hc/en-us/articles/360049776974-Using-RStudio-Server-in-Windows-WSL2）>
 
 </details>
 
@@ -809,17 +778,17 @@ npm run dev
 
   <summary>🅿 PHP</summary>
 
-### PHP7 
+### PHP7
 
 >安装 Apache、MySQL 和 PHP 为了创建 LAMP 堆栈的基本结构（Linux、Apache、MySQL、PHP）。
 
-- [在 WSL 2 上安装和配置功能齐全的 Web 服务器]（https://needlify.com/post/install-and-configure-a-fully-functionnal-web-server-on-wsl-2-b1aa0954）
+- [在 WSL 2 上安装和配置功能齐全的 Web 服务器]（<https://needlify.com/post/install-and-configure-a-fully-functionnal-web-server-on-wsl-2-b1aa0954）>
 
 ### PHP8
 
 >这篇文章是关于 Windows PHP 8 Web 开发的设置。这主要是为了 Laravel 开发。
 
-- [Windows PHP8 开发设置与 WSL2]（https://joshpress.net/blog/wsl-debian-php8）
+- [Windows PHP8 开发设置与 WSL2]（<https://joshpress.net/blog/wsl-debian-php8）>
 
 </details>
 
@@ -837,7 +806,7 @@ npm run dev
 
 >本分步指南将帮助你开始将 WSL 中的项目连接到数据库。开始使用 MySQL、PostgreSQL、MongoDB、Redis、MicrosoftSQLServer 或 SQLite。
 
-- [开始使用 Windows 子系统上的数据库 Linux]（https://docs.microsoft.com/en-us/windows/wsl/tutorials/wsl-database）
+- [开始使用 Windows 子系统上的数据库 Linux]（<https://docs.microsoft.com/en-us/windows/wsl/tutorials/wsl-database）>
 
 </details>
 
