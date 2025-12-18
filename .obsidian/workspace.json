@@ -1,64 +1,41 @@
 {
   "main": {
-    "id": "ea431e026d86678d",
+    "id": "34181bf243b6f5e3",
     "type": "split",
     "children": [
       {
-        "id": "b377d8a7ed4c7b09",
+        "id": "2cde3141a83cf379",
         "type": "tabs",
         "children": [
           {
-            "id": "f38366e814a686ef",
+            "id": "5063fcf0286946ed",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "【ENV】Git/git.md",
+                "file": "TS.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "git"
-            }
-          },
-          {
-            "id": "c5aeccecec035259",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-<<<<<<< Updated upstream
-                "file": "Windows 开发人员设置指南.md",
-=======
-                "file": "【BackEnd】Node/node 环境配置.md",
->>>>>>> Stashed changes
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-<<<<<<< Updated upstream
-              "title": "Windows 开发人员设置指南"
-=======
-              "title": "node 环境配置"
->>>>>>> Stashed changes
+              "title": "TS"
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "vertical"
   },
   "left": {
-    "id": "6f3a589cf2a96f1f",
+    "id": "676f3ea893dca26f",
     "type": "split",
     "children": [
       {
-        "id": "1f7f42aa91047d13",
+        "id": "c25dba682771eb22",
         "type": "tabs",
         "children": [
           {
-            "id": "8d96114849f72a3e",
+            "id": "feaea3ac8e5b5350",
             "type": "leaf",
             "state": {
               "type": "file-explorer",
@@ -67,17 +44,17 @@
                 "autoReveal": false
               },
               "icon": "lucide-folder-closed",
-              "title": "Files"
+              "title": "文件列表"
             }
           },
           {
-            "id": "604b1818dceae49f",
+            "id": "52925a3900bce6e9",
             "type": "leaf",
             "state": {
               "type": "search",
               "state": {
-                "query": "count",
-                "matchingCase": true,
+                "query": "",
+                "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
                 "extraContext": false,
@@ -88,7 +65,7 @@
             }
           },
           {
-            "id": "2c3baf2f309f6cec",
+            "id": "679805d3e74af567",
             "type": "leaf",
             "state": {
               "type": "bookmarks",
@@ -101,24 +78,24 @@
       }
     ],
     "direction": "horizontal",
-    "width": 331.5
+    "width": 300
   },
   "right": {
-    "id": "c964bde6db0477ba",
+    "id": "fc0e9c4ef8b96c1a",
     "type": "split",
     "children": [
       {
-        "id": "e7734885903437be",
+        "id": "435875ee40826385",
         "type": "tabs",
         "children": [
           {
-            "id": "8003676c1077abd6",
+            "id": "ba27f988f2065ab3",
             "type": "leaf",
             "state": {
               "type": "backlink",
               "state": {
-                "file": "backend/spring/02 SpringMVC/02 响应处理.md",
-                "collapseAll": false,
+                "file": "【ENV】Git/git.md",
+                "collapseAll": true,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
                 "showSearch": false,
@@ -127,25 +104,25 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "02 响应处理 的反向链接列表"
+              "title": "git 的反向链接列表"
             }
           },
           {
-            "id": "61266deb66bebb93",
+            "id": "5ce57fa6de241c5d",
             "type": "leaf",
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "backend/spring/02 SpringMVC/02 响应处理.md",
+                "file": "TS.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "02 响应处理 的出链列表"
+              "title": "TS 的出链列表"
             }
           },
           {
-            "id": "83968df2a3b7e668",
+            "id": "f8238c5dca6c02af",
             "type": "leaf",
             "state": {
               "type": "tag",
@@ -160,36 +137,18 @@
             }
           },
           {
-            "id": "da7ea6bc3bff8842",
+            "id": "4a4494ffc5b27973",
             "type": "leaf",
             "state": {
               "type": "outline",
               "state": {
-<<<<<<< Updated upstream
-                "file": "Windows 开发人员设置指南.md",
-=======
-                "file": "【BackEnd】Node/node 环境配置.md",
->>>>>>> Stashed changes
+                "file": "TS.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-<<<<<<< Updated upstream
-              "title": "Outline of Windows 开发人员设置指南"
-=======
-              "title": "node 环境配置 的大纲"
->>>>>>> Stashed changes
-            }
-          },
-          {
-            "id": "07f512a1fc605f3a",
-            "type": "leaf",
-            "state": {
-              "type": "git-view",
-              "state": {},
-              "icon": "git-pull-request",
-              "title": "Source Control"
+              "title": "TS 的大纲"
             }
           }
         ],
@@ -197,122 +156,29 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300.5
+    "width": 300
   },
   "left-ribbon": {
     "hiddenItems": {
-<<<<<<< Updated upstream
-      "switcher:Open quick switcher": false,
-      "canvas:Create new canvas": false,
-      "daily-notes:Open today's daily note": false,
-      "templates:Insert template": false,
-      "command-palette:Open command palette": false,
-      "bases:Create new base": false,
-      "obsidian-git:Open Git source control": false
-=======
-      "bases:创建新数据库": false,
       "switcher:打开快速切换": false,
       "canvas:新建白板": false,
+      "daily-notes:打开/创建今天的日记": false,
       "templates:插入模板": false,
       "command-palette:打开命令面板": false,
+      "bases:创建新数据库": false,
       "obsidian-git:Open Git source control": false,
-      "daily-notes:打开/创建今天的日记": false,
       "obsidian-excalidraw-plugin:新建绘图文件": false
->>>>>>> Stashed changes
     }
   },
-  "active": "c5aeccecec035259",
+  "active": "5063fcf0286946ed",
   "lastOpenFiles": [
-<<<<<<< Updated upstream
-    "【FrontEnd】Javascript/存储和后台任务优化.md",
-    "Windows 开发人员设置指南.md",
-    "images/gcm.png",
-    "images/env.jpg",
-    "images/adminps.png",
-    "images/term-settings.jpg",
-    "images/nvm-nonode.png",
-    "images/default-profile.jpg",
-    "images/dependencies.jpg",
-    "images/dockerICmd.png",
-    "images/cd.jpg",
-    "images/no-node.png",
-    "images",
-    "【FrontEnd】Javascript/调度优化.md",
-    "README_cn (1).md",
-    "【FrontEnd】Javascript/07 性能优化.md",
-    "【FrontEnd】Javascript/渲染优化.md",
-    "【BackEnd】MySql/01 运算符.md",
-    "【BackEnd】MySql/03 分页.md",
-    "【BackEnd】MySql/02 排序.md",
-    "【BackEnd】Open Source/gulimall/02 运行环境搭建.md",
-    "【BackEnd】Open Source/gulimall/01 虚拟机环境搭建.md",
-    "【BackEnd】Open Source/gulimall/03 开发环境搭建.md",
-    "【BackEnd】Open Source/sky/01 环境搭建.md",
-    "【Utils】Glob/Glob.md",
-    "【FrontEnd】Open Source/vue-vben-admin/[Vben Admin 源码实现] 05_GIT配置.md",
-    "【FrontEnd】Javascript/01 基础.md",
-    "【Utils】Glob",
-    "【FrontEnd】Javascript/06 模块化.md",
-    "【FrontEnd】Javascript/05 设计模式.md",
-    "【FrontEnd】Javascript/03 函数与函数式编程.md",
-=======
+    "【Basic】Browser/05 浏览器优化.md",
+    "【Basic】Browser/02 Https基础.md",
     "【Basic】Browser/01 Http基础.md",
->>>>>>> Stashed changes
-    "【FrontEnd】Javascript/02 闭包与作用域.md",
-    "【FrontEnd】Javascript/01 基础.md",
-    "【Utils】Vim/01 vim基本概念与常用操作.md",
-    "【Utils】Glob/Glob.md",
-    "【FrontEnd】Format/format.md",
-    "【FrontEnd】Javascript/05 设计模式.md",
-    "【FrontEnd】Javascript/06 模块化.md",
-    "【FrontEnd】Javascript/07 性能优化.md",
-    "【FrontEnd】Javascript/渲染优化.md",
-    "【FrontEnd】Javascript/调度优化.md",
-    "【FrontEnd】Javascript/存储和后台任务优化.md",
-    "【ENV】JDK/JDK.md",
-    "【FrontEnd】Open Source/vue-vben-admin/[Vben Admin 源码实现] 01_项目初始化.md",
-    "【FrontEnd】Open Source/vue-vben-admin/[Vben Admin 源码实现] 04_TS配置.md",
-    "【FrontEnd】Open Source/vue-vben-admin/[Vben Admin 源码实现] 03_代码格式化.md",
-    "【FrontEnd】Open Source/vue-vben-admin/[Vben Admin 源码实现] 02_编辑器设置.md",
-    "【FrontEnd】Open Source/vue-vben-admin/[Vben Admin 源码实现] 00_开篇.md",
-<<<<<<< Updated upstream
-=======
     "【ENV】Git/git.md",
-    "【ENV】Git/git flow.md",
-    "attachments/Pasted image 20250611172011.png",
-    "Excalidraw/Drawing 2025-06-11 14.23.51.excalidraw.md",
-    "attachments/decision-flow-control.excalidrawlib",
-    "未命名.canvas",
-    "Excalidraw",
-    "未命名未命名.canvas",
-    "【FrontEnd】Vite/vite.md",
-    "【FrontEnd】Webpack/第二章 指南.md",
-    "【FrontEnd】Webpack/第一章 概念.md",
-    "【FrontEnd】Webpack/Webpack.md",
-    "【FrontEnd】React/react.md",
-    "【Utils】Glob",
-    "【BackEnd】Open Source/sky/day12/assets/image-20230131160929202.png",
-    "【BackEnd】Open Source/sky/day12/assets/image-20230131160647328.png",
-    "【BackEnd】Open Source/sky/day12/assets/image-20230131155111294.png",
-    "【BackEnd】Open Source/sky/day12/assets/image-20230131152610559.png",
-    "【BackEnd】Open Source/sky/day12/assets/image-20230131151132672.png",
-    "【BackEnd】Open Source/sky/day12/assets/image-20230131113255962.png",
-    "【BackEnd】Open Source/sky/day12/assets/image-20230131112905034.png",
-    "【BackEnd】Open Source/sky/day12/assets/image-20230131110856903.png",
-    "【BackEnd】Open Source/sky/day12/assets/image-20230131110839959.png",
->>>>>>> Stashed changes
-    "【BackEnd】Open Source/sky/day12/assets",
-    "【BackEnd】Open Source/sky/day11/assets",
-    "【BackEnd】Open Source/sky/day10/assets",
-    "【BackEnd】Open Source/sky/day08/assets",
-    "【BackEnd】Open Source/sky/day07/assets",
-    "【BackEnd】Open Source/sky/day06/assets",
-    "【BackEnd】Open Source/sky/day05/assets",
-<<<<<<< Updated upstream
-    "【BackEnd】Open Source/sky/day03/assets",
-    "未命名.canvas",
-=======
->>>>>>> Stashed changes
-    "未命名 1.canvas"
+    "TS.md",
+    "流程.md",
+    "未命名.md",
+    "未命名.canvas"
   ]
 }

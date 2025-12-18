@@ -1,7 +1,7 @@
 {
   "translucency": false,
-  "theme": "obsidian",
-  "cssTheme": "GitHub Theme",
+  "theme": "system",
+  "cssTheme": "Dracula Official",
   "accentColor": "",
   "enabledCssSnippets": [
     "extended-colorschemes",
