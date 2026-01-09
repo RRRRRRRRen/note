@@ -1,659 +1,605 @@
-# GIT 使用指南
+# Git 使用指南
 
-## 一、基本命令
+Git 是一个分布式版本控制系统，用于跟踪代码变更历史、协同开发和版本管理。
 
-### git stash
+## 目录
+- [Git 使用指南](#git-使用指南)
+  - [目录](#目录)
+  - [基础概念](#基础概念)
+  - [基本操作命令](#基本操作命令)
+    - [初始化和配置](#初始化和配置)
+    - [工作区操作](#工作区操作)
+    - [分支管理](#分支管理)
+    - [远程仓库](#远程仓库)
+    - [历史记录](#历史记录)
+    - [标签管理](#标签管理)
+  - [高级操作](#高级操作)
+    - [变基操作](#变基操作)
+    - [拣选提交](#拣选提交)
+    - [交互式变基](#交互式变基)
+  - [实用技巧](#实用技巧)
+    - [SSH 配置](#ssh-配置)
+    - [子模块管理](#子模块管理)
+    - [撤销操作](#撤销操作)
+  - [工作流程](#工作流程)
+  - [提交规范](#提交规范)
 
-**简介**
+## 基础概念
 
-用来临时保存不想提交的内容
+- **工作区(Working Directory)**：项目的实际文件夹
+- **暂存区(Staging Area)**：准备提交的变更集合
+- **本地仓库(Local Repository)**：本地的 Git 仓库
+- **远程仓库(Remote Repository)**：服务器上的 Git 仓库
 
-**命令**
+## 基本操作命令
 
-```shell
-# 储存变更
-git stash save 'xxx'
+### 初始化和配置
 
-# 查看储存区所有的提交列表
-git stash list
-
-# 恢复最近一次的临时存储内容
-git stash pop
-
-# 删除指定的存储记录
-git stash drop stash@{n}
-
-# 删除所有的stash记录
-git stash clear
-```
-
-### git clone
-
-**简介**
-
-用于克隆仓库
-
-**命令**
-
-```shell
-# 克隆仓库到本地，默认停留到master分支
-git clone xxx.git
-
-# 克隆仓库到本地后，并切换到指定分支
-git clone xxx.git -b branch_name
-```
-
-### git init
-
-**简介**
-
-初始化本地 git 仓库
-
-**命令**
+#### git init
+初始化一个新的 Git 仓库。
 
 ```shell
-# 在当前文件夹创建一个git仓库
+# 在当前目录创建一个 Git 仓库
 git init
+
+# 创建一个名为 my-project 的目录并初始化 Git 仓库
+git init my-project
 ```
 
-### git remote
-
-**简介**
-
-用于和远程仓库绑定关系等操作
-
-**命令**
+#### git config
+配置 Git 用户信息和行为。
 
 ```shell
-# 添加远程仓库，设置远程仓库地址，并将其命名为origin
-git remote add origin xxx.git
+# 设置全局用户名和邮箱（仅需设置一次）
+git config --global user.name "your-name"
+git config --global user.email "your-email@example.com"
 
-# 关联分支
-git push -u origin master
+# 查看当前配置
+git config --list
+
+# 设置别名（简化命令）
+git config --global alias.st status
+git config --global alias.co checkout
 ```
 
-### git branch
+### 工作区操作
 
-**简介**
-
-用于查看分支
-
-**命令**
+#### git add
+将文件添加到暂存区。
 
 ```shell
-# 查看本地分支
+# 添加单个文件
+git add filename.txt
+
+# 添加所有修改过的文件
+git add .
+
+# 添加特定类型的文件
+git add *.js
+
+# 交互式添加（选择性添加部分内容）
+git add -p
+```
+
+#### git commit
+提交暂存区的更改到本地仓库。
+
+```shell
+# 提交并输入提交信息
+git commit -m "描述性的提交信息"
+
+# 修改最后一次提交（不改变提交信息）
+git commit --amend --no-edit
+
+# 修改最后一次提交（包括提交信息）
+git commit --amend -m "新的提交信息"
+```
+
+#### git status
+查看工作区状态。
+
+```shell
+# 查看当前状态
+git status
+
+# 简洁输出状态
+git status -s
+```
+
+#### git diff
+查看文件差异。
+
+```shell
+# 查看工作区与暂存区的差异
+git diff
+
+# 查看暂存区与本地仓库的差异
+git diff --staged
+git diff --cached
+
+# 查看工作区与本地仓库指定版本的差异
+git diff HEAD~1
+```
+
+### 分支管理
+
+#### git branch
+管理本地分支。
+
+```shell
+# 查看本地分支（当前分支前有 * 标记）
 git branch
+
+# 查看所有分支（包括远程分支）
+git branch -a
 
 # 查看远程分支
 git branch -r
 
-# 查看本地和远程分支
-git branch -a
+# 创建新分支
+git branch feature-branch
+
+# 删除本地分支
+git branch -d feature-branch
+
+# 强制删除本地分支
+git branch -D feature-branch
 ```
 
-### git checkout
-
-**简介**
-
-用于切换分支
-
-**命令**
+#### git checkout
+切换分支或恢复工作树文件。
 
 ```shell
 # 切换到指定分支
-git checkout branch_name
+git checkout branch-name
 
-# 切换到指定分支，如果分支不存在则直接创建
-git checkout -b branch_name
+# 创建并切换到新分支
+git checkout -b new-feature
+
+# 恢复指定文件到指定版本
+git checkout HEAD~1 -- filename.txt
 ```
 
-### git add
-
-**简介**
-
-添加修改的文件到暂存区
-
-**命令**
+#### git switch
+切换分支（较新版本 Git 提供）。
 
 ```shell
-# 添加指定文件
-git add file_name_1 file_name_2 ...
+# 切换到指定分支
+git switch main
+git switch feature-branch
 
-# 添加当前目录下所有修改的文件
-git add .
+# 创建并切换到新分支
+git switch -c new-feature
 
-# 添加当前仓库下所有修改的文件
-git add -A
+# 切换到上一个分支
+git switch -
 ```
 
-### git commit
+### 远程仓库
 
-**简介**
-
-提交暂存区的文件到本地仓库
-
-**命令**
+#### git clone
+克隆远程仓库。
 
 ```shell
-# 提交并输入提交信息
-git commit -m "xxx"
+# 克隆仓库到本地
+git clone https://github.com/user/repo.git
+
+# 克隆到指定目录
+git clone https://github.com/user/repo.git my-directory
+
+# 克隆指定分支
+git clone -b branch-name --single-branch https://github.com/user/repo.git
 ```
 
-### git rm
-
-**简介**
-
-用于删除追踪的文件
-
-**命令**
+#### git remote
+管理远程仓库。
 
 ```shell
-# 取消指定文件的追踪效果，类似强制ignore
-git rm file_name
+# 查看远程仓库
+git remote -v
 
-# 删除指定目录
-git rm -r floder_name
+# 添加远程仓库
+git remote add origin https://github.com/user/repo.git
+
+# 更改远程仓库地址
+git remote set-url origin https://github.com/user/new-repo.git
+
+# 添加上游仓库（用于同步主仓库的更新）
+git remote add upstream https://github.com/original/repo.git
 ```
 
-### git push
-
-**简介**
-
-推送本地仓库到远程仓库
-
-**命令**
+#### git fetch
+从远程仓库获取更新（不自动合并）。
 
 ```shell
-# git push <远程主机名> <本地分支名>:<远程分支名>
-git push origin locale_branch_name:remote_branch_name
-
-# 本地分支名和远程分支名相同时可以省略远程分支名
-git push origin branch_name
-
-# 版本差异时强制推送本地版本
-git push --force origin branch_name
-
-# 删除远程分支
-git push origin --delete remote_branch_name
-
-# 本地新分支推送到远程，并建立联系
-git push --set-upstream origin branch_name
-```
-
-### git pull
-
-**简介**
-
-获取远程分支的更新
-
-**命令**
-
-```shell
-# 拉取指定远程分支合并到本地分支
-git pull origin branch_name
-```
-
-### git fetch
-
-**简介**
-
-拉取远程分支的更新，但是不合并到本地，需要主动合并，获取更新后会返回一个 FETCH_HEAD
-
-**命令**
-
-```shell
-# 将远程主机的更新全部取回本地
+# 获取所有远程分支的更新
 git fetch origin
 
-# 取回特定分支的更新
-git fetch origin branch_name
+# 获取特定分支的更新
+git fetch origin feature-branch
 
-# 合并fetch获取到修改
-git merge origin/branch_name
-
-# 查看FETCH_HEAD
-git log -p FETCH_HEAD
+# 获取所有远程仓库的更新
+git fetch --all
 ```
 
-### git merge
-
-**简介**
-
-用于合并 fetch 或者合并其他分支
-
-**命令**
+#### git pull
+从远程仓库获取更新并自动合并。
 
 ```shell
-# 合并指定分支
-git merge branch_name
+# 拉取并合并当前分支的远程更新
+git pull origin main
 
-# 取消合并
-git merge --abort
+# 拉取并合并指定分支的更新
+git pull origin feature-branch
+
+# 使用 rebase 方式合并
+git pull --rebase origin main
 ```
 
-### git log
-
-**简介**
-
-查看提交记录
-
-**命令**
+#### git push
+将本地更改推送到远程仓库。
 
 ```shell
-# 查看所有提交记录和id
+# 推送到远程仓库的同名分支
+git push origin main
+
+# 推送并设置上游分支（首次推送时使用）
+git push -u origin main
+
+# 强制推送（谨慎使用）
+git push --force origin main
+
+# 删除远程分支
+git push origin --delete feature-branch
+
+# 推送所有标签
+git push origin --tags
+```
+
+### 历史记录
+
+#### git log
+查看提交历史。
+
+```shell
+# 查看详细提交历史
 git log
+
+# 以一行显示简要历史
+git log --oneline
+
+# 查看图形化的分支历史
+git log --graph --oneline --all
+
+# 查看指定文件的历史
+git log --follow filename.txt
+
+# 显示统计信息
+git log --stat
+
+# 显示具体变化
+git log -p
 ```
 
-### git reflog
-
-**简介**
-
-查看所有提交记录，包括丢失的部分
-
-**命令**
+#### git reflog
+查看引用日志（包含已删除的提交）。
 
 ```shell
-# 查看所有提交记录
+# 查看 HEAD 移动历史
 git reflog
+
+# 查看特定分支的移动历史
+git reflog show feature-branch
 ```
 
-### git reset
-
-**简介**
-
-用于回撤版本
-
-**命令**
+#### git reset
+重置当前分支到指定状态。
 
 ```shell
-# 回退到上一个版本
-git reset HEAD^
-# 回退到上上一个版本
-git reset HEAD^^
-# 回退到上n一个版本
-git reset HEAD~n
+# 重置暂存区（保持工作区不变）
+git reset
 
-# 回退后保留代码到工作区（add 前）
-git reset --mixed HEAD^
+# 重置到上一个提交（保持工作区变更）
+git reset --soft HEAD~1
 
-# 回退后保留代码到暂存区（commit 前）
-git reset --soft HEAD^
+# 重置到上一个提交（保留修改到工作区）
+git reset --mixed HEAD~1
 
-# 回退后丢弃代码
-git reset --hard HEAD^
+# 重置到上一个提交（彻底删除修改）
+git reset --hard HEAD~1
+
+# 重置到指定提交
+git reset --hard commit-hash
 ```
 
-### git revert
-
-**简介**
-
-保留记录的回滚，不会让 commit 消失，而是产生一个新的 commit
-
-**命令**
+#### git revert
+创建一个新提交来撤销指定提交的更改。
 
 ```shell
-# 回退到指定版本
-git revert HEAD^
-git revert commit_id
+# 撤销最近一次提交
+git revert HEAD
+
+# 撤销指定提交
+git revert commit-hash
+
+# 撤销而不创建提交（准备手动提交）
+git revert --no-commit commit-hash
 ```
 
-### git cherry-pick
+### 标签管理
 
-**简介**
-
-用于挑选指定提交，然后合并到当前分支上，会产生新的提交记录，且会拥有不同的 commit_id
-
-**命令**
+#### git tag
+管理标签。
 
 ```shell
-# 获取指定commit_id
-git cherry-pick commit_id
-
-# 获取指定分支的最近一次提交
-git cherry-pick branch_name
-
-# 同时转移多个提交
-git cherry-pick commit_id_1 commit_id_2 ...
-
-# 转移连续的提交，要求1必须早于2，切不包含1
-git cherry-pick commit_id_1..commit_id_2
-
-# 包含首位的连续转移
-git cherry-pick commit_id_1^..commit_id_2
-
-# 解决相关冲突后继续合并，需要先git add
-git cherry-pick --continue
-
-# 冲突发生时放弃合并，回到之前的状态
-git cherry-pick --abort
-
-# 发生冲突时直接放弃，维持现状
-git cherry-pick --quit
-```
-
-### git tag
-
-**简介**
-
-用来标记特定的版本
-
-**命令**
-
-```shell
-# 快速创建一个tag
-git tag tag_name
-
-# 附注标签创建
-git tag -a tag_name -m "xxx"
-
-# 查看标签
+# 查看所有标签
 git tag
 
-# 推送标签到远程
-git push origin tag_name
+# 创建轻量标签
+git tag v1.0.0
 
-# 删除tag
-git tag -d tag_name
+# 创建附注标签
+git tag -a v1.0.0 -m "Release version 1.0.0"
+
+# 推送标签到远程仓库
+git push origin v1.0.0
+git push origin --tags  # 推送所有标签
+
+# 删除本地标签
+git tag -d v1.0.0
+
+# 删除远程标签
+git push origin --delete v1.0.0
 ```
 
-### git rebase
+## 高级操作
 
-**简介**
+### 变基操作
 
-改建分支基点或者合并多次提交记录
-
-**命令**
+#### git rebase
+将一个分支的更改应用到另一个分支上。
 
 ```shell
-# 变基 (将当前分支的基点移到master到最新提交)
-git rebase master
+# 将当前分支变基到 main 分支
+git checkout feature-branch
+git rebase main
 
-# 合并(合并当前分支的多次提交)
-git rebase -i HEAD~n
+# 交互式变基（修改提交历史）
+git rebase -i HEAD~3  # 修改最近三次提交
 ```
 
-## 二、常用操作指南
+### 拣选提交
 
-### 01.撤销与回滚
-
-**-- 撤销 git add**
+#### git cherry-pick
+选择特定提交应用到当前分支。
 
 ```shell
-# 以下命令等价
-git reset
-git reset HEAD
-git reset --mixed HEAD
+# 拣选单个提交
+git cherry-pick commit-hash
+
+# 拣选多个提交
+git cherry-pick commit1 commit2 commit3
+
+# 拣选一系列提交（从 commit1 后面开始到 commit3）
+git cherry-pick commit1..commit3
+
+# 拣选包含起点的一系列提交
+git cherry-pick commit1^..commit3
 ```
 
-**-- 撤销 git commit**
+### 交互式变基
+
+交互式变基用于修改提交历史，如合并提交、重排提交、修改提交信息等。
 
 ```shell
-# 以下命令等价
-git reset HEAD^
-git reset --mixed HEAD^
+# 交互式变基最近 3 次提交
+git rebase -i HEAD~3
 ```
 
-**-- 回滚到指定 commit_id**
+变基指令说明：
+- `pick`：保留此提交
+- `reword`：保留此提交但修改提交信息
+- `edit`：保留此提交但允许修改
+- `squash`：与此前提交合并（保留提交信息）
+- `fixup`：与此前提交合并（丢弃提交信息）
+- `drop`：删除此提交
+
+## 实用技巧
+
+### 临时保存更改
+
+#### git stash
+临时保存未完成的工作。
 
 ```shell
-# 查看需要回滚的commit_id
-git log
+# 保存当前工作区和暂存区的更改
+git stash push -m "work in progress"
 
-# 直接回滚，丢弃当前未保存未提交的代码
-git reset --hard commit_id
+# 保存所有更改（包括未跟踪的文件）
+git stash push -m "work in progress" --include-untracked
+
+# 快速保存
+git stash
+
+# 查看保存的更改列表
+git stash list
+
+# 应用最近一次保存的更改
+git stash pop
+
+# 应用指定索引的更改（不删除 stash）
+git stash apply stash@{1}
+
+# 删除指定的 stash
+git stash drop stash@{0}
+
+# 清空所有 stash
+git stash clear
 ```
 
-**-- 回滚后再滚回来**
+### SSH 配置
 
-```shell
-# 获取回滚目标id
-git log
+SSH 密钥用于安全地连接到远程 Git 仓库。
 
-# 执行回滚
-git reset --hard commit_id
-
-# 获取因回滚而丢失的id
-git reflog
-
-# 执行回滚
-git reset --hard commit_id
-```
-
-### 02.本地的项目托管到远程
-
-**1.配置 git**
+#### 生成 SSH 密钥
 
 ```bash
-git config --global user.name rrrrrrrren
-git config --global user.email dittorenard@outlook.com
-# 开启git颜色
-git config --global color.ui true
+# 生成新的 SSH 密钥对
+ssh-keygen -t rsa -b 4096 -C "your-email@example.com"
+
+# 或使用更现代的 Ed25519 算法
+ssh-keygen -t ed25519 -C "your-email@example.com"
 ```
 
-**2.生成密钥**
+#### 添加 SSH 密钥到 SSH 代理
 
 ```bash
-ssh-keygen -t rsa -b 4096 -C "dittorenard@outlook.com"
+# 启动 SSH 代理
+eval "$(ssh-agent -s)"
+
+# 添加私钥到 SSH 代理
+ssh-add ~/.ssh/id_ed25519
 ```
 
-公钥位置： `C:\Users\任国强\.ssh\id_rsa`
+#### 配置 SSH
 
-密钥位置： `C:\Users\任国强\.ssh\id_rsa\id_rsa.pub`
+在 `~/.ssh/config` 文件中添加：
 
-**3.注册密钥**
-
-进入 github 设置页面：[Add new SSH keys (github.com)](https://github.com/settings/ssh/new)
-
-将密钥内容复制进输入框中，确认后即可生效。
-
-**4.初次提交**
-
-```bash
-git init
-
-git add .
-
-git commit -m "first commit"
-
-// 添加远程仓库并将其命名为origin
-git remote add origin https://github.com/xxx/xxx.git
-
-// 把当前仓库的 master 分支和远端仓库的 master 分支关联起来
-git push -u origin master
 ```
-
-如果在键入远程地址时出错，需要先删除远程地址再重新键入
-
-```bash
-git remote rem origin
-git remote add origin https://github.com/xxx/xxx.git
-git push -u origin master
-```
-
-切换 http 到 ssh
-
-```bash
-git remote set-url origin git@github.com:RRRRRRRRen/what_for_dinner_frontend.git
-git remote -v show // 查看当前源
-```
-
-### 03.删除分支
-
-**1.查看所有分支**
-
-```bash
-# 查看所有分支
-git branch -a
-```
-
-**2.删除分支**
-
-```bash
-# 删除本地分支
-git branch -d  local_branch_name
-# 删除远程分支
-git push origin --delete origin_branch_name
-```
-
-**3.删除 tag**
-
-```shell
-# 删除本地tag
-git tag -d tag_name
-# 删除远程tag
-git push origin --delete tag_name
-```
-
-### 04.submodule
-
-**1.添加子模块**
-
-```shell
-# 添加子模块
-git submodule add <git_repository_path> <submodule_path>
-# git_repository_path: 子模块仓库地址
-# submodule_path: 自定义子模块的文件夹与位置
-```
-
-**2.查看所有子模块**
-
-```shell
-# 查看所有子模块
-git submodule
-```
-
-**3.拉取子模块代码**
-
-```shell
-# 拉取子模块
-# 初始化子模块信息
-git submodule init
-# 拉取子模块代码
-git submodule update
-
-# 等同于
-git submodule update --init --recursive
-```
-
-**4.克隆项目同时获取子模块代码**
-
-```shell
-# 克隆项目同时获取
-git clone <git_repository_path> --recursive
-```
-
-**5.删除子模块**
-
-```shell
-# 1.取消子模块追踪
- git rm --cached <submodule_folder_path>
-# 2.删除子模块文件
- rm -rf <submodule_folder_path>
-# 3.删除子模块配置
- # 进入.gitmodules文件
- # 删除对应模块配置内容：例如
- # [submodule "assets"]
-  #  path = assets
-  #  url = https://github.com/maonx/vimwiki-assets.git
-# 4.删除git模块配置
- # 进入.git/config文件
- # 删除对应模块配置内容：例如
- # [submodule "assets"]
-  #  url = https://github.com/maonx/vimwiki-assets.git
-# 5.删除子模块追踪文件
- rm -rf .git/modules/<submodule_folder_path>
-# 6.提交修改
- git add .
- git commit -m "message"
- git push
-```
-
-### 05.合并提记录
-
-**1.设置 vscode 编辑器**
-
-```shell
-# 查看git使用的编辑器
-git config --global --get core.editor
-
-# 设置git使用的编辑器
-# --wait 表示关闭编辑器后再执行后续命令
-git config --global core.editor "code --wait"
-```
-
-**2.明确合并范围**
-
-```shell
-# 从当前commit向上处理共n个记录（包括本身）
-git rebase -i HEAD^n
-
-# 从当前commit向上处理到hash之前到记录（包括本身，但不包括hash的那条）
-git rebase -i [hash]
-
-# 从指定hash到指定hash到记录（不包括起始位置）
-git rebase -i [old_hash] [new_hash]
-```
-
-**3.操作范围内的 commit**
-
-| 缩写 | 命令   | 释义                                                 |
-| ---- | ------ | ---------------------------------------------------- |
-| p    | pick   | use commit                                           |
-| r    | reword | use commit, but edit the commit message              |
-| e    | edit   | use commit, but stop for amending                    |
-| s    | squash | use commit, but meld into previous commit            |
-| f    | fixup  | like “squash”, but discard this commit’s log message |
-| x    | exec   | run command (the rest of the line) using shell       |
-| d    | drop   | remove commit                                        |
-
-1. **pick (p):**
-   - 意义：保留该提交，不做任何更改。
-   - 使用场景：默认的选项，表示保留该提交。
-2. **reword (r):**
-   - 意义：保留该提交，但修改提交消息。
-   - 使用场景：用于更改提交消息，可以编辑提交信息以使其更清晰或规范。
-3. **edit (e):**
-   - 意义：暂停 rebase 过程，允许你修改该提交。
-   - 使用场景：用于修改提交的文件、解决冲突等，然后继续 rebase。
-4. **squash (s):**
-   - 意义：将该提交与前一个提交合并为一个提交。
-   - 使用场景：用于合并相邻的提交，将它们合为一个逻辑单元。
-5. **fixup (f):**
-   - 意义：类似于 squash，但丢弃该提交的提交消息。
-   - 使用场景：用于合并提交，但不保留该提交的提交消息。
-6. **exec (x):**
-   - 意义：运行指定的命令，可以在 rebase 过程中执行自定义操作。
-   - 使用场景：较少使用，通常用于执行自动化任务。
-7. **drop (d):**
-   - 意义：丢弃该提交，不保留任何更改。
-   - 使用场景：用于完全删除一个提交。
-
-![image-20231225154008318](https://gitee.com/rrrrrrrren/note_image/raw/master/image-20231225154008318.png)
-
-## 三、提交规范
-
-**前缀**
-
-```shell
-wip:   开发中
-feat:   增加新功能
-fix:   修复问题/BUG
-refactor: 重构
-docs:   文档/注释
-test:   测试相关
-chore:  依赖更新/脚手架配置修改等
-style:  代码风格相关无影响运行结果的
-revert:  撤销修改
-```
-
-## 四、配置ssh代理
-
-/Users/ren/.ssh/config
-
-```text
 Host github.com
   HostName ssh.github.com
   Port 443
   User git
-  ProxyCommand nc -x 127.0.0.1:7897 %h %p
+  IdentityFile ~/.ssh/id_ed25519
+
+Host gitlab.com
+  HostName gitlab.com
+  User git
+  IdentityFile ~/.ssh/id_ed25519
+```
+
+#### 更改远程仓库协议
+
+```bash
+# 从 HTTPS 改为 SSH
+git remote set-url origin git@github.com:user/repo.git
+
+# 从 SSH 改为 HTTPS
+git remote set-url origin https://github.com/user/repo.git
+```
+
+### 子模块管理
+
+子模块允许将一个 Git 仓库作为另一个仓库的子目录。
+
+```shell
+# 添加子模块
+git submodule add https://github.com/user/repo.git path/to/submodule
+
+# 克隆包含子模块的项目
+git clone --recurse-submodules https://github.com/user/repo.git
+
+# 初始化和更新子模块
+git submodule update --init --recursive
+
+# 更新所有子模块到最新提交
+git submodule foreach git pull origin main
+
+# 删除子模块
+git submodule deinit path/to/submodule
+git rm path/to/submodule
+rm -rf .git/modules/path/to/submodule
+```
+
+### 撤销操作
+
+#### 撤销工作区更改
+
+```shell
+# 撤销单个文件的更改
+git checkout -- filename.txt
+
+# 撤销所有更改
+git checkout .
+```
+
+#### 撤销暂存区更改
+
+```shell
+# 取消暂存单个文件
+git reset HEAD filename.txt
+
+# 取消暂存所有文件
+git reset HEAD
+```
+
+## 工作流程
+
+### 功能分支工作流
+
+```shell
+# 1. 从 main 分支创建功能分支
+git checkout main
+git pull origin main
+git checkout -b feature/new-functionality
+
+# 2. 开发功能并提交
+git add .
+git commit -m "feat: implement new functionality"
+
+# 3. 推送功能分支
+git push -u origin feature/new-functionality
+
+# 4. 在代码审查平台创建 PR/MR
+
+# 5. 合并后删除功能分支
+git checkout main
+git pull origin main
+git branch -d feature/new-functionality  # 删除本地分支
+git push origin --delete feature/new-functionality  # 删除远程分支
+```
+
+### Git Flow
+
+Git Flow 是一种 Git 工作流程，包含长期分支（main 和 develop）以及短期分支（feature、release、hotfix）。
+
+## 提交规范
+
+良好的提交信息有助于理解项目历史和协作开发。
+
+### 提交信息格式
+
+```
+<type>(<scope>): <subject>
+<BLANK LINE>
+<body>
+<BLANK LINE>
+<footer>
+```
+
+### 类型说明
+
+- `feat`: 新功能
+- `fix`: 修复 bug
+- `docs`: 文档更新
+- `style`: 代码格式调整，不影响逻辑
+- `refactor`: 重构，既不是修复 bug 也不是添加功能
+- `test`: 测试相关
+- `chore`: 构建过程或辅助工具变动
+- `perf`: 性能优化
+- `ci`: CI 配置或脚本更新
+- `build`: 构建相关
+- `revert`: 撤销提交
+
+### 示例
+
+```
+feat(auth): add JWT authentication module
+
+- Implement login endpoint
+- Add token verification middleware
+- Create user session management
+- Add logout functionality
+
+Closes #123
 ```
