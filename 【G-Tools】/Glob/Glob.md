@@ -1,330 +1,199 @@
 # Glob 使用指南
 
-Glob 是一种用于匹配文件路径的模式语法，广泛应用于各种开发工具中，如文件查找、打包工具、版本控制等。
-
-## 目录
-- [Glob 使用指南](#glob-使用指南)
-  - [目录](#目录)
-  - [基础匹配模式](#基础匹配模式)
-    - [一级匹配](#一级匹配)
-    - [多级匹配](#多级匹配)
-  - [通配符](#通配符)
-  - [特殊模式](#特殊模式)
-  - [实际应用场景](#实际应用场景)
-    - [Gitignore 文件](#gitignore-文件)
-    - [构建工具](#构建工具)
-    - [文件查找工具](#文件查找工具)
-    - [IDE 配置](#ide-配置)
-  - [常见模式详解](#常见模式详解)
-  - [注意事项](#注意事项)
+Glob 是一种用于匹配文件路径的模式语法，广泛应用于文件查找、打包工具、版本控制等开发工具中。
 
 ## 基础匹配模式
 
-### 一级匹配
+### 路径前缀规则
 
-```gitignore
-# 匹配：
-#    1. 所有名为 log 的目录
-#    2. 所有名为 log 的文件
-log
+有无 `/` 前缀决定匹配范围是"任意位置"还是"锚定根目录"，有无 `/` 后缀决定是否只匹配目录。
 
-# 匹配：
-#    1. 所有名为 log 的目录
-log/
+| 模式 | 匹配范围 |
+|------|----------|
+| `log` | 任意位置的 `log` 文件或目录 |
+| `log/` | 任意位置的 `log` 目录（尾部 `/` 限定只匹配目录） |
+| `/log` | 根目录下的 `log` 文件或目录（头部 `/` 锚定根目录） |
+| `/log/` | 根目录下的 `log` 目录 |
+| `log/sub` | 任意位置的 `log` 目录下的 `sub` 文件或目录 |
+| `/log/sub` | 根目录直属 `log` 目录下的 `sub` 文件或目录 |
 
-# 匹配：
-#    1. 根目录下 所有名为 log 的目录
-#    2. 根目录下 所有名为 log 的文件
-/log
+### 通配符
 
-# 匹配：
-#    1. 根目录下 所有名为 log 的目录
-/log/
+| 符号 | 含义 | 示例 | 匹配 | 不匹配 |
+|------|------|------|------|--------|
+| `*` | 任意数量字符，但不跨越路径分隔符 | `*.log` | `app.log` | `logs/app.log` |
+| `?` | 任意单个字符 | `l?g` | `log`, `lag` | `lg`, `loag` |
+| `[abc]` | 字符集合中的一个 | `l[ao]g` | `log`, `lag` | `lug` |
+| `[a-z]` | 字符范围中的一个 | `l[a-z]g` | `log`, `lbg` | `l1g` |
+| `[!abc]` | 不在字符集合中的一个 | `l[!ao]g` | `lug`, `lbg` | `log`, `lag` |
+| `**` | 任意深度路径，可跨越路径分隔符 | `**/*.js` | `a.js`, `src/a.js`, `src/b/a.js` | — |
+| `{a,b}` | 多个模式中的一个（部分工具支持） | `*.{js,ts}` | `app.js`, `app.ts` | `app.css` |
+| `!` | 否定，排除已匹配的项 | `!log` | — | `log` |
+
+### `*` 与 `**` 的区别
+
+这是最容易混淆的点：`*` 不跨目录，`**` 跨任意层目录。
+
+```text
+项目结构：
+src/
+  index.js
+  utils/
+    helper.js
+    deep/
+      tool.js
 ```
 
-### 多级匹配
-
 ```gitignore
-# 匹配：
-#    1. 所有 log 目录下，名为 sub 的目录
-#    2. 所有 log 目录下，名为 sub 的文件
-log/sub
+# src/*.js — 只匹配 src 直属的 .js 文件
+src/*.js        # 匹配 src/index.js
+                # 不匹配 src/utils/helper.js
+                # 不匹配 src/utils/deep/tool.js
 
-# 匹配：
-#    1. 所有 log 目录下，名为 sub 的目录
-log/sub/
-
-# 匹配：
-#    1. 根目录的直属目录 log 下，所有名为 sub 的目录
-#    2. 根目录的直属目录 log 下，所有名为 sub 的文件
-/log/sub
-
-# 匹配：
-#    1. 根目录的直属目录 log 下，所有名为 sub 的目录
-/log/sub/
+# src/**/*.js — 匹配 src 下任意深度的 .js 文件
+src/**/*.js     # 匹配 src/index.js
+                # 匹配 src/utils/helper.js
+                # 匹配 src/utils/deep/tool.js
 ```
 
-## 通配符
+### 双星号 `**` 的位置
 
 ```gitignore
-# 匹配：
-#    1. * 可以是 任意数量包括零个 字符或空格
+# 开头：匹配任意位置下的 .js 文件
+**/*.js
+
+# 中间：匹配 path 和目标文件之间任意深度的目录
+path/**/file.txt    # 匹配 path/file.txt
+                    # 匹配 path/a/file.txt
+                    # 匹配 path/a/b/file.txt
+
+# src 下任意深度的 .css 文件
+src/**/*.css
+```
+
+### 否定模式 `!`
+
+`!` 用于从已匹配的集合中排除特定项，但有一个重要限制：
+
+```gitignore
+# 正常用法：忽略所有 .log，但保留 important.log
 *.log
+!important.log      # 有效
 
-# 匹配：
-#    1. ? 可以是 任意一个 字符或空格
-l?g
-
-# 匹配：
-#    1. [abc] 只能是 abc 中的一个
-l[abc]g
-
-# 匹配：
-#    1. [a-z] 只能是 a到z 中的一个字符
-l[a-z]g
-
-
-# 匹配：
-#    1. 排除 log 文件或目录
-!log
-
-# 匹配：
-#    1. [!abc] 不能是 abc 中的一个
-l[!abc]g
+# 无效用法：父目录已被忽略，子文件无法用 ! 恢复
+logs/
+!logs/important.log # 无效，logs/ 整个目录已被忽略
 ```
 
-## 特殊模式
+## 常见模式对比
 
-### 双星号模式
+### `/dist/` 与 `/dist/*` 的区别
+
+`/dist/` — 忽略整个目录及其所有内容（递归）：
+
+```text
+/dist/            ✅ 忽略
+/dist/a.js        ✅ 忽略
+/dist/css/        ✅ 忽略
+/dist/css/x.css   ✅ 忽略
+```
+
+`/dist/*` — 仅忽略一级子项，不递归：
+
+```text
+/dist/a.js        ✅ 忽略
+/dist/img/        ✅ 忽略（目录本身）
+/dist/img/x.png   🚫 不忽略（需要改用 /dist/** 才能递归）
+```
+
+推荐使用 `/dist/` 来忽略整个构建输出目录。
+
+## 应用场景
+
+### .gitignore
 
 ```gitignore
-# 匹配任意深度的目录
-**/*.js           # 匹配任意深度的 js 文件
-
-# 匹配特定目录下的任意深度文件
-src/**/*.css     # 匹配 src 目录下任意深度的 css 文件
-
-# 匹配任意路径
-path/**/file.txt  # 匹配 path/file.txt, path/sub/file.txt, path/sub/deep/file.txt 等
-```
-
-## 实际应用场景
-
-### Gitignore 文件
-
-`.gitignore` 文件使用 Glob 模式来指定 Git 应该忽略的文件和目录：
-
-```
-# 忽略所有 .log 文件
+# 日志（任意位置的 .log 文件，以及任意位置的 logs 目录）
 *.log
+logs/
 
-# 忽略 node_modules 目录
+# 依赖（任意位置的 node_modules 目录）
 node_modules/
 
-# 忽略根目录下的 config.json
-/config.json
-
-# 忽略所有 dist 目录及内容
-**/dist/
-
-# 忽略特定路径下的缓存
-cache/
-
-# 忽略编辑器配置
-.vscode/
-.idea/
-
-# 排除某些特定文件
-!important.log
-```
-
-### 构建工具
-
-在构建工具中，Glob 模式用于指定需要处理或排除的文件：
-
-#### Webpack 配置
-```javascript
-module.exports = {
-  entry: './src/index.js',
-  output: {
-    path: path.resolve(__dirname, 'dist')
-  },
-  module: {
-    rules: [
-      {
-        test: /\.(js|jsx)$/,
-        exclude: /node_modules/,  // 排除 node_modules 目录
-        use: 'babel-loader'
-      }
-    ]
-  }
-};
-```
-
-#### Vite 配置
-```javascript
-export default {
-  build: {
-    rollupOptions: {
-      input: {
-        main: './index.html',
-        nested: './nested/index.html'
-      },
-      external: ['some-external-lib'],
-      output: {
-        assetFileNames: (assetInfo) => {
-          if (assetInfo.name.endsWith('.css')) {
-            return 'assets/[name][extname]';
-          }
-          return 'assets/[name].[hash][extname]';
-        }
-      }
-    }
-  }
-}
-```
-
-### 文件查找工具
-
-在文件查找工具中，Glob 模式用于搜索特定模式的文件：
-
-#### 命令行工具
-```bash
-# 使用 find 命令查找所有 .js 文件
-find . -name "*.js"
-
-# 使用 fd 命令查找特定文件
-fd "*.test.js"        # 查找所有测试文件
-
-# 使用 ripgrep 查找特定内容
-rg -F "**/*.js"      # 在特定模式的文件中搜索
-```
-
-### IDE 配置
-
-在 IDE 配置文件中使用 Glob 模式来指定需要忽略的文件：
-
-#### VSCode settings.json
-```json
-{
-  "files.watcherExclude": {
-    "**/node_modules/**": true,
-    "**/bower_components/**": true,
-    "**/.git/**": true,
-    "**/dist/**": true
-  },
-  "files.exclude": {
-    "**/.git": true,
-    "**/node_modules": true,
-    "**/*.js": {"when": "$(basename).ts"},
-    "**/dist": true
-  }
-}
-```
-
-#### ESLint 配置
-```javascript
-module.exports = {
-  ignorePatterns: [
-    "node_modules/",
-    "dist/",
-    "**/vendor/*.js",
-    "!important.config.js"  // 排除重要配置文件
-  ],
-  extends: ["eslint:recommended"],
-  env: {
-    node: true
-  }
-};
-```
-
-## 常见模式详解
-
-### `/dist/*` 和 `/dist/` 的区别
-
-#### `/dist/`
-
-**匹配**
-
-- 忽略的是：`dist` 目录及其 **全部内容**（包括子目录、文件）。
-- 等价于："忽略整个目录，不管里面有什么"。
-
-**示例**
-
-```
-/dist/          ✅ 忽略 dist/
-    /dist/a.js    ✅ 忽略
-    /dist/css/    ✅ 忽略
-    /dist/css/x.css ✅ 忽略
-```
-
-> 推荐用这个来忽略整个构建输出目录，如 `build/`, `dist/`, `out/`
-
-#### `/dist/*`
-
-- 忽略的是：`dist` 目录下的 **所有文件和一级子目录**，但**不递归**。
-- `dist` 本身必须存在且不被忽略。
-- 可能会**保留子目录中的子文件**，除非手动加规则。
-
-✅ 示例匹配：
-
-```
-/dist/a.js      ✅ 忽略
-    /dist/img/      ✅ 忽略 img/ 这个子目录本身
-    /dist/img/x.png 🚫 不忽略（除非你加了 /dist/**）
-```
-
-### 常见构建工具模式
-
-```
-# Node.js 项目
-node_modules/
-npm-debug.log*
-.nyc_output/
-coverage/
-.nyc_output/
-
-# 构建输出
+# 构建输出（锚定根目录，避免误匹配子项目的同名目录）
 /dist/
 /build/
 /out/
-/public/bundle.js
 
-# 环境变量
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+# 环境变量（.env.local, .env.production 等所有变体）
 .env.*
 
 # IDE
 .vscode/
 .idea/
 *.swp
-*.swo
 .DS_Store
-
-# 日志
-logs/
-*.log
 
 # 临时文件
 *.tmp
-*.temp
 tmp/
 temp/
+
+# 排除特定文件（不忽略 important.log，即使前面规则匹配了它）
+!important.log
+```
+
+### VSCode settings.json
+
+```json
+{
+  "files.watcherExclude": {
+    "**/node_modules/**": true,   // ** 开头匹配任意位置，/** 结尾匹配目录内所有内容
+    "**/.git/**": true,
+    "**/dist/**": true
+  },
+  "files.exclude": {
+    "**/.git": true,
+    "**/node_modules": true,
+    "**/dist": true,
+    "**/*.js": { "when": "$(basename).ts" }  // 有对应 .ts 文件时隐藏 .js 文件
+  }
+}
+```
+
+### ESLint 配置
+
+```javascript
+module.exports = {
+  ignorePatterns: [
+    "node_modules/",
+    "dist/",
+    "**/vendor/*.js",           // 任意位置 vendor 目录下的直属 .js 文件
+    "!important.config.js"      // 排除重要配置，不忽略
+  ]
+};
+```
+
+### Webpack 配置
+
+```javascript
+module.exports = {
+  module: {
+    rules: [
+      {
+        test: /\.(js|jsx)$/,    // 正则匹配文件扩展名（非 glob）
+        exclude: /node_modules/, // 排除 node_modules
+        use: "babel-loader"
+      }
+    ]
+  }
+};
 ```
 
 ## 注意事项
 
-1. **路径分隔符**: 在不同操作系统中，Glob 模式通常使用正斜杠 `/` 作为路径分隔符，即使在 Windows 上也是如此。
-
-2. **大小写敏感性**: 在 Unix 系统中，路径通常是大小写敏感的；在 Windows 中则不敏感。这可能会影响匹配结果。
-
-3. **转义特殊字符**: 如果文件名包含特殊字符，可能需要进行转义。
-
-4. **性能考虑**: 使用双星号 `**` 可能会导致性能下降，因为它需要遍历所有子目录。
-
-5. **相对路径 vs 绝对路径**: 确保理解工具如何解释相对路径和绝对路径。
-
-6. **否定模式**: 使用 `!` 排除模式时，确保它在正确的上下文中使用（如在 `.gitignore` 中，否定模式只会影响前面的模式）。
+- 路径分隔符统一使用 `/`，包括 Windows 环境
+- Unix 系统路径大小写敏感，Windows 不敏感，跨平台项目注意统一大小写
+- `**` 会遍历所有子目录，大型项目中注意性能影响
+- `{a,b}` 花括号扩展并非所有工具都支持，使用前确认工具是否支持（`.gitignore` 不支持，`glob` npm 包支持）
+- 文件名含特殊字符（如空格、`[`、`]`）时需要转义或用引号包裹
