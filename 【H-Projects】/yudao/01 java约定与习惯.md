@@ -1,347 +1,239 @@
-# java 约定与习惯问题
+# 01 java约定与习惯
 
-## 问题1：为什么项目中经常使用`LocalDateTime`对象来保存时间
+## LocalDateTime 使用约定
 
-### 一、`LocalDateTime` 是为了解决什么问题而被设计出来的？
+### 设计背景
 
-在 Java 8 之前，Java 处理日期和时间主要依赖：
+在 Java 8 之前，时间处理主要依赖 `Date`、`Calendar`、`Timestamp`，常见问题如下：
 
-- `java.util.Date`
-- `java.util.Calendar`
-- `java.sql.Timestamp`
+- 可变对象，线程安全差。
+- API 语义混杂，日期、时间、时区边界不清晰。
+- 使用体验不一致，例如月份从 0 开始。
 
-这些类存在严重问题：
+Java 8 引入 `java.time`（JSR-310）后，`LocalDateTime` 用于表示不带时区的本地日期时间，具备不可变和线程安全特性。
 
-- **可变性**：不是线程安全的。
-- **设计混乱**：`Date` 既表示日期又表示时间，还隐含时区（基于 UTC 时间戳），但显示时却受本地时区影响。
-- **API 不直观**：比如月份从 0 开始（Calendar.JANUARY = 0）。
-- **缺少清晰的语义区分**：无法区分“带时区的时间”、“本地时间”、“纯日期”等概念。
+### 典型场景
 
-为了解决这些问题，Java 8 引入了 **JSR-310 规范**（受 Joda-Time 启发），推出了 `java.time` 包。
-其中 `LocalDateTime` 就是为了**清晰表示“不带时区的本地日期+时间”** 而设计的。
+| 场景 | 推荐类型 | 说明 |
+| --- | --- | --- |
+| 用户本地输入时间 | `LocalDateTime` | 预约、日程等本地语义时间 |
+| 数据库 `DATETIME` 字段 | `LocalDateTime` | 与 MySQL `DATETIME` 语义一致 |
+| 业务规则中的本地时间 | `LocalDateTime` | 例如每天 9:00 开门 |
+| 全局统一时间点 | `Instant` / `OffsetDateTime` / `ZonedDateTime` | 跨时区系统统一基准时间 |
 
-> ✅ 核心目标：提供**不可变、线程安全、语义明确、易用**的日期时间 API。
+### Java 与 MySQL 映射
 
-------
+| Java 类型 | MySQL 类型 | 时区语义 | 说明 |
+| --- | --- | --- | --- |
+| `LocalDateTime` | `DATETIME` | 不带时区 | 最常用业务时间存储方式 |
+| `LocalDate` | `DATE` | 不带时区 | 仅日期 |
+| `LocalTime` | `TIME` | 不带时区 | 仅时间 |
+| `Instant` / `OffsetDateTime` | `TIMESTAMP` | 与会话时区相关 | 适合绝对时间点 |
 
-### 二、`LocalDateTime` 的典型使用场景
-
-| 场景                         | 说明                                                         |
-| ---------------------------- | ------------------------------------------------------------ |
-| **用户输入的时间**           | 如预约时间、生日（带时间）、日程安排等，通常不关心时区。     |
-| **数据库中的 DATETIME 字段** | MySQL 的 `DATETIME` 类型不带时区，天然匹配 `LocalDateTime`。 |
-| **业务规则中的本地时间**     | 如“每天上午9点开门”，这个“9点”是本地时间，无需转换时区。     |
-| **日志记录（非精确时间戳）** | 如果日志只需记录“本地看到的时间”，可用 `LocalDateTime`。     |
-| **前端传来的“本地时间”**     | Web 接口接收如 `"2026-01-21T15:30"` 这样的字符串，直接映射为 `LocalDateTime`。 |
-
-> ⚠️ 注意：如果需要表示**全球统一的时刻**（如交易发生时间、服务器事件时间），应使用 `Instant` 或 `ZonedDateTime`，而不是 `LocalDateTime`。
-
-------
-
-### 三、为什么框架中经常使用 `LocalDateTime`？
-
-1. **与主流数据库类型天然兼容**
-   - MySQL：`DATETIME` → `LocalDateTime`
-   - PostgreSQL：`TIMESTAMP WITHOUT TIME ZONE` → `LocalDateTime`
-   - Oracle：`DATE` / `TIMESTAMP`（无时区）→ `LocalDateTime`
-2. **ORM 框架默认支持**
-   - Hibernate / JPA、MyBatis 等自动将 `LocalDateTime` 映射到数据库的 `DATETIME` 字段，无需额外配置。
-3. **避免时区干扰**
-   - 很多业务系统只在一个时区运行（如中国全部用东八区），不需要复杂的时区逻辑。用 `LocalDateTime` 可以“所见即所得”。
-4. **不可变 & 线程安全**
-   - 所有操作返回新对象，适合在高并发 Web 应用中使用。
-
-------
-
-### 四、`LocalDateTime` 与 MySQL 数据类型的关系
-
-| Java 类型                    | MySQL 类型  | 是否带时区                      | 说明                                       |
-| ---------------------------- | ----------- | ------------------------------- | ------------------------------------------ |
-| `LocalDateTime`              | `DATETIME`  | ❌ 不带                          | 最常用组合，存储形如 `2026-01-21 15:30:45` |
-| `LocalDate`                  | `DATE`      | ❌                               | 仅日期，如 `2026-01-21`                    |
-| `LocalTime`                  | `TIME`      | ❌                               | 仅时间，如 `15:30:45`                      |
-| `Instant` / `OffsetDateTime` | `TIMESTAMP` | ✅ 带（MySQL 内部转为 UTC 存储） | 用于需要时区或精确时间戳的场景             |
-
-> 💡 提示：MySQL 的 `TIMESTAMP` 会自动转换时区（存入时转 UTC，读取时转回当前会话时区），而 `DATETIME` 完全不处理时区——这正是 `LocalDateTime` 的语义。
-
-------
-
-### 五、常用 API 代码示例
+### 常用 API
 
 ```java
-import java.time.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class LocalDateTimeExample {
+
     public static void main(String[] args) {
-        // 1. 获取当前本地时间（基于系统默认时区）
+        // 1) 获取系统默认时区下的当前本地时间
         LocalDateTime now = LocalDateTime.now();
-        System.out.println("当前时间: " + now); // 2026-01-21T21:05:30.123456789
 
-        // 2. 构造指定时间
-        LocalDateTime dt = LocalDateTime.of(2026, 1, 21, 20, 30, 45);
-        System.out.println("构造时间: " + dt); // 2026-01-21T20:30:45
+        // 2) 构造固定时间，适合测试与业务边界验证
+        LocalDateTime fixed = LocalDateTime.of(2026, 1, 21, 20, 30, 45);
 
-        // 3. 解析字符串（ISO 标准格式）
-        LocalDateTime parsed = LocalDateTime.parse("2026-01-21T20:30:45");
-        System.out.println("解析时间: " + parsed);
+        // 3) 解析 ISO-8601 标准格式字符串
+        LocalDateTime isoParsed = LocalDateTime.parse("2026-01-21T20:30:45");
 
-        // 4. 自定义格式解析
+        // 4) 解析自定义格式字符串，用于接口与数据库文本互转
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        LocalDateTime custom = LocalDateTime.parse("2026-01-21 20:30:45", formatter);
-        System.out.println("自定义格式: " + custom);
+        LocalDateTime customParsed = LocalDateTime.parse("2026-01-21 20:30:45", formatter);
 
-        // 5. 格式化输出
+        // 5) 格式化输出，保证日志与接口返回格式稳定
         String formatted = now.format(formatter);
-        System.out.println("格式化输出: " + formatted); // 2026-01-21 21:05:30
 
-        // 6. 时间运算
+        // 6) 时间运算返回新对象，不会修改原对象
         LocalDateTime tomorrow = now.plusDays(1);
         LocalDateTime oneHourAgo = now.minusHours(1);
-        System.out.println("明天: " + tomorrow);
-        System.out.println("一小时前: " + oneHourAgo);
 
-        // 7. 比较时间
-        boolean isAfter = now.isAfter(dt);
-        boolean isBefore = now.isBefore(LocalDateTime.of(2030, 1, 1, 0, 0));
-        System.out.println("现在是否晚于 dt? " + isAfter); // true
-        System.out.println("现在是否早于 2030年? " + isBefore); // true
+        // 7) 比较方法表达业务规则判断
+        boolean afterFixed = now.isAfter(fixed);
+        boolean before2030 = now.isBefore(LocalDateTime.of(2030, 1, 1, 0, 0));
 
-        // 8. 提取字段
+        // 8) 提取字段
         int year = now.getYear();
-        int month = now.getMonthValue(); // 1-12
+        int month = now.getMonthValue();
         int day = now.getDayOfMonth();
         int hour = now.getHour();
-        System.out.printf("年=%d, 月=%d, 日=%d, 时=%d\n", year, month, day, hour);
+
+        // 9) LocalDate + LocalTime 合并
+        LocalDate date = LocalDate.of(2026, 1, 21);
+        LocalTime time = LocalTime.of(8, 30, 0);
+        LocalDateTime merged = LocalDateTime.of(date, time);
+
+        // 10) 显式绑定时区，用于跨时区场景
+        ZonedDateTime shanghaiTime = now.atZone(ZoneId.of("Asia/Shanghai"));
+
+        System.out.println("now=" + now);
+        System.out.println("fixed=" + fixed);
+        System.out.println("isoParsed=" + isoParsed);
+        System.out.println("customParsed=" + customParsed);
+        System.out.println("formatted=" + formatted);
+        System.out.println("tomorrow=" + tomorrow);
+        System.out.println("oneHourAgo=" + oneHourAgo);
+        System.out.println("afterFixed=" + afterFixed);
+        System.out.println("before2030=" + before2030);
+        System.out.println("year/month/day/hour=" + year + "/" + month + "/" + day + "/" + hour);
+        System.out.println("merged=" + merged);
+        System.out.println("shanghaiTime=" + shanghaiTime);
     }
 }
 ```
 
-------
+### 项目建议
 
-### 六、总结
+- 实体字段映射 MySQL `DATETIME` 时，优先使用 `LocalDateTime`。
+- 需要全局统一时刻时，优先使用 `Instant`，避免本地时区歧义。
+- 跨服务传输时间时，明确约定格式和时区语义。
 
-| 项目             | 说明                                                         |
-| ---------------- | ------------------------------------------------------------ |
-| **设计目的**     | 替代老旧 Date/Calendar，提供清晰、不可变、线程安全的“本地日期时间”表示 |
-| **核心特点**     | 不带时区、人类可读、不可变、API 友好                         |
-| **适用场景**     | 本地时间业务、数据库 DATETIME 字段、用户输入时间             |
-| **不适用场景**   | 需要跨时区同步的绝对时间点（应使用 `Instant`）               |
-| **框架偏好原因** | 与数据库无缝集成、无时区干扰、线程安全、现代标准             |
+## Javadoc 书写约定
 
-> 📌 **最佳实践建议**：  
->
-> - 在实体类中，若字段对应 MySQL 的 `DATETIME`，就用 `LocalDateTime`。  
-> - 若需记录“事件发生的确切时刻”，考虑用 `Instant` 并存储为 `BIGINT`（毫秒时间戳）或 `TIMESTAMP`。
+### 常用标签
 
-希望这份总结能帮你彻底理解 `LocalDateTime` 的定位与用法！
+| 标签 | 用途 | 示例 |
+| --- | --- | --- |
+| `@param` | 参数说明 | `@param id 用户 ID` |
+| `@return` | 返回值说明 | `@return 用户对象` |
+| `@throws` | 异常说明 | `@throws IllegalArgumentException 参数非法` |
+| `@see` | 关联引用 | `@see UserService#findById(long)` |
+| `{@link ...}` | 内联链接 | `详见 {@link java.time.LocalDateTime}` |
+| `{@code ...}` | 内联代码 | `调用 {@code list.size()}` |
+| `@deprecated` | 废弃声明 | `@deprecated 使用新接口` |
+| `@since` | 引入版本 | `@since 1.0.0` |
+| `@author` | 作者信息 | `@author ren` |
+| `@version` | 版本信息 | `@version 1.0` |
 
-
-
-## 问题2：javadoc中有哪些常用的功能
-
-Javadoc 是 Java 提供的**标准文档生成工具**，它可以从源代码中的注释自动生成 HTML 格式的 API 文档。除了生成文档，Javadoc 注释本身也包含许多**结构化标签（tags）**，用于描述类、方法、参数、异常等信息。
-
-以下是 Javadoc 中**最常用的功能和标签**，适用于日常开发和团队协作：
-
-------
-
-### 一、核心 Javadoc 标签（Tags）
-
-| 标签                     | 用途                             | 示例                                              |
-| ------------------------ | -------------------------------- | ------------------------------------------------- |
-| `@param`                 | 描述方法或构造器的参数           | `@param name 用户姓名`                            |
-| `@return`                | 描述方法的返回值                 | `@return 用户对象`                                |
-| `@throws` / `@exception` | 描述可能抛出的异常（两者等价）   | `@throws IllegalArgumentException 如果 name 为空` |
-| `@see`                   | 引用相关类、方法或外部资源       | `@see UserService#findById`                       |
-| `@link`                  | 在文本中内联链接到其他类或方法   | `详见 {@link LocalDateTime}`                      |
-| `@code`                  | 在文档中显示代码片段（保留格式） | `使用 {@code list.add(item)}`                     |
-| `@deprecated`            | 标记已废弃的 API，并说明替代方案 | `@deprecated 使用 {@link newMethod()} 代替`       |
-| `@since`                 | 指明该 API 从哪个版本开始引入    | `@since 1.8` 或 `@since v2.1.0`                   |
-| `@author`                | 作者信息（通常用于类）           | `@author 张三`                                    |
-| `@version`               | 版本信息（较少用）               | `@version 1.0`                                    |
-
-> 💡 注意：`@link` 和 `@code` 是 **内联标签**，写在普通描述文本中；其他是 **块标签**，通常放在注释末尾，每行一个。
-
-------
-
-### 二、Javadoc 注释的基本结构
+### 标准写法示例
 
 ```java
 /**
- * 这是一个用户服务类，用于管理用户信息。
+ * 用户服务，封装用户查询与创建逻辑。
  * <p>
- * 该类支持创建、查询和删除用户操作。
+ * 约定：参数校验失败抛出 {@link IllegalArgumentException}。
  * 示例：
- * {@code
- *   UserService service = new UserService();
- *   User user = service.createUser("Alice");
- * }
+ * <pre>
+ * UserService service = new UserService();
+ * User user = service.findById(1L);
+ * </pre>
  *
- * @author 李四
- * @since 1.0
+ * @author ren
+ * @since 1.0.0
  */
 public class UserService {
 
     /**
-     * 根据用户 ID 查询用户信息。
+     * 根据用户 ID 查询用户。
      * <p>
-     * 如果用户不存在，返回 {@code null}。
+     * 输入参数必须为正整数。
      *
-     * @param id 用户唯一标识，必须大于 0
-     * @return 匹配的用户对象，若不存在则返回 null
-     * @throws IllegalArgumentException 如果 id <= 0
+     * @param id 用户 ID，必须大于 0
+     * @return 用户对象；不存在时返回 {@code null}
+     * @throws IllegalArgumentException 当 id 小于等于 0 时抛出
      * @see #deleteUser(long)
-     * @since 1.1
      */
     public User findById(long id) {
+        // 参数前置校验，避免无意义的下游调用
         if (id <= 0) {
-            throw new IllegalArgumentException("ID 必须大于 0");
+            throw new IllegalArgumentException("id must be greater than 0");
         }
-        // ...
+
+        // 示例代码：真实项目应替换为仓储查询
         return null;
     }
 
     /**
-     * 创建新用户。
+     * 创建用户（旧版接口）。
      *
-     * @param name 用户名，不能为空
-     * @return 新创建的用户对象
-     * @deprecated 请使用 {@link #createUser(String, String)} 并提供邮箱
+     * @param name 用户名
+     * @return 创建后的用户
+     * @deprecated 请使用 {@link #createUser(String, String)} 并补充邮箱参数
      */
     @Deprecated
     public User createUser(String name) {
-        // ...
+        // 兼容旧接口，内部可委托新接口实现
         return new User(name);
+    }
+
+    public User createUser(String name, String email) {
+        return new User(name);
+    }
+
+    public void deleteUser(long id) {
+        // 略
     }
 }
 ```
 
-------
-
-### 三、常用技巧与最佳实践
-
-#### 1. 使用 HTML 标签增强可读性
-
-Javadoc 支持有限的 HTML：
-
-- `<p>`：段落分隔
-- `<ul><li>...</li></ul>`：列表
-- `<pre>`：预格式化代码块（保留换行和空格）
-- `<b>`, `<i>`：加粗、斜体
+### HTML 标签与内联能力
 
 ```java
 /**
- * 支持以下状态：
+ * 状态说明：
  * <ul>
  *   <li>{@code ACTIVE} - 激活</li>
  *   <li>{@code INACTIVE} - 未激活</li>
  * </ul>
+ * 更多信息见 {@link java.time.LocalDateTime}。
  */
-```
-
-#### 2. 链接到其他元素
-
-- `{@link ClassName}` → 链接到类
-- `{@link #methodName}` → 链接到当前类的方法
-- `{@link ClassName#methodName}` → 跨类链接
-
-#### 3. 代码高亮与转义
-
-- 使用 `{@code ...}` 避免 HTML 转义，且显示为等宽字体：
-
-  ```java
-  /** 应该调用 {@code list.size()} 而不是 {@code list.length} */
-  ```
-
-#### 4. 废弃 API 必须说明替代方案
-
-```java
-/**
- * @deprecated 使用 {@link #processAsync()} 代替，性能更好
- */
-@Deprecated
-public void process() { ... }
-```
-
-------
-
-### 四、生成 Javadoc 文档
-
-在命令行或 IDE 中执行：
-
-```bash
-javadoc -d docs src/com/example/*.java
-```
-
-- `-d docs`：输出目录为 `docs`
-- 工具会自动解析所有 `/** */` 注释并生成 HTML
-
-在 Maven/Gradle 中也有插件支持一键生成。
-
-------
-
-### 五、总结：最常用的 Javadoc 功能
-
-| 场景         | 推荐标签                |
-| ------------ | ----------------------- |
-| 描述方法作用 | 自然语言 + `<p>` 分段   |
-| 说明参数     | `@param`                |
-| 说明返回值   | `@return`               |
-| 说明异常     | `@throws`               |
-| 标记废弃     | `@deprecated` + `@link` |
-| 版本信息     | `@since`                |
-| 内联代码     | `{@code ...}`           |
-| 内联链接     | `{@link ...}`           |
-
-> ✅ **良好 Javadoc 的价值**：
->
-> - 提升代码可读性和可维护性
-> - 自动生成 API 文档，方便团队协作
-> - IDE 悬浮提示直接显示文档内容
-> - 减少沟通成本，明确契约（参数/返回/异常）
-
-掌握这些常用功能，就能写出专业、清晰的 Java 文档注释！
-
-
-
-## 问题3：为什么习惯上使用接口组织常量
-
-你提到的这种写法——**使用 `interface` 来集中定义一组 `ErrorCode` 常量**——在 Java 项目中确实很常见，但它**并不是“用 interface 定义枚举”**，而是一种**利用接口作为常量容器（Constant Interface）的变体**。虽然它看起来像枚举，但本质上和 Java 的 `enum` 类型完全不同。
-
-下面我们来详细分析：
-
-------
-
-### 一、你展示的代码本质是什么？
-
-```java
-public interface ErrorCodeConstants {
-    ErrorCode AUTH_LOGIN_BAD_CREDENTIALS = new ErrorCode(1_002_000_000, "登录失败，账号密码不正确");
-    // ...
+public class StatusDoc {
 }
 ```
 
-**✅ 实际机制：**
+### 文档生成命令
 
-- 接口中的字段 **自动是 `public static final`**。
-- 所以这些 `ErrorCode` 实例在类加载时就被创建，并作为**全局唯一常量**存在。
-- 其他类可以通过 `ErrorCodeConstants.AUTH_LOGIN_BAD_CREDENTIALS` 直接引用。
+```bash
+# 扫描源码中的 /** */ 注释并生成 HTML 文档
+javadoc -d docs src/com/example/*.java
+```
 
-> 🔍 这**不是枚举**！这只是把一堆 `ErrorCode` 对象“挂”在一个接口下，当作命名空间使用。
+### 项目建议
 
-------
+- 对公共 API 必须补齐 `@param`、`@return`、`@throws`。
+- 废弃 API 必须说明替代方案和迁移方向。
+- 以“行为契约”描述为主，不写实现细节。
 
-### 二、为什么不用 Java 的 `enum`？
+## 错误码常量组织约定
 
-你可能会问：**为什么不直接用 `enum`？**
+### 方案说明
 
-**使用 `enum` 的写法示例：**
+使用接口承载常量，本质是“常量容器”，不是枚举。
 
 ```java
-public enum AuthErrorCode implements ErrorCode {
+public interface ErrorCodeConstants {
+
+    // 接口字段默认是 public static final
+    ErrorCode AUTH_LOGIN_BAD_CREDENTIALS =
+            new ErrorCode(1_002_000_000, "登录失败，账号密码不正确");
+
+    ErrorCode AUTH_LOGIN_USER_DISABLED =
+            new ErrorCode(1_002_000_001, "登录失败，账号已被禁用");
+}
+```
+
+### enum 方案示例
+
+```java
+public enum AuthErrorCode {
+
     AUTH_LOGIN_BAD_CREDENTIALS(1_002_000_000, "登录失败，账号密码不正确"),
-    AUTH_LOGIN_USER_DISABLED(1_002_000_001, "登录失败，账号被禁用");
+    AUTH_LOGIN_USER_DISABLED(1_002_000_001, "登录失败，账号已被禁用");
 
     private final int code;
     private final String message;
@@ -351,150 +243,401 @@ public enum AuthErrorCode implements ErrorCode {
         this.message = message;
     }
 
-    @Override
-    public int getCode() { return code; }
+    public int getCode() {
+        return code;
+    }
 
-    @Override
-    public String getMessage() { return message; }
+    public String getMessage() {
+        return message;
+    }
 }
 ```
 
-**⚖️ 对比两种方式的优劣：**
+### 与 enum 对比
 
-| 特性                | `interface + ErrorCode`                        | `enum`                                                   |
-| ------------------- | ---------------------------------------------- | -------------------------------------------------------- |
-| **类型安全**        | ❌ 所有常量都是 `ErrorCode` 类型，无法区分模块  | ✅ 每个枚举是独立类型（如 `AuthErrorCode`），可做参数限定 |
-| **扩展性**          | ✅ 可跨模块集中管理（如一个接口包含所有错误码） | ❌ 枚举不能继承，难以跨模块聚合                           |
-| **序列化/反序列化** | ✅ 通常基于 `code`（int）传输，兼容性强         | ⚠️ 默认按 name 序列化，可能不稳定（需自定义）             |
-| **反射/动态获取**   | ✅ 可通过工具扫描所有 `ErrorCode` 常量          | ✅ `Enum.values()` 天然支持                               |
-| **语义清晰度**      | ❌ 接口本意是行为契约，这里被滥用为“命名空间”   | ✅ 枚举天生就是“有限常量集合”                             |
-| **IDE 支持**        | 一般                                           | 极好（自动补全、重构安全）                               |
+| 维度 | 常量容器（`interface`/`final class`） | `enum` |
+| --- | --- | --- |
+| 跨模块聚合 | 强 | 一般 |
+| 类型约束 | 弱 | 强 |
+| 整数错误码管理 | 灵活 | 需额外字段 |
+| 与现有错误体系兼容 | 强 | 中 |
 
-------
+### 推荐写法
 
-### 三、为什么很多项目仍用 `interface` 方式？
-
-尽管 `enum` 更“正宗”，但以下原因让 `interface + 常量对象` 模式依然流行：
-
-#### 1. **错误码需要全局唯一整数 ID**
-
-- 很多系统要求错误码是 **32 位整数**（如 `1_002_000_000`），用于日志、监控、前端映射。
-- `enum` 虽然也能存 code，但**默认标识是 name**，容易在序列化时出问题（比如前端收到 `"AUTH_LOGIN_BAD_CREDENTIALS"` 而不是 `1002000000`）。
-
-#### 2. **跨模块聚合方便**
-
-- 你可以有一个总接口 `ErrorCodeConstants`，组合多个子模块的常量：
-
-  ```java
-  public interface ErrorCodeConstants extends AuthErrorCodeConstants,
-                                             OrderErrorCodeConstants,
-                                             PaymentErrorCodeConstants {}
-  ```
-
-- 而 `enum` 无法继承或组合。
-
-#### 3. **与现有 `ErrorCode` 接口集成**
-
-- 通常项目会定义一个通用接口：
-
-  ```java
-  public interface ErrorCode {
-      int getCode();
-      String getMessage();
-  }
-  ```
-
-- 然后让所有错误码实现它（无论是匿名内部类还是普通类）。
-
-- 这种设计更灵活，比如支持动态错误码（带参数的 message）。
-
-#### 4. **避免枚举的“单例”限制**
-
-- 枚举实例是 JVM 单例，无法动态创建（比如根据配置生成错误码）。
-- 而 `new ErrorCode(...)` 可以在运行时构造（虽然常量场景下一般不会这么做）。
-
-------
-
-### 四、如何改进这种设计？（最佳实践）
-
-如果你坚持用 `interface` 组织常量，建议：
-
-#### ✅ 1. **不要让业务类 `implements ErrorCodeConstants`**
-
-这是经典的 **Constant Interface 反模式**！
-正确用法是直接通过类名访问：
+- 不要让业务类 `implements` 常量接口。
+- 优先通过 `final class` + `public static final` 定义常量。
+- 按模块分组常量，避免单文件无限膨胀。
 
 ```java
-throw new BusinessException(ErrorCodeConstants.AUTH_LOGIN_BAD_CREDENTIALS);
-```
+public final class ErrorCodes {
 
-#### ✅ 2. **使用静态导入提升可读性**
-
-```java
-import static com.example.ErrorCodeConstants.AUTH_LOGIN_BAD_CREDENTIALS;
-
-// 使用
-throw new BusinessException(AUTH_LOGIN_BAD_CREDENTIALS);
-```
-
-#### ✅ 3. **考虑用 `final class` 替代 `interface`**
-
-```java
-public final class ErrorCodeConstants {
-    private ErrorCodeConstants() {}
-
-    public static final ErrorCode AUTH_LOGIN_BAD_CREDENTIALS = 
-        new ErrorCode(1_002_000_000, "登录失败，账号密码不正确");
-}
-```
-
-这样语义更准确：**这是一个常量容器，不是行为契约**。
-
-#### ✅ 4. **如果错误码按模块划分，可用嵌套类**
-
-```java
-public final class ErrorCodeConstants {
-    private ErrorCodeConstants() {}
+    private ErrorCodes() {
+        // 工具类不允许实例化
+    }
 
     public static final class Auth {
-        public static final ErrorCode BAD_CREDENTIALS = ...;
-        public static final ErrorCode USER_DISABLED = ...;
+
+        private Auth() {
+        }
+
+        // 按模块分组，便于维护与检索
+        public static final ErrorCode BAD_CREDENTIALS =
+                new ErrorCode(1_002_000_000, "登录失败，账号密码不正确");
+
+        public static final ErrorCode USER_DISABLED =
+                new ErrorCode(1_002_000_001, "登录失败，账号已被禁用");
+    }
+}
+```
+
+## 无界通配符 `<?>` 约定
+
+### 定义与限制
+
+`<?>` 表示“具体类型未知但确定存在”的泛型参数。
+
+- 可读：读取结果按 `Object` 处理。
+- 不可写：除 `null` 外，不能添加元素。
+
+```java
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+public class WildcardDemo {
+
+    public static void main(String[] args) {
+        List<String> names = Arrays.asList("a", "b");
+        List<Integer> ids = Arrays.asList(1, 2);
+
+        printSize(names);
+        printSize(ids);
+
+        List<?> unknown = new ArrayList<String>();
+        // unknown.add("x"); // 编译错误：类型未知，写入不安全
+        unknown.add(null); // 仅允许写入 null
     }
 
-    public static final class Order {
-        public static final ErrorCode NOT_FOUND = ...;
+    public static void printSize(List<?> list) {
+        // 仅依赖集合结构，不依赖元素具体类型
+        System.out.println("size=" + list.size());
+
+        // 读取时只能按 Object 处理
+        Object first = list.isEmpty() ? null : list.get(0);
+        System.out.println("first=" + first);
+    }
+}
+```
+
+### 适用场景
+
+- 只读工具方法，如统计、判空、遍历。
+- 接口入参对元素类型无关时。
+- 反射场景中的 `Class<?>`。
+
+### 与原始类型对比
+
+| 维度 | `List<?>` | `List`（raw type） |
+| --- | --- | --- |
+| 编译期类型检查 | 有 | 无 |
+| 未检查警告 | 少 | 多 |
+| 推荐程度 | 高 | 低 |
+
+## 异常使用约定
+
+### 基本区别
+
+| 类型 | 是否强制处理 | 典型场景 |
+| --- | --- | --- |
+| 受检异常（Checked） | 是 | IO、数据库、网络等外部失败 |
+| 非受检异常（Unchecked） | 否 | 参数错误、状态错误、编码缺陷 |
+
+### 项目实践
+
+- 外部依赖失败：在基础设施层捕获受检异常并转换为业务异常。
+- 参数和状态校验：抛出非受检异常，快速失败。
+- 控制器层：统一异常处理，输出标准错误响应。
+
+```java
+import java.io.IOException;
+
+public class ExceptionDemo {
+
+    public void execute() {
+        try {
+            // 调用文件或网络 API，可能抛出受检异常
+            performIoOperation();
+        } catch (IOException e) {
+            // 转换为项目统一异常类型，保留根因便于排查
+            throw new RuntimeException("I/O operation failed", e);
+        }
+    }
+
+    private void performIoOperation() throws IOException {
+        // 模拟 I/O 失败
+        throw new IOException("disk not available");
+    }
+}
+```
+
+### 业务异常示例
+
+```java
+public class InsufficientBalanceException extends RuntimeException {
+
+    public InsufficientBalanceException(String message) {
+        // 业务语义明确，便于全局异常处理映射状态码
+        super(message);
+    }
+}
+```
+
+## Comparator.comparing 排序约定
+
+### 基础用法
+
+```java
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
+
+public class ComparatorDemo {
+
+    public static void main(String[] args) {
+        List<Person> people = Arrays.asList(
+                new Person("Alice", 30, LocalDateTime.parse("2026-01-01T10:00:00")),
+                new Person("Bob", 25, LocalDateTime.parse("2026-01-01T09:00:00")),
+                new Person("Charlie", 25, LocalDateTime.parse("2026-01-01T08:00:00"))
+        );
+
+        // 先按年龄升序，再按姓名升序
+        people.sort(
+                Comparator.comparing(Person::getAge)
+                        .thenComparing(Person::getName)
+        );
+
+        // 逆序时统一在末尾调用 reversed，表达更清晰
+        people.sort(Comparator.comparing(Person::getAge).reversed());
+
+        // 多字段：先按年龄，再按创建时间倒序
+        people.sort(
+                Comparator.comparing(Person::getAge)
+                        .thenComparing(Person::getCreatedAt, Comparator.reverseOrder())
+        );
+    }
+
+    static class Person {
+
+        private final String name;
+        private final int age;
+        private final LocalDateTime createdAt;
+
+        Person(String name, int age, LocalDateTime createdAt) {
+            this.name = name;
+            this.age = age;
+            this.createdAt = createdAt;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public int getAge() {
+            return age;
+        }
+
+        public LocalDateTime getCreatedAt() {
+            return createdAt;
+        }
+    }
+}
+```
+
+### 空值处理
+
+```java
+import java.util.Comparator;
+import java.util.List;
+
+// 处理 name 可能为空的场景，避免排序时空指针
+public class NullSafeSortDemo {
+
+    public static void sortByName(List<Person> people) {
+        people.sort(
+                Comparator.comparing(
+                        Person::getName,
+                        Comparator.nullsLast(String::compareTo)
+                )
+        );
+    }
+
+    interface Person {
+        String getName();
+    }
+}
+```
+
+### 项目建议
+
+- 多字段排序统一使用 `thenComparing` 链式表达。
+- 可空字段必须显式使用 `nullsFirst` 或 `nullsLast`。
+- 不可比较字段需要提供自定义比较器。
+
+## Collections 工具类约定
+
+### `Collections.singleton` 的作用
+
+`Collections.singleton(T)` 返回仅包含一个元素的不可变 `Set`。
+
+```java
+import java.util.Collections;
+import java.util.Set;
+
+public class SingletonDemo {
+
+    public static void main(String[] args) {
+        Set<String> roles = Collections.singleton("ADMIN");
+        System.out.println(roles);
+
+        // roles.add("USER");
+        // 运行时抛 UnsupportedOperationException，因为返回集合是不可变实现
+    }
+}
+```
+
+### 常用 API 速查
+
+| 场景 | API |
+| --- | --- |
+| 单元素不可变集合 | `singleton` / `singletonList` / `singletonMap` |
+| 空集合返回 | `emptyList` / `emptySet` / `emptyMap` |
+| 排序与重排 | `sort` / `reverse` / `shuffle` / `swap` |
+| 不可变视图 | `unmodifiableList` / `unmodifiableSet` / `unmodifiableMap` |
+| 同步包装 | `synchronizedList` / `synchronizedSet` / `synchronizedMap` |
+| 统计与查找 | `max` / `min` / `frequency` / `binarySearch` |
+
+### API 示例
+
+```java
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+public class CollectionsApiDemo {
+
+    public static void main(String[] args) {
+        List<Integer> nums = new ArrayList<>(Arrays.asList(3, 1, 2, 2));
+
+        // 排序
+        Collections.sort(nums);
+
+        // 反转
+        Collections.reverse(nums);
+
+        // 统计元素出现次数
+        int count = Collections.frequency(nums, 2);
+
+        // 二分查找前必须有序
+        Collections.sort(nums);
+        int index = Collections.binarySearch(nums, 2);
+
+        // 不可变视图：通常先 copy 再包装
+        List<Integer> readonly = Collections.unmodifiableList(new ArrayList<>(nums));
+
+        // 空集合返回：避免返回 null
+        List<String> empty = Collections.emptyList();
+
+        System.out.println(nums);
+        System.out.println(count);
+        System.out.println(index);
+        System.out.println(readonly);
+        System.out.println(empty);
+    }
+}
+```
+
+### 使用注意
+
+- `unmodifiableXxx` 是视图不可变，原集合仍可变。
+- `binarySearch` 之前必须确保集合有序。
+- 优先返回空集合，避免返回 `null`。
+
+## 接口 `default` 方法约定
+
+### 作用
+
+`default` 方法用于在不破坏已有实现类的前提下为接口扩展新能力。
+
+### 示例
+
+```java
+public interface MyInterface {
+
+    // 抽象方法：实现类必须提供实现
+    void execute();
+
+    // default 方法：实现类可直接继承，也可覆盖
+    default void logStart() {
+        System.out.println("start");
     }
 }
 
-// 使用
-ErrorCodeConstants.Auth.BAD_CREDENTIALS
+class MyService implements MyInterface {
+
+    @Override
+    public void execute() {
+        logStart();
+        System.out.println("execute business logic");
+    }
+}
 ```
 
-------
+### JDK 场景示例
 
-### 五、什么时候该用 `enum`？
+```java
+import java.util.Arrays;
+import java.util.List;
 
-✅ 推荐用 `enum` 的场景：
+public class DefaultMethodJdkDemo {
 
-- 错误码**不需要全局整数 ID**，或 ID 可以通过 `ordinal()` 或自定义字段实现。
-- 错误码**数量固定、不跨模块**。
-- 需要**强类型约束**（如方法参数只接受某种错误码）。
-- 需要利用枚举特性：`values()`, `valueOf()`, `switch` 支持等。
+    public static void main(String[] args) {
+        List<String> names = Arrays.asList("A", "B", "C");
 
-------
+        // forEach 是接口 default 方法，集合实现类可直接使用
+        names.forEach(System.out::println);
+    }
+}
+```
 
-### 六、总结
+### 多接口冲突处理
 
-| 问题                                                 | 回答                                                         |
-| ---------------------------------------------------- | ------------------------------------------------------------ |
-| **你写的 `interface ErrorCodeConstants` 是枚举吗？** | ❌ 不是，只是用接口当常量容器                                 |
-| **为什么不用 `enum`？**                              | 因为需要全局整数 ID、跨模块聚合、与现有 `ErrorCode` 接口集成 |
-| **这种写法合理吗？**                                 | ✅ 合理，但**不要让类 `implements` 它**                       |
-| **如何优化？**                                       | 用 `final class` 替代 `interface`，或使用嵌套类分组          |
-| **何时用 `enum`？**                                  | 当错误码封闭、类型安全更重要、无需复杂 ID 规则时             |
+```java
+interface A {
+    default void foo() {
+        System.out.println("A");
+    }
+}
 
-> 💡 **核心思想**：
-> **选择数据结构要看实际需求**。
-> 虽然 `enum` 是 Java 的“官方枚举”，但在需要**灵活 ID、跨模块、与接口集成**的错误码系统中，`interface` 或 `final class` + 常量对象的方式反而更实用。
+interface B {
+    default void foo() {
+        System.out.println("B");
+    }
+}
 
-你的项目采用这种方式，说明它更看重**错误码的可管理性和整数 ID 的规范性**，这是完全合理的工程选择。
+class C implements A, B {
+
+    @Override
+    public void foo() {
+        // 必须显式选择调用路径，消除二义性
+        A.super.foo();
+    }
+}
+```
+
+### 项目建议
+
+- `default` 用于行为扩展，不承载共享状态。
+- 需要共享字段或构造逻辑时，使用抽象类。
+- 接口新增方法时优先考虑 `default` 兼容历史实现。
