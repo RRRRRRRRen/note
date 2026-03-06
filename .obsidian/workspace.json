@@ -4,21 +4,17 @@
     "type": "split",
     "children": [
       {
-        "id": "aee0fb72e67dc6d1",
+        "id": "7eddf1fe48b14afc",
         "type": "tabs",
         "children": [
           {
-            "id": "2bce060dafbe920b",
+            "id": "124f2e1c21c6e524",
             "type": "leaf",
             "state": {
-              "type": "markdown",
-              "state": {
-                "file": "【I-AI】/prompt/prompt.md",
-                "mode": "source",
-                "source": false
-              },
+              "type": "empty",
+              "state": {},
               "icon": "lucide-file",
-              "title": "prompt"
+              "title": "新标签页"
             }
           }
         ]
@@ -180,10 +176,12 @@
       "obsidian-excalidraw-plugin:新建绘图文件": false
     }
   },
-  "active": "2bce060dafbe920b",
+  "active": "124f2e1c21c6e524",
   "lastOpenFiles": [
-    "【FrontEnd】Vue/02 vue3 基础.md",
+    "未命名.md",
+    "【H-Projects】/yudao/01 java约定与习惯.md",
     "【I-AI】/prompt/prompt.md",
+    "【FrontEnd】Vue/02 vue3 基础.md",
     "【I-AI】/prompt",
     "【I-AI】",
     "【H-Projects】/yudao/yudao.md",
@@ -212,8 +210,6 @@
     "【G-Tools】/Regex/04 修饰符.md",
     "【G-Tools】/Regex/02 位置匹配.md",
     "【G-Tools】/PicGo/picGo.md",
-    "【G-Tools】/Regex/01 字符串匹配.md",
-    "【G-Tools】/Glob/Glob.md",
     "【G-Tools】/Vim",
     "【G-Tools】/Regex",
     "【G-Tools】/PicGo",
