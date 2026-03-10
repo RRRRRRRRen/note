@@ -412,3 +412,50 @@ feat(auth): add JWT authentication module
 
 Closes #123
 ```
+
+## Worktree
+
+在同一仓库中同时检出多个分支到不同目录，共享 `.git` 数据库，各自拥有独立工作区和 HEAD。
+
+适用于：并行开发多个分支（无需反复 stash 切换），或同时编译/测试不同版本。
+
+### 常用命令
+
+```bash
+# 查看所有 worktree
+git worktree list
+
+# 添加 worktree（检出已有分支）
+git worktree add ../my-feature feature/login
+
+# 添加 worktree 并创建新分支（基于当前 HEAD）
+git worktree add -b feature/new-ui ../new-ui
+
+# 删除 worktree（先删目录，再清理元数据）
+rm -rf ../my-feature
+git worktree prune
+
+# 锁定 worktree，防止被 prune（适用于 CI 临时目录）
+git worktree lock ../ci-build
+git worktree unlock ../ci-build
+```
+
+### 示例
+
+正在开发 `feature/auth`，需要临时切到 `main` 查 bug：
+
+```bash
+git worktree add ../main-checkout main
+cd ../main-checkout
+# 调试 main，不影响 feature/auth 工作区
+
+# 完成后清理
+rm -rf ../main-checkout && git worktree prune
+```
+
+### 注意事项
+
+- 所有 worktree 共享同一 Git 对象数据库，提交和标签对全部 worktree 可见
+- 同一分支不能被两个 worktree 同时检出
+- 不支持嵌套 worktree
+- 需要 Git 2.5.0+
