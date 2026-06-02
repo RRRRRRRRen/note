@@ -4,39 +4,24 @@
     "type": "split",
     "children": [
       {
-        "id": "7eddf1fe48b14afc",
+        "id": "fc5fc65275eded0c",
         "type": "tabs",
         "children": [
           {
-            "id": "124f2e1c21c6e524",
+            "id": "4ba3ef8de371b70a",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "【H-Projects】/yudao/99 问题收集.md",
+                "file": "【A-Lang】/Python/书本知识点.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "99 问题收集"
-            }
-          },
-          {
-            "id": "9c1909680c1101aa",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "【H-Projects】/yudao/05 数据库相关.md",
-                "mode": "source",
-                "source": true
-              },
-              "icon": "lucide-file",
-              "title": "05 数据库相关"
+              "title": "书本知识点"
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "vertical"
@@ -93,7 +78,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300
+    "width": 243.5
   },
   "right": {
     "id": "fc0e9c4ef8b96c1a",
@@ -157,13 +142,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "【H-Projects】/yudao/05 数据库相关.md",
+                "file": "【A-Lang】/Python/书本知识点.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "05 数据库相关 的大纲"
+              "title": "书本知识点 的大纲"
             }
           },
           {
@@ -195,14 +180,31 @@
       "obsidian-excalidraw-plugin:新建绘图文件": false
     }
   },
-  "active": "9c1909680c1101aa",
+  "active": "4ba3ef8de371b70a",
   "lastOpenFiles": [
+    "CLAUDE.md",
+    "【A-Lang】/Python/书本知识点.md",
+    "【A-Lang】/Python/01 基础.md",
+    "【A-Lang】/Python",
+    "【A-Lang】/Python/99 类型注解与最佳实践.md",
+    "【A-Lang】/Python/08 标准库与常用工具.md",
+    "【A-Lang】/Python/07 并发与异步编程.md",
+    "【A-Lang】/Python/06 文件与IO操作.md",
+    "【A-Lang】/Python/05 异常处理与调试.md",
+    "【A-Lang】/Python/04 模块与包管理.md",
+    "【A-Lang】/Python/03 面向对象编程.md",
+    "【A-Lang】/Python/02 函数与函数式编程.md",
+    "【H-Projects】/yudao/07 序列化.md",
+    "【J-Interview】/前端问题收集.md",
+    "【J-Interview】",
+    "【H-Projects】/yudao/01 java约定与习惯.md",
+    "【H-Projects】/yudao/03 spring 相关.md",
     "【H-Projects】/yudao/99 问题收集.md",
+    "【H-Projects】/yudao/10 Lombok相关问题.md",
+    "【H-Projects】/yudao/08 文档注释.md",
+    "未命名.canvas",
     "【H-Projects】/yudao/05 数据库相关.md",
     "【H-Projects】/yudao/04 maven 相关.md",
-    "【H-Projects】/yudao/03 spring 相关.md",
-    "未命名.md",
-    "【H-Projects】/yudao/01 java约定与习惯.md",
     "【I-AI】/prompt/prompt.md",
     "【FrontEnd】Vue/02 vue3 基础.md",
     "【I-AI】/prompt",
@@ -211,28 +213,12 @@
     "【H-Projects】/yudao/02 项目常见问题和设计.md",
     "【H-Projects】/yudao/01 java约定与习惯问题.md",
     "【H-Projects】/vue-vben-admin/[Vben Admin 源码实现] 10_状态管理.md",
-    "【H-Projects】/vue-vben-admin/[Vben Admin 源码实现] 09_路由配置.md",
-    "【H-Projects】/vue-vben-admin/[Vben Admin 源码实现] 08_其他配置.md",
-    "【H-Projects】/vue-vben-admin/[Vben Admin 源码实现] 07_Vite配置.md",
-    "【H-Projects】/vue-vben-admin/[Vben Admin 源码实现] 06_包管理器解析.md",
-    "【H-Projects】/vue-vben-admin/[Vben Admin 源码实现] 05_GIT配置.md",
-    "【H-Projects】/vue-vben-admin/[Vben Admin 源码实现] 04_TS配置.md",
-    "【H-Projects】/vue-vben-admin/[Vben Admin 源码实现] 03_代码格式化.md",
-    "【H-Projects】/vue-vben-admin/[Vben Admin 源码实现] 02_编辑器设置.md",
-    "【H-Projects】/vue-vben-admin/[Vben Admin 源码实现] 01_项目初始化.md",
-    "【H-Projects】/vue-vben-admin/[Vben Admin 源码实现] 00_开篇.md",
-    "【H-Projects】/vue-element-admin/第二部分.md",
-    "【H-Projects】/vue-element-admin/第一部分.md",
     "【H-Projects】/yudao",
     "【H-Projects】/vue-vben-admin",
     "【H-Projects】/vue-element-admin",
     "【H-Projects】",
-    "【G-Tools】/Vim/01 vim基本概念与常用操作.md",
-    "【G-Tools】/Regex/99 案例分析.md",
     "【G-Tools】/Vim",
     "【G-Tools】/Regex",
-    "【G-Tools】/PicGo",
-    "【G-Tools】/Glob",
     "【F-ENV】/WSL/images/zsh-profile.jpg",
     "【F-ENV】/WSL/images/windows.jpg",
     "【F-ENV】/WSL/images/term-settings.jpg",
@@ -242,7 +228,6 @@
     "【F-ENV】/WSL/images/scripts.jpg",
     "【F-ENV】/WSL/images/screen.jpg",
     "【F-ENV】/WSL/images/run.jpg",
-    "【F-ENV】/WSL/images/right-click-admin.png",
-    "未命名.canvas"
+    "【F-ENV】/WSL/images/right-click-admin.png"
   ]
 }

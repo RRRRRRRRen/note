@@ -107,18 +107,18 @@ public class LocalDateTimeExample {
 
 ### 常用标签
 
-| 标签 | 用途 | 示例 |
-| --- | --- | --- |
-| `@param` | 参数说明 | `@param id 用户 ID` |
-| `@return` | 返回值说明 | `@return 用户对象` |
-| `@throws` | 异常说明 | `@throws IllegalArgumentException 参数非法` |
-| `@see` | 关联引用 | `@see UserService#findById(long)` |
-| `{@link ...}` | 内联链接 | `详见 {@link java.time.LocalDateTime}` |
-| `{@code ...}` | 内联代码 | `调用 {@code list.size()}` |
-| `@deprecated` | 废弃声明 | `@deprecated 使用新接口` |
-| `@since` | 引入版本 | `@since 1.0.0` |
-| `@author` | 作者信息 | `@author ren` |
-| `@version` | 版本信息 | `@version 1.0` |
+| 标签            | 用途    | 示例                                      |
+| ------------- | ----- | --------------------------------------- |
+| `@param`      | 参数说明  | `@param id 用户 ID`                       |
+| `@return`     | 返回值说明 | `@return 用户对象`                          |
+| `@throws`     | 异常说明  | `@throws IllegalArgumentException 参数非法` |
+| `@see`        | 关联引用  | `@see UserService#findById(long)`       |
+| `{@link ...}` | 内联链接  | `详见 {@link java.time.LocalDateTime}`    |
+| `{@code ...}` | 内联代码  | `调用 {@code list.size()}`                |
+| `@deprecated` | 废弃声明  | `@deprecated 使用新接口`                     |
+| `@since`      | 引入版本  | `@since 1.0.0`                          |
+| `@author`     | 作者信息  | `@author ren`                           |
+| `@version`    | 版本信息  | `@version 1.0`                          |
 
 ### 标准写法示例
 
