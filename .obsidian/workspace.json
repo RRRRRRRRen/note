@@ -4,21 +4,17 @@
     "type": "split",
     "children": [
       {
-        "id": "fc5fc65275eded0c",
+        "id": "5c39cbf3bac1995b",
         "type": "tabs",
         "children": [
           {
-            "id": "4ba3ef8de371b70a",
+            "id": "a5a146e70daf4769",
             "type": "leaf",
             "state": {
-              "type": "markdown",
-              "state": {
-                "file": "【A-Lang】/Python/书本知识点.md",
-                "mode": "source",
-                "source": false
-              },
+              "type": "empty",
+              "state": {},
               "icon": "lucide-file",
-              "title": "书本知识点"
+              "title": "新标签页"
             }
           }
         ]
@@ -142,13 +138,12 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "【A-Lang】/Python/书本知识点.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "书本知识点 的大纲"
+              "title": "大纲"
             }
           },
           {
@@ -180,10 +175,10 @@
       "obsidian-excalidraw-plugin:新建绘图文件": false
     }
   },
-  "active": "4ba3ef8de371b70a",
+  "active": "a5a146e70daf4769",
   "lastOpenFiles": [
-    "CLAUDE.md",
     "【A-Lang】/Python/书本知识点.md",
+    "CLAUDE.md",
     "【A-Lang】/Python/01 基础.md",
     "【A-Lang】/Python",
     "【A-Lang】/Python/99 类型注解与最佳实践.md",
