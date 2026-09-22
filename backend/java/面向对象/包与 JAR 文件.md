@@ -1,4 +1,5 @@
 # 包与 JAR 文件
+
 *类型：knowledge ｜ 难度：入门 ｜ 标签：Java、package、import、JAR、classpath ｜ 更新：2026-09-22*
 
 **包的唯一目的是确保类名唯一性（域名逆序命名），import 只能消除类名前缀、不搬运文件；类的访问权限分 public / 包级私有 / private 三层；JAR 用 ZIP 格式把应用打包为一个文件，可用 -e 指定入口做成可执行 JAR。**

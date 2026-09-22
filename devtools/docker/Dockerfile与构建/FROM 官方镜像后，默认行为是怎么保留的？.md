@@ -58,7 +58,7 @@ COPY 20-envsubst-on-templates.sh /docker-entrypoint.d/
 容器启动时，Docker 把两者拼成一条完整命令执行。它们的官方定位：
 
 > Docker Docs · Dockerfile reference：The purpose of a CMD is to provide defaults for an executing container. There can only be one CMD instruction in a Dockerfile.
-
+<!---->
 > Docker Docs · Dockerfile reference：An ENTRYPOINT allows you to configure a container that will run as an executable.
 
 分工可以记成：**ENTRYPOINT 是固定主程序，CMD 是默认参数**。nginx 镜像的教科书示范：`ENTRYPOINT ["/docker-entrypoint.sh"]` + `CMD ["nginx", "-g", "daemon off;"]`——主程序是钩子脚本，默认参数是把 nginx 拉起来。而 `docker run` 时在镜像名后面敲的内容，会**顶替 CMD 的位置**，ENTRYPOINT 纹丝不动：

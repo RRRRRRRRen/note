@@ -128,7 +128,7 @@ $ git commit -m "fix: 修复 x"
 ```
 
 > 说明：status 定位 → add -p 挑块 → diff --staged 复核 → commit。四步节奏固定下来，手滑提交绝迹。
-
+<!---->
 > **注意：restore 覆盖不可恢复**
 >
 > `git restore <文件>` 会用 index 的版本**覆盖**工作区——从未 add 过的改动没有进入对象库，被覆盖就彻底没了。丢弃前先 `git diff` 确认扔掉的确实不要；拿不准就先 `git stash`（撤销篇细讲）。

@@ -31,14 +31,14 @@ tar -xzvf ~/Downloads/apache-maven-3.9.9-bin.tar.gz -C /usr/local
 code ~/.zshrc    # 以 Zsh 为例
 ```
 
-2. 添加以下内容：
+1. 添加以下内容：
 
 ```bash
 export MAVEN_HOME=/usr/local/apache-maven-3.9.9
 export PATH=$MAVEN_HOME/bin:$PATH
 ```
 
-3. 使配置生效：
+1. 使配置生效：
 
 ```bash
 source ~/.zshrc
@@ -67,13 +67,13 @@ Java version: 17.0.8, vendor: Oracle Corporation
 nano $MAVEN_HOME/conf/settings.xml
 ```
 
-3. 找到 `<localRepository>` 标签并修改：
+1. 找到 `<localRepository>` 标签并修改：
 
 ```xml
 <localRepository>/Users/ren/.m2/repository</localRepository>
 ```
 
-4. 找到 `<mirror>` 标签添加阿里镜像，依赖下载走国内源明显提速：
+1. 找到 `<mirror>` 标签添加阿里镜像，依赖下载走国内源明显提速：
 
 ```xml
 <mirror>
@@ -93,8 +93,8 @@ nano $MAVEN_HOME/conf/settings.xml
 - User settings file：`$MAVEN_HOME/conf/settings.xml`
 - Local repository：`/Users/ren/.m2/repository`
 
-3. 打开 Runner 选项
-4. VM Options 填入 `-DarchetypeCatalog=internal`，禁止联网下载远程 archetype 模板，新建项目更快
+1. 打开 Runner 选项
+2. VM Options 填入 `-DarchetypeCatalog=internal`，禁止联网下载远程 archetype 模板，新建项目更快
 
 ## 测试 Maven 项目
 
@@ -104,7 +104,7 @@ nano $MAVEN_HOME/conf/settings.xml
 mvn archetype:generate -DgroupId=com.example -DartifactId=my-app -DarchetypeArtifactId=maven-archetype-quickstart -DinteractiveMode=false
 ```
 
-2. 编译并运行：
+1. 编译并运行：
 
 ```bash
 cd my-app
@@ -122,4 +122,4 @@ java -cp target/my-app-1.0-SNAPSHOT.jar com.example.App
 sudo rm -rf /usr/local/apache-maven-3.9.5
 ```
 
-2. 移除环境变量：编辑 `~/.zshrc` 或 `~/.bash_profile`，删除 MAVEN_HOME 与 PATH 相关行
+1. 移除环境变量：编辑 `~/.zshrc` 或 `~/.bash_profile`，删除 MAVEN_HOME 与 PATH 相关行

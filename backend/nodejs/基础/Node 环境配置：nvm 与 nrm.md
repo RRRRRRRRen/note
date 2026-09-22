@@ -26,13 +26,13 @@ nvm 下载 node 官方源在国内很慢，切到 npmmirror 镜像：
 nvm cache clear
 ```
 
-2. 在 `~/.zshrc` 中添加镜像环境变量：
+1. 在 `~/.zshrc` 中添加镜像环境变量：
 
 ```bash
 export NVM_NODEJS_ORG_MIRROR=https://npmmirror.com/mirrors/node/
 ```
 
-3. 重新载入终端配置使变量生效：
+1. 重新载入终端配置使变量生效：
 
 ```bash
 source ~/.zshrc

@@ -44,16 +44,20 @@ Mac 用户默认已开启虚拟化，且无法更改。
 | MSI（微星） | `Del` |
 | Acer（宏碁） | `F2` 或 `Del` |
 
-3. 找到虚拟化选项并启用：
-  - Intel CPU：`Intel Virtualization Technology (VT-x)` 或 `Intel VT-d`。
-  - AMD CPU：`SVM Mode` 或 `AMD-V`。
-4. 按 `F10`（Save & Exit）保存退出，电脑自动重启。
+1. 找到虚拟化选项并启用：
+
+   - Intel CPU：`Intel Virtualization Technology (VT-x)` 或 `Intel VT-d`。
+   - AMD CPU：`SVM Mode` 或 `AMD-V`。
+
+2. 按 `F10`（Save & Exit）保存退出，电脑自动重启。
 
 ## 安装 VMware Fusion
 
 1. 官网下载：[vmware.com/products/fusion](https://www.vmware.com/products/fusion.html)
-  - Apple Silicon（M1/M2/M3）：选 Fusion 13+（原生支持 ARM）。
-  - Intel Mac：选 Fusion 12+。
+
+   - Apple Silicon（M1/M2/M3）：选 Fusion 13+（原生支持 ARM）。
+   - Intel Mac：选 Fusion 12+。
+
 2. 双击 `.dmg`，把 VMware Fusion 拖入 Applications。
 3. 首次运行按提示在「安全性与隐私」中允许系统扩展，输入管理员密码完成安装。
 

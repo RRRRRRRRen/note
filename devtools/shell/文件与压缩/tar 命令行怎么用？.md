@@ -215,7 +215,7 @@ $ xxd plain.tar | head -1
 
 - **tar -tvf 先看清单** — 有公共顶层目录吗？有没有来路不明的绝对路径或 `..`？
 - **选好落点再解** — mkdir 一个目录配 -C，别在当前位置裸解铺一地
-- **普通用户解包** — 不用 sudo；macOS 打的包留意 ._ 条目（COPYFILE_DISABLE=1）
+- **普通用户解包** — 不用 sudo；macOS 打的包留意 ._条目（COPYFILE_DISABLE=1）
 
 命令速查（cheatsheet）：
 
@@ -271,7 +271,7 @@ tar 打开归档先读头部魔数：1F 8B 认出 gzip 壳、FD 37 7A 58 5A 认�
 
 bsdtar 把 macOS 扩展属性（Finder 信息、ACL 等）以 AppleDouble 编码存成 ._<名字> 条目物理写进包；Linux 的 tar 不认识这种伴随条目，当普通文件落地就成了垃圾。根治在打包端：COPYFILE_DISABLE=1 tar ...（macOS 10.5+ 起）或 --disable-copyfile（libarchive 3.0.3+）。
 
-- 加分项：坑中坑在「自己看不见」——本机 bsdtar 的 -tf 清单会过滤 ._ 条目，xxd 看包的开头字节才实锤。发包前用 COPYFILE_DISABLE=1 重打一次最稳。
+- 加分项：坑中坑在「自己看不见」——本机 bsdtar 的 -tf 清单会过滤 ._条目，xxd 看包的开头字节才实锤。发包前用 COPYFILE_DISABLE=1 重打一次最稳。
 
 ## 延伸阅读
 

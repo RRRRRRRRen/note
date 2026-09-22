@@ -134,7 +134,7 @@ const program = ts.createProgram(/* ... */);
 
 不存在调度。npm 包只是分发容器：meta 包用 optionalDependencies 装对应平台的二进制，启动链是 shell shim → 一行 node 脚本 → lib/tsc.js 里 process.execve 用原生二进制替换整个进程。所有编译工作在 Go 进程里，node 只是几十毫秒的引导。
 
-补充：esbuild、oxlint、rollup 全是同一套路——平台二进制 + 薄启动器。识别标志是 lockfile 里成排的 *-darwin-arm64 / *-linux-x64 平台包。
+补充：esbuild、oxlint、rollup 全是同一套路——平台二进制 + 薄启动器。识别标志是 lockfile 里成排的 *-darwin-arm64 /*-linux-x64 平台包。
 
 **2. strict 默认变 true，对老项目意味着什么？**
 

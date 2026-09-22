@@ -1,4 +1,5 @@
 # JDK 安装与环境配置
+
 *类型：practice ｜ 难度：入门 ｜ 标签：JDK、jenv、Homebrew、macOS、环境配置 ｜ 更新：2026-09-22*
 
 **macOS 上推荐 Homebrew 装 openjdk、jenv 管多版本：brew 负责安装，软链接把 JDK 挂到系统标准目录，jenv 负责注册与切换（global / local / shell），最后用 `java -version` 验证。**

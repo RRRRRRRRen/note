@@ -67,7 +67,7 @@ TLS 握手    ██████████████████ 56ms
 
 缓存是这场考试里区分度最高的部分。判定顺序固定，且先于任何网络请求：**先查强缓存**——`Cache-Control: max-age` 在有效期内直接用本地副本，一个字节都不问服务器（`no-cache` 不是不缓存，而是「跳过强缓存、每次都协商」；`no-store` 才是真不存）；**强缓存过期后走协商缓存**——带上 `If-None-Match`（对应响应里的 ETag）或 `If-Modified-Since`（对应 Last-Modified）问服务器「资源变了吗」，没变返回 304 复用本地文件，变了返回 200 加新内容。
 
-为什么有了 Last-Modified 还要 ETag？因为 mtime 只有秒级精度（一秒内多次修改检测不到）、内容不变仅 mtime 变会误判、分布式集群各机器 mtime 可能不一致。ETag 基于内容指纹（hash 或 inode+size+mtime 组合）解决这三个问题，两者同时存在时 **ETag 优先**。工程实践的最佳组合是：**带内容指纹的文件名 + **`Cache-Control: max-age=31536000, immutable`——文件变了名字就变，等于永远命中强缓存，协商缓存只在 HTML 入口上使用。
+为什么有了 Last-Modified 还要 ETag？因为 mtime 只有秒级精度（一秒内多次修改检测不到）、内容不变仅 mtime 变会误判、分布式集群各机器 mtime 可能不一致。ETag 基于内容指纹（hash 或 inode+size+mtime 组合）解决这三个问题，两者同时存在时 **ETag 优先**。工程实践的最佳组合是：**带内容指纹的文件名 +**`Cache-Control: max-age=31536000, immutable`——文件变了名字就变，等于永远命中强缓存，协商缓存只在 HTML 入口上使用。
 
 缓存判定链：
 

@@ -2,7 +2,7 @@
 
 *类型：knowledge ｜ 难度：进阶 ｜ 标签：Flexbox、Grid、布局、CSS ｜ 更新：2026-09-10*
 
-**内容沿**一个方向**排 → Flex；需要**同时约束行和列** → Grid。Grid 先定网格再放内容（layout-out），Flex 先有内容再分配空间（content-out）——两种相反的布局哲学。拿不准时记住经验法则：**组件内部的一维排列用 Flex，页面骨架与二维网格用 Grid**；嵌套组合（外 Grid 内 Flex）是常态而非妥协。两个引擎共有的第一坑是**自动最小尺寸**：Flex 解法 `min-w-0`，Grid 解法 `minmax(0, 1fr)`。**
+**内容沿**一个方向**排 → Flex；需要**同时约束行和列**→ Grid。Grid 先定网格再放内容（layout-out），Flex 先有内容再分配空间（content-out）——两种相反的布局哲学。拿不准时记住经验法则：**组件内部的一维排列用 Flex，页面骨架与二维网格用 Grid**；嵌套组合（外 Grid 内 Flex）是常态而非妥协。两个引擎共有的第一坑是**自动最小尺寸**：Flex 解法 `min-w-0`，Grid 解法 `minmax(0, 1fr)`。**
 
 ## 两种布局哲学：content-out vs layout-out
 
@@ -122,10 +122,10 @@ Flex 只有两条轴：`justify-*` 管**主轴**、`align-*` 管**交叉轴**（
 
 | Flex：两轴两族 | Grid：两轴三层 |
 | --- | --- |
-| justify-* 沿主轴、align-* 沿交叉轴 | -content：轨道组 vs 容器（分布整组轨道） |
+| justify-*沿主轴、align-* 沿交叉轴 | -content：轨道组 vs 容器（分布整组轨道） |
 | -content 分配轴上的剩余/溢出空间（多行时 align-content 才生效） | -items：项目在格子内的默认对齐 |
 | align-items / align-self 管交叉轴上的项目对齐 | -self：单个项目覆盖 |
-| 主轴/交叉轴随 flex-direction 变化（column 时主轴即块方向），属性名不变 | justify-* 沿行内轴（行内方向）、align-* 沿块轴（块方向），固定不变，行列各一套 |
+| 主轴/交叉轴随 flex-direction 变化（column 时主轴即块方向），属性名不变 | justify-*沿行内轴（行内方向）、align-* 沿块轴（块方向），固定不变，行列各一套 |
 
 反例 vs 正例（对齐层次 / alignment layers）——justify-content 面向轨道组与容器之间的空间，管不着项目在格子内的位置：
 

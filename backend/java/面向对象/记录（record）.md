@@ -1,4 +1,5 @@
 # 记录（record）
+
 *类型：knowledge ｜ 难度：入门 ｜ 标签：Java、record、不可变类 ｜ 更新：2026-09-22*
 
 **record 是 JDK 14 预览、JDK 16 正式发布的不可变数据载体类：声明一组字段后自动生成构造器、访问器、equals、hashCode 和 toString，天然不可变，适合纯粹存放数据的场景。**

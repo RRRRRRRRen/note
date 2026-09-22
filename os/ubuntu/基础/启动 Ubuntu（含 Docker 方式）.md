@@ -49,7 +49,7 @@ docker ps -a
 # 列出所有容器（含已停止的），找到目标容器的 ID 或名称
 ```
 
-2. 启动已停止的容器：
+1. 启动已停止的容器：
 
 ```bash
 docker start abc123
@@ -57,7 +57,7 @@ docker start abc123
 docker start mycontainer
 ```
 
-3. 重新进入容器的交互式 Shell：
+1. 重新进入容器的交互式 Shell：
 
 ```bash
 docker exec -it abc123 /bin/bash
