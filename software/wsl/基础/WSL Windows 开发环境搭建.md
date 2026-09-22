@@ -241,6 +241,54 @@ choco upgrade all         # 更新全部
 choco install wox runjs responsively zeal figma drawio github-desktop postman notion powertoys -y
 ```
 
+## Chrome 扩展
+
+以下扩展在 Firefox 中也都有对应版本。
+
+- React DevTools：在 Chrome 开发者工具中加入 React 调试面板。
+- ColorZilla：高级吸管、颜色选择器、渐变生成器。
+- Axe Accessibility：面向开发、测试与设计的网页可访问性检查器。
+- daily.dev：个性化的热门开发者新闻提要。
+- Nimbus Capture：截取完整网页或任意区域。
+- WhatFont：鼠标悬停即可检查网页字体。
+- JSON Formatter：让 JSON 响应易于阅读。
+
+## VetsWhoCode Web App
+
+以 VetsWhoCode 的开源应用为例，走一遍「克隆开源项目到本地跑起来」的完整流程，也是为该组织做开源贡献的第一步。
+
+```bash
+# 1. 克隆仓库
+git clone https://github.com/Vets-Who-Code/vets-who-code-app.git
+cd vets-who-code-app
+
+# 2. 按项目声明的版本安装 Node.js
+nvm install
+
+# 3. 安装依赖（React、Next、Bootstrap 等，需要几分钟）
+npm install
+
+# 4. 创建本地环境变量（连接 Contentful API 的密钥从这里配置；
+#    默认的 .env 使用模拟数据，本地跑博客无需真实密钥）
+cp .env.example .env
+
+# 5. 启动开发服务器
+npm run dev
+```
+
+- 启动后访问 `http://localhost:3000/` 查看应用；`Ctrl + C` 关闭开发服务器。
+- `npm install` 会输出大量警告与消息，属于正常现象。
+
+## 其他环境
+
+JavaScript 与 Web 开发之外，各语言/工具在 WSL 上的官方搭建指南（本笔记不展开，按需查阅）：
+
+- Python：在 Windows 上使用 Python 进行 Web 开发（WSL 版）——参见微软文档 `docs.microsoft.com/windows/python/web-frameworks`。
+- R：在 Windows WSL2 中使用 RStudio Server——参见 RStudio 官方支持文章。
+- PHP 7：在 WSL 2 上安装和配置 LAMP（Apache + MySQL + PHP）Web 服务器。
+- PHP 8：面向 Laravel 开发的 Windows PHP8 + WSL2 环境设置。
+- 数据库：在 WSL 中安装并连接 MySQL、PostgreSQL、MongoDB、Redis、SQL Server、SQLite——参见微软文档 `docs.microsoft.com/windows/wsl/tutorials/wsl-database`。
+
 ## 注意事项
 
 - 项目代码放 Linux 文件系统（如 `~/code`），跨系统访问 `mnt/c` 慢且易出权限问题。

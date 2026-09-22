@@ -171,3 +171,35 @@ const __dirname = path.dirname(__filename);        // 当前模块目录
 - 按需导入而非 `import * as`，只引入用到的成员
 - 循环依赖在 CJS 中返回「执行到一半的快照」、在 ESM 中靠动态引用延缓解析，两者都能「不报错」但都可能拿到 `undefined`——设计上应提取共享模块规避循环
 - 常见陷阱：ESM 中误用 `require`/`__dirname`；CJS 中 `exports = xxx` 切断引用；浏览器漏写 `type="module"`
+
+## 模块打包工具
+
+现代前端开发通常使用打包工具来处理模块——无论源码用哪种规范，最终都被工具统一解析、拼装成可发布的产物。
+
+### Webpack
+
+```javascript
+// webpack.config.js：最小可用配置——入口、出口两件套
+module.exports = {
+  entry: './src/index.js',        // 依赖图的起点，从这里开始静态分析 require/import
+  output: {
+    filename: 'bundle.js',
+    path: __dirname + '/dist'     // CJS 配置文件，可直接用 __dirname
+  }
+};
+```
+
+### Vite
+
+```javascript
+// vite.config.js：开发态走原生 ESM 免打包，生产构建交给 Rollup
+export default {
+  build: {
+    rollupOptions: {
+      input: './src/main.js'      // 多入口时在这里声明依赖图起点
+    }
+  }
+};
+```
+
+## 延伸阅读

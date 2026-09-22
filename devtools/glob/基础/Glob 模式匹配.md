@@ -174,6 +174,35 @@ module.exports = {
 };
 ```
 
+### Webpack 配置
+
+Webpack 的 module rules 用的是**正则表达式**而非 Glob——这是两类工具容易混淆的地方：
+
+```javascript
+module.exports = {
+  module: {
+    rules: [
+      {
+        test: /\.(js|jsx)$/,     // 正则匹配文件扩展名（非 Glob）
+        exclude: /node_modules/, // 正则排除 node_modules
+        use: "babel-loader"
+      }
+    ]
+  }
+};
+```
+
+两者的对照：
+
+| | Glob 模式 | 正则表达式 |
+| --- | --- | --- |
+| 语法 | 通配符（`*`、`**`、`?`、`{a,b}`） | 字符类、量词、分组（`\.`、`(js|jsx)`） |
+| 匹配对象 | 文件路径整体 | 需要自己写清路径边界（如 exclude 不加 `^` 也能命中路径中任意一段） |
+| 典型场景 | .gitignore、ESLint ignorePatterns、文件查找 | Webpack test/exclude、代码校验 |
+
+- 注意 `test: /\.(js|jsx)$/` 里是 `\.`（转义点号），与 Glob 里 `*.{js,jsx}` 表达同一意图但语法完全不同。
+- `exclude: /node_modules/` 只要路径中包含该子串即命中排除，等价的 Glob 直觉是「排除所有 node_modules 目录下的文件」。
+
 ## 注意事项
 
 - 路径分隔符统一使用 `/`，包括 Windows 环境。

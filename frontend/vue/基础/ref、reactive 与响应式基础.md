@@ -88,3 +88,58 @@ const state = reactive({ count: 0 })
 | 模板中使用 | 自动解包，无需 `.value` | 直接使用 |
 | 解构/传参 | `.value` 引用不变，保持响应 | 解构后丢失响应性（需 toRefs） |
 | 重新赋值整体 | 支持（替换 `.value`） | 不支持替换整个代理对象 |
+
+## 模版引用
+
+用 ref 直接拿到模板中的 DOM 元素或子组件实例：
+
+- 只可以在组件挂载后才能访问模板引用（`onMounted` 之后）。
+- 模板 ref 的属性值必须和声明的 ref 变量同名。
+- ref 数组并不保证与源数组相同的顺序。
+- 模板引用也可以用在一个子组件上，此时引用中获得的值是组件实例。
+
+### 获取单个元素
+
+```vue
+<script setup>
+import { ref, onMounted } from 'vue'
+
+// 声明一个 ref 来存放该元素的引用
+// 必须和模板里的 ref 同名
+const input = ref(null)
+
+onMounted(() => {
+  input.value.focus()
+})
+</script>
+
+<template>
+  <input ref="input" />
+</template>
+```
+
+### v-for 中的模板引用
+
+```vue
+<script setup>
+import { ref, onMounted } from 'vue'
+
+const list = ref([
+  /* ... */
+])
+
+const itemRefs = ref([])
+
+onMounted(() => console.log(itemRefs.value))
+</script>
+
+<template>
+  <ul>
+    <li v-for="item in list" ref="itemRefs">
+      {{ item }}
+    </li>
+  </ul>
+</template>
+```
+
+更多响应式 API（shallowRef、customRef、toRefs 等）见《响应式 API 进阶》。

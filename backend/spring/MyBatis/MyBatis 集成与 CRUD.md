@@ -279,3 +279,49 @@ public class Address {
 ```
 
 优点：减少一次性加载无用数据、提高响应速度；适用一对一/一对多关联、关联数据量大但不一定访问的场景。
+
+## 缓存机制
+
+MyBatis 提供两级缓存，分别由 `SqlSession` 和 `SqlSessionFactory` 层管理：
+
+- 缓存是存储在内存中的数据副本，能避免频繁访问数据库，减少数据库压力、提升响应速度
+- 一级缓存默认开启，二级缓存需要手动开启
+
+### 一级缓存
+
+一级缓存是 `SqlSession` 级别的缓存，MyBatis 默认启用。只要 `SqlSession` 没有关闭或提交，通过该 `SqlSession` 执行的所有查询都会先查一级缓存，没有命中再去查数据库。作用范围仅限于当前的 `SqlSession`：同一个 `SqlSession` 中多次查询相同数据，直接从缓存获取，不再执行 SQL。
+
+工作原理：
+
+1. 第一次查询：执行 SQL，结果存入当前 `SqlSession` 的一级缓存
+2. 第二次查询：同一个 `SqlSession` 中执行相同查询，直接从一级缓存获取，不再执行 SQL
+3. 提交或关闭 `SqlSession`：一级缓存中的数据被清空
+
+### 二级缓存
+
+二级缓存是 `SqlSessionFactory` 级别的缓存，作用范围是整个 `SqlSessionFactory`，可以跨 `SqlSession` 共享缓存数据。默认禁用，需要手动开启。
+
+开启步骤：
+
+```xml
+<!-- 步骤一：在 Mapper 映射文件中加 <cache/> 标签 -->
+<mapper namespace="com.example.UserMapper">
+  <cache/>
+  <!-- 其他 SQL 查询语句 -->
+</mapper>
+```
+
+```xml
+<!-- 步骤二：确保全局配置中二级缓存开启 -->
+<configuration>
+  <settings>
+    <setting name="cacheEnabled" value="true"/>
+  </settings>
+</configuration>
+```
+
+工作原理：
+
+1. 第一次查询：结果存入二级缓存
+2. 第二次查询：不同 `SqlSession` 之间共享二级缓存，查询条件相同时直接从二级缓存获取，不查数据库
+3. 缓存失效：`SqlSession` 提交或关闭时一级缓存失效，二级缓存内容依然保留，直到缓存超时或手动清除
