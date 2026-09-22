@@ -4,11 +4,11 @@
     "type": "split",
     "children": [
       {
-        "id": "5c39cbf3bac1995b",
+        "id": "c83bbcaa03e63f16",
         "type": "tabs",
         "children": [
           {
-            "id": "a5a146e70daf4769",
+            "id": "a493e1c1c2d87040",
             "type": "leaf",
             "state": {
               "type": "empty",
@@ -37,7 +37,9 @@
               "type": "file-explorer",
               "state": {
                 "sortOrder": "alphabetical",
-                "autoReveal": false
+                "autoReveal": false,
+                "showSearch": false,
+                "searchQuery": ""
               },
               "icon": "lucide-folder-closed",
               "title": "文件列表"
@@ -138,6 +140,7 @@
             "state": {
               "type": "outline",
               "state": {
+                "file": "2026-09-20.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
@@ -175,10 +178,17 @@
       "obsidian-excalidraw-plugin:新建绘图文件": false
     }
   },
-  "active": "a5a146e70daf4769",
+  "active": "feaea3ac8e5b5350",
   "lastOpenFiles": [
-    "【A-Lang】/Python/书本知识点.md",
+    "未命名.canvas",
+    "2026-09-20.md",
+    "未命名.base",
+    "未命名 2.base",
+    "未命名 1.base",
     "CLAUDE.md",
+    "AGENTS.md",
+    "【J-Interview】/front/01 架构设计与工程治理.md",
+    "【A-Lang】/Python/书本知识点.md",
     "【A-Lang】/Python/01 基础.md",
     "【A-Lang】/Python",
     "【A-Lang】/Python/99 类型注解与最佳实践.md",
@@ -197,23 +207,15 @@
     "【H-Projects】/yudao/99 问题收集.md",
     "【H-Projects】/yudao/10 Lombok相关问题.md",
     "【H-Projects】/yudao/08 文档注释.md",
-    "未命名.canvas",
     "【H-Projects】/yudao/05 数据库相关.md",
     "【H-Projects】/yudao/04 maven 相关.md",
     "【I-AI】/prompt/prompt.md",
     "【FrontEnd】Vue/02 vue3 基础.md",
     "【I-AI】/prompt",
     "【I-AI】",
-    "【H-Projects】/yudao/yudao.md",
-    "【H-Projects】/yudao/02 项目常见问题和设计.md",
-    "【H-Projects】/yudao/01 java约定与习惯问题.md",
-    "【H-Projects】/vue-vben-admin/[Vben Admin 源码实现] 10_状态管理.md",
     "【H-Projects】/yudao",
     "【H-Projects】/vue-vben-admin",
     "【H-Projects】/vue-element-admin",
-    "【H-Projects】",
-    "【G-Tools】/Vim",
-    "【G-Tools】/Regex",
     "【F-ENV】/WSL/images/zsh-profile.jpg",
     "【F-ENV】/WSL/images/windows.jpg",
     "【F-ENV】/WSL/images/term-settings.jpg",
