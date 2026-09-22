@@ -1,7 +1,302 @@
 # 后台任务：Worker、WASM 与 Service Worker
 
-- 来源：09 存储和后台任务优化.md
-- 建议类型：knowledge
-- 状态：待迁移：从来源 md 对应章节拆出（一篇一论）
+*类型：knowledge ｜ 难度：高级 ｜ 标签：浏览器、Web Worker、WebAssembly、Service Worker、性能优化*
 
-迁移到 note-viz 时创建 `meta.ts` + `index.tsx`（meta 六字段见其写作规范），完成后删除本文件。
+**三者定位不同、可组合使用：Web Worker 是后台线程，把重计算移出主线程避免页面卡顿（不能碰 DOM，靠消息传递通信）；WebAssembly 是二进制字节码格式，让 C/C++/Rust 编译后的代码以接近原生的速度运行（不做字符串/DOM 这类 JS 本就擅长的事）；Service Worker 是独立于页面生命周期的网络代理，拦截请求、缓存资源、支持离线与推送，是 PWA 的基石。三者都不能访问 DOM；典型组合是「Worker 里跑 Wasm」，计算快且不卡主线程。**
+
+## Web Worker
+
+浏览器提供的**后台线程机制**，允许在独立线程中运行 JavaScript，从而避免阻塞主线程。
+
+### 工作原理
+
+主线程负责页面渲染和用户交互，一旦执行耗时操作（大量计算、文件解析等）就会导致页面卡顿。Web Worker 将这些操作移到后台处理。
+
+### 基本使用
+
+```js
+// worker.js（Worker 线程）：监听消息、计算、回传结果
+self.onmessage = function (e) {
+  const result = e.data * 2;
+  self.postMessage(result);
+};
+```
+
+```js
+// main.js（主线程）：创建 Worker 并收发消息
+const worker = new Worker('worker.js');
+
+worker.onmessage = function (e) {
+  console.log('结果:', e.data);
+};
+
+worker.postMessage(10);
+```
+
+### 通信机制
+
+通信基于**消息传递（Message Passing）**，使用 `postMessage` 发送、`onmessage` 接收。
+
+- 通信是**异步**的
+- 数据通过**结构化克隆算法**拷贝传递，不共享内存
+- 如需共享内存，使用 `SharedArrayBuffer`
+
+### 限制
+
+| 限制 | 说明 |
+| --- | --- |
+| 无法操作 DOM | 不能访问 `document`、`window` |
+| API 受限 | `setTimeout` 可用，`alert`、`localStorage` 等不可用 |
+| 作用域隔离 | 不能访问主线程的变量 |
+| 需要独立文件 | 默认需传入文件路径（可用 `Blob` 绕过） |
+
+### 动态创建（无需独立文件）
+
+```js
+// 把 Worker 代码写成字符串，经 Blob URL 创建，适合简单场景
+const code = `
+  self.onmessage = function(e) {
+    self.postMessage(e.data * 3);
+  }
+`;
+
+const blob = new Blob([code], { type: 'application/javascript' });
+const worker = new Worker(URL.createObjectURL(blob));
+
+worker.onmessage = e => console.log('结果:', e.data);
+worker.postMessage(5);
+```
+
+### 终止 Worker
+
+```js
+// 主线程终止
+worker.terminate();
+
+// Worker 内部自我终止
+self.close();
+```
+
+### 适用场景
+
+- 大数据排序、数学运算、数据聚合
+- 图像像素处理、滤镜、压缩
+- 大文件解析（配合 `FileReader`）
+- 游戏中的寻路、碰撞检测等逻辑计算
+
+## WebAssembly
+
+一种**二进制字节码格式**，让 C/C++/Rust 等语言编译后的代码能在浏览器中以接近原生的速度运行，并与 JavaScript 协同工作。
+
+### 为什么需要它
+
+JavaScript 在以下场景性能不足：
+
+- 高性能计算（图像处理、视频编解码、大型游戏）
+- 数学/加密/音频算法
+- 复用已有的 C/C++ 模块
+
+Wasm 的优势：
+
+- 接近原生性能
+- 安全沙箱环境
+- 与 JS 高效互操作
+- 跨平台（浏览器 / Node.js / 嵌入式）
+
+### 应用场景
+
+| 场景 | 说明 |
+| --- | --- |
+| 游戏引擎 | Unity、Unreal 编译为 Wasm 运行 |
+| 图像/音视频处理 | 实时滤镜、压缩、格式转换 |
+| 文档渲染 | C/C++ 实现的 PDF、Word 渲染库移植到 Web |
+| 加密/解密 | 高速哈希、加密算法 |
+| AI/机器学习 | TensorFlow Lite Web 推理 |
+| 科学计算 | 物理引擎、CAD 模型、数值模拟 |
+
+### 与 Web Worker 搭配使用
+
+耗时的 Wasm 模块应放在 Web Worker 中运行，彻底释放主线程：
+
+```js
+// worker.js：初始化 Wasm 模块后执行重计算
+import init, { heavy_fn } from './pkg/my_wasm.js';
+
+onmessage = async (e) => {
+  await init();
+  const result = heavy_fn(e.data);
+  postMessage(result);
+};
+```
+
+### 性能对比
+
+Wasm vs JS 执行效率：
+
+| 场景 | Wasm | JS | 差距 |
+| --- | --- | --- | --- |
+| 简单加法/乘法 | 极快 | 快（JIT 优化） | 2～5 倍 |
+| 数组循环计算 | 非常快 | 快 | 3～10 倍 |
+| 图像处理（滤镜） | 极快（接近原生） | 慢 | 10～30 倍+ |
+| 加密/哈希（SHA256） | 快（C/Rust 优化） | 慢 | 5～50 倍 |
+| 字符串/JSON 操作 | 慢（需自行实现） | 快（原生支持） | JS 更优 |
+| DOM 操作 | 不支持 | 原生支持 | 只能用 JS |
+
+Wasm 快的原因：
+
+| 原因 | 解释 |
+| --- | --- |
+| 静态类型 | 强类型字节码，执行前已知变量类型，无需运行时推断 |
+| 二进制指令 | 低级字节码直接映射 CPU 指令 |
+| 无 GC 压力 | 线性内存（ArrayBuffer），无垃圾回收开销 |
+| 提前编译优化 | clang 等编译器的 AOT 优化比 JS 的 JIT 更彻底 |
+
+JS 反而更快的场景：
+
+| 场景 | 原因 |
+| --- | --- |
+| 字符串、JSON 操作 | JS 有原生方法，Wasm 需自行实现 |
+| DOM/UI 操作 | Wasm 不能直接访问 DOM，需通过 JS 中转 |
+| 操作 JS 对象 | Wasm 不支持 JS 对象结构，跨边界通信有开销 |
+| 少量计算任务 | Wasm 的加载和初始化成本不划算 |
+
+### 限制
+
+| 限制 | 说明 |
+| --- | --- |
+| 无 DOM 访问 | 只能通过 JS 间接操作 DOM |
+| 调试困难 | 类似机器码，可读性差 |
+| 独立内存模型 | 需自行管理线性内存 |
+| 开发门槛高 | 需掌握 C/C++/Rust 等语言 |
+
+## Service Worker
+
+浏览器在**后台运行的独立线程**，作为页面与网络之间的代理，可拦截请求、缓存资源、推送通知，**生命周期独立于页面**。
+
+### 与普通 JS 的区别
+
+- 运行在主线程之外
+- 无法直接访问 DOM
+- 可控制同作用域下的多个页面
+- 页面关闭后仍可存活
+
+### 典型用途
+
+| 用途 | 描述 |
+| --- | --- |
+| 离线访问 | 预缓存静态资源，断网可用 |
+| 请求拦截与缓存 | 缓存优先、网络优先等策略 |
+| 后台推送通知 | 配合 Push API 使用 |
+| 后台数据同步 | 网络恢复后自动提交草稿 |
+| PWA 支持 | 使 Web 应用接近原生体验 |
+
+### 架构
+
+```text
+用户页面
+   |
+   v
+Service Worker  <-- 拦截 fetch、push 等事件
+   |
+   v
+网络 or 缓存
+```
+
+### 生命周期
+
+注册：
+
+```js
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js').then(reg => {
+    console.log('注册成功', reg);
+  });
+}
+```
+
+安装（install）— 首次注册或文件变动时触发，通常用于**预缓存资源**：
+
+```js
+self.addEventListener('install', event => {
+  // waitUntil 保证预缓存完成前不进入下一阶段
+  event.waitUntil(
+    caches.open('v1').then(cache => {
+      return cache.addAll(['/', '/index.html', '/style.css', '/app.js']);
+    })
+  );
+});
+```
+
+激活（activate）— 安装完成后触发，通常用于**清除旧版本缓存**：
+
+```js
+self.addEventListener('activate', event => {
+  // 删除版本号不等于当前版本的所有旧缓存
+  event.waitUntil(
+    caches.keys().then(keys =>
+      Promise.all(keys.filter(k => k !== 'v1').map(k => caches.delete(k)))
+    )
+  );
+});
+```
+
+拦截请求（fetch）— 页面发出的每个请求都会经过这里：
+
+```js
+self.addEventListener('fetch', event => {
+  // 缓存命中直接应答，未命中才走网络
+  event.respondWith(
+    caches.match(event.request).then(resp => resp || fetch(event.request))
+  );
+});
+```
+
+### 缓存策略
+
+缓存优先（离线优先）— 有缓存就用缓存，没有再请求网络，适合静态资源：
+
+```js
+event.respondWith(
+  caches.match(event.request).then(resp => resp || fetch(event.request))
+);
+```
+
+网络优先（可降级）— 优先请求网络，失败时降级到缓存，适合频繁更新的内容：
+
+```js
+event.respondWith(
+  fetch(event.request).catch(() => caches.match(event.request))
+);
+```
+
+动态缓存（网络 + 更新缓存）— 请求网络并将结果存入缓存，下次可离线使用：
+
+```js
+event.respondWith(
+  caches.open('dynamic').then(cache =>
+    fetch(event.request).then(response => {
+      cache.put(event.request, response.clone()); // clone 后再缓存，一份消费一份存
+      return response;
+    })
+  )
+);
+```
+
+### 限制与注意事项
+
+| 限制 | 说明 |
+| --- | --- |
+| 必须 HTTPS | localhost 除外 |
+| 无 DOM 访问 | 需通过 `postMessage` 与页面通信 |
+| 存储空间有限 | 各浏览器不同，通常几十 MB |
+| 延迟激活 | 安装后不立即生效，需用户刷新页面 |
+| 缓存需主动清理 | 否则缓存会无限增长 |
+
+## 三者对比
+
+| | Web Worker | WebAssembly | Service Worker |
+| --- | --- | --- | --- |
+| 核心作用 | 后台线程，避免主线程阻塞 | 接近原生性能的计算 | 网络请求拦截与缓存 |
+| 能否访问 DOM | 否 | 否 | 否 |
+| 生命周期 | 随页面 | 随页面 | 独立于页面 |
+| 典型场景 | 大数据计算、文件解析 | 图像处理、加密、游戏 | 离线缓存、PWA |
