@@ -1,0 +1,7 @@
+# String() 与 JSON.stringify() 的区别
+
+- 来源：01 基础.md #17
+- 建议类型：question
+- 状态：待迁移：从来源 md 对应章节拆出（一篇一论）
+
+迁移到 note-viz 时创建 `meta.ts` + `index.tsx`（meta 六字段见其写作规范），完成后删除本文件。
